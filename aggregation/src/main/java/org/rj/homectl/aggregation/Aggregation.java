@@ -4,11 +4,14 @@ import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.rj.homectl.aggregation.consumer.EventConsumer;
 import org.rj.homectl.aggregation.consumer.TmpDataHandler;
 import org.rj.homectl.common.config.Config;
+import org.rj.homectl.consumer.status.StatusEventConsumer;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.ComponentScan;
 
 
 @SpringBootApplication
+@ComponentScan(basePackages = "com.rj")
 public class Aggregation {
 
     public static void main(String[] args) {
@@ -18,14 +21,15 @@ public class Aggregation {
     public Aggregation() {
         final var config = Config.load("config/event-consumer.properties");
 
-        final var eventConsumer = new EventConsumer(
-                config.getProperties(),
+        final var statusConsumer = new StatusEventConsumer(
+                "status-consumer-01",
+                config,
                 new KafkaConsumer<>(config.getProperties()),
                 new TmpDataHandler());
 
-        Runtime.getRuntime().addShutdownHook(new Thread(eventConsumer::shutdown));
+        Runtime.getRuntime().addShutdownHook(new Thread(statusConsumer::shutdown));
 
-        new Thread(eventConsumer::execute).start();
+        new Thread(statusConsumer::execute).start();
     }
 
 }

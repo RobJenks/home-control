@@ -64,7 +64,10 @@ public class Config {
 
     public <T> T getAs(String entry, Function<String, T> transform) {
         try {
-            return transform.apply(properties.getProperty(entry));
+            final var value = properties.getProperty(entry);
+            if (value == null) throw new RuntimeException("Could not retrieve missing config property: " + entry);
+
+            return transform.apply(value);
         }
         catch (Exception ex) {
             throw new RuntimeException(String.format("Could not read property '%s': (%s)", entry, ex.getMessage()), ex);

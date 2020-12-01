@@ -14,6 +14,11 @@
         <java.version>14</java.version>
         <maven.compiler.release>14</maven.compiler.release>
 
+        <spring.version>5.2.10.RELEASE</spring.version>
+        <spring-parent.version>2.3.5.RELEASE</spring-parent.version>
+        <apache.commons-lang.version>3.11</apache.commons-lang.version>
+        <jackson.version>2.12.0</jackson.version>
+        <maven.compiler.version>3.8.1</maven.compiler.version>
         <org.jooq.jool.version>0.9.14</org.jooq.jool.version>
         <apache.kafka.version>2.6.0</apache.kafka.version>
     </properties>
@@ -22,6 +27,7 @@
         <module>aggregation</module>
         <module>common</module>
         <module>kafka-common</module>
+        <module>consumer-status-event</module>
     </modules>
 
     <build>
@@ -29,7 +35,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.8.1</version>
+                <version>${maven.compiler.version}</version>
                 <configuration>
                     <source>14</source>
                     <target>14</target>
@@ -41,16 +47,42 @@
     <dependencyManagement>
         <dependencies>
 
-
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-lang3</artifactId>
+                <version>${apache.commons-lang.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-core</artifactId>
+                <version>${jackson.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-databind</artifactId>
+                <version>${jackson.version}</version>
+            </dependency>
             <dependency>
                 <groupId>org.jooq</groupId>
                 <artifactId>jool</artifactId>
                 <version>${org.jooq.jool.version}</version>
             </dependency>
+
             <dependency>
                 <groupId>org.apache.kafka</groupId>
                 <artifactId>kafka-streams</artifactId>
                 <version>${apache.kafka.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-context</artifactId>
+                <version>${spring.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-core</artifactId>
+                <version>${spring.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

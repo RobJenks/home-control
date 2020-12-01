@@ -1,7 +1,7 @@
 package org.rj.homectl.aggregation.consumer;
 
 import org.apache.kafka.clients.consumer.Consumer;
-import org.rj.homectl.kafka.consumer.ConsumerRecordsHandler;
+import org.rj.homectl.kafka.consumer.handlers.ConsumerRecordsHandler;
 
 import java.time.Duration;
 import java.util.List;

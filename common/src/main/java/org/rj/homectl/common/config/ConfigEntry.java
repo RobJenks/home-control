@@ -1,7 +1,8 @@
 package org.rj.homectl.common.config;
 
 public enum ConfigEntry {
-    InputTopicName("input.topic.name");
+    InputTopicNames("input.topic.names"),
+    PollDurationSec("poll.duration.secs");
 
     private final String key;
     ConfigEntry(String key) {

@@ -1,8 +1,10 @@
 package org.rj.homectl.common.config;
 
 import java.io.IOException;
+import java.util.Map;
 import java.util.Properties;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 public class Config {
     private final Properties properties;
@@ -28,6 +30,11 @@ public class Config {
 
     public Properties getProperties() {
         return properties;
+    }
+
+    public Map<String, Object> toMap() {
+        return properties.entrySet().stream()
+                .collect(Collectors.toMap(x -> (String)x.getKey(), Map.Entry::getValue));
     }
 
     public String get(ConfigEntry entry) {
@@ -64,7 +71,10 @@ public class Config {
 
     public <T> T getAs(String entry, Function<String, T> transform) {
         try {
-            return transform.apply(properties.getProperty(entry));
+            final var value = properties.getProperty(entry);
+            if (value == null) throw new RuntimeException("Could not retrieve missing config property: " + entry);
+
+            return transform.apply(value);
         }
         catch (Exception ex) {
             throw new RuntimeException(String.format("Could not read property '%s': (%s)", entry, ex.getMessage()), ex);

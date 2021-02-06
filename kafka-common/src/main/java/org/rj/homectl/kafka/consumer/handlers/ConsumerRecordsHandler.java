@@ -1,4 +1,4 @@
-package org.rj.homectl.kafka.consumer;
+package org.rj.homectl.kafka.consumer.handlers;
 
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 

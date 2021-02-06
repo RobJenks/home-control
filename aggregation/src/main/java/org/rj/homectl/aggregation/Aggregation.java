@@ -1,13 +1,13 @@
 package org.rj.homectl.aggregation;
 
-import org.apache.kafka.clients.consumer.KafkaConsumer;
-import org.rj.homectl.aggregation.consumer.EventConsumer;
 import org.rj.homectl.aggregation.consumer.TmpDataHandler;
 import org.rj.homectl.common.config.Config;
 import org.rj.homectl.consumer.status.StatusEventConsumer;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
+
+import java.util.Optional;
 
 
 @SpringBootApplication
@@ -24,7 +24,7 @@ public class Aggregation {
         final var statusConsumer = new StatusEventConsumer(
                 "status-consumer-01",
                 config,
-                new KafkaConsumer<>(config.getProperties()),
+                Optional.empty(),
                 new TmpDataHandler());
 
         Runtime.getRuntime().addShutdownHook(new Thread(statusConsumer::shutdown));

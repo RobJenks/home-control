@@ -1,15 +1,29 @@
 package org.rj.homectl.kafka.consumer;
 
 import org.apache.kafka.clients.consumer.Consumer;
+import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
+import org.apache.kafka.common.serialization.Deserializer;
 import org.rj.homectl.common.config.Config;
 import org.rj.homectl.common.config.ConfigEntry;
 import org.rj.homectl.common.util.Util;
 import org.rj.homectl.kafka.consumer.handlers.ConsumerRecordsHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.annotation.Bean;
+import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
+import org.springframework.kafka.core.ConsumerFactory;
+import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
+import org.springframework.kafka.support.serializer.JsonDeserializer;
 
 import java.time.Duration;
+import java.util.Map;
+import java.util.Optional;
+import java.util.function.Supplier;
+
+/*
+   Custom factory initialisation: https://github.com/SpringOnePlatform2016/grussell-spring-kafka/blob/master/s1p-kafka/src/main/java/org/s1p/JsonConfiguration.java#L66
+*/
 
 public abstract class AbstractEventConsumer<K, V> implements EventConsumer<K, V> {
     private volatile boolean active = true;
@@ -22,7 +36,7 @@ public abstract class AbstractEventConsumer<K, V> implements EventConsumer<K, V>
 
     public AbstractEventConsumer(final String id,
                                  final Config config,
-                                 final Consumer<K, V> consumer,
+                                 final ConsumerGenerator<K, V> consumerGenerator,
                                  final ConsumerRecordsHandler<K, V> recordsHandler,
                                  final Class<?> implementationClass) {
         this.log = LoggerFactory.getLogger(implementationClass);
@@ -30,9 +44,36 @@ public abstract class AbstractEventConsumer<K, V> implements EventConsumer<K, V>
 
         this.id = id;
         this.config = config;
-        this.consumer = consumer;
+        this.consumer = consumerGenerator.apply(consumerConfig());
         this.recordsHandler = recordsHandler;
         this.pollDuration = getPollDuration(config);
+    }
+
+    @Bean
+    public Map<String, Object> consumerConfig() {
+        final var consumerConfig = config.toMap();
+
+        // Add base properties not specified in external config
+        consumerConfig.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, getKeyDeserializerClass());
+        consumerConfig.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, getValueDeserializerClass());
+        consumerConfig.put(JsonDeserializer.VALUE_DEFAULT_TYPE, getValueClass().getName());
+
+        return consumerConfig;
+    }
+
+    @Bean
+    public ConsumerFactory<K, V> consumerFactory() {
+        return new DefaultKafkaConsumerFactory<>(consumerConfig(),
+                provideKeyDeserializer().orElse(() -> null),
+                provideValueDeserializer().orElse(() -> null));
+    }
+
+    @Bean
+    public ConcurrentKafkaListenerContainerFactory<K, V> kafkaListenerContainerFactory() {
+        ConcurrentKafkaListenerContainerFactory<K, V> containerFactory = new ConcurrentKafkaListenerContainerFactory<>();
+        containerFactory.setConsumerFactory(consumerFactory());
+
+        return containerFactory;
     }
 
     public void execute() {
@@ -62,6 +103,17 @@ public abstract class AbstractEventConsumer<K, V> implements EventConsumer<K, V>
 
         return Duration.ofSeconds(secs);
     }
+
+    protected abstract Class<?> getKeyClass();
+    protected abstract Class<?> getValueClass();
+
+    @SuppressWarnings("rawtypes")
+    protected abstract Class<? extends Deserializer> getKeyDeserializerClass();
+    @SuppressWarnings("rawtypes")
+    protected abstract Class<? extends Deserializer> getValueDeserializerClass();
+
+    protected abstract Optional<Supplier<Deserializer<K>>> provideKeyDeserializer();
+    protected abstract Optional<Supplier<Deserializer<V>>> provideValueDeserializer();
 
     @Override
     public void shutdown() {

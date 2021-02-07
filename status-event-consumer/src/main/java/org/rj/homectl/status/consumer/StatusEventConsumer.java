@@ -1,4 +1,4 @@
-package org.rj.homectl.consumer.status;
+package org.rj.homectl.status.consumer;
 
 import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.KafkaConsumer;

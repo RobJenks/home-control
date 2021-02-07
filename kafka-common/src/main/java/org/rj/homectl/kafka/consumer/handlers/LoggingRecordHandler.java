@@ -20,7 +20,7 @@ public class LoggingRecordHandler<K, V> implements ConsumerRecordsHandler<K, V> 
                 value = objectMapper.writeValueAsString(recordInfo);
             }
             catch (Exception ex) {
-                value = String.format("Failed to serialise consumer record (%s)", ex.toString());
+                value = String.format("Failed to serialize consumer record (%s)", ex.toString());
             }
 
             LOG.info("Processing new record ({})", value);

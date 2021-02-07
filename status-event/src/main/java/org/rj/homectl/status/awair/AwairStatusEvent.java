@@ -1,7 +1,7 @@
 package org.rj.homectl.consumer.status.awair;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import org.rj.homectl.common.beans.events.StatusEvent;
+import org.rj.homectl.consumer.status.events.StatusEvent;
 
 public class AwairStatusEvent extends StatusEvent {
     private Integer score;

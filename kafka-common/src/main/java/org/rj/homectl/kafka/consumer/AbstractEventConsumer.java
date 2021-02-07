@@ -1,7 +1,6 @@
 package org.rj.homectl.kafka.consumer;
 
 import org.apache.kafka.clients.consumer.Consumer;
-import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.common.serialization.Deserializer;
 import org.rj.homectl.common.config.Config;
@@ -14,6 +13,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
 import org.springframework.kafka.core.ConsumerFactory;
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
+import org.springframework.kafka.support.serializer.ErrorHandlingDeserializer;
 import org.springframework.kafka.support.serializer.JsonDeserializer;
 
 import java.time.Duration;
@@ -54,8 +54,8 @@ public abstract class AbstractEventConsumer<K, V> implements EventConsumer<K, V>
         final var consumerConfig = config.toMap();
 
         // Add base properties not specified in external config
-        consumerConfig.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, getKeyDeserializerClass());
-        consumerConfig.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, getValueDeserializerClass());
+        consumerConfig.put(ErrorHandlingDeserializer.KEY_DESERIALIZER_CLASS, getKeyDeserializerClass());
+        consumerConfig.put(ErrorHandlingDeserializer.VALUE_DESERIALIZER_CLASS, getValueDeserializerClass());
         consumerConfig.put(JsonDeserializer.VALUE_DEFAULT_TYPE, getValueClass().getName());
 
         return consumerConfig;
@@ -64,8 +64,8 @@ public abstract class AbstractEventConsumer<K, V> implements EventConsumer<K, V>
     @Bean
     public ConsumerFactory<K, V> consumerFactory() {
         return new DefaultKafkaConsumerFactory<>(consumerConfig(),
-                provideKeyDeserializer().orElse(() -> null),
-                provideValueDeserializer().orElse(() -> null));
+                buildErrorHandlingDeserializer(provideKeyDeserializer()),
+                buildErrorHandlingDeserializer(provideValueDeserializer()));
     }
 
     @Bean
@@ -74,6 +74,11 @@ public abstract class AbstractEventConsumer<K, V> implements EventConsumer<K, V>
         containerFactory.setConsumerFactory(consumerFactory());
 
         return containerFactory;
+    }
+
+    private <T> Deserializer<T> buildErrorHandlingDeserializer(Optional<Supplier<Deserializer<T>>> provider) {
+        final var deser = provider.orElse(() -> null).get();
+        return new ErrorHandlingDeserializer<>(deser);
     }
 
     public void execute() {

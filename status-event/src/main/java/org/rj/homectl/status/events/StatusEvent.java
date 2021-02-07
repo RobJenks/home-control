@@ -1,4 +1,4 @@
-package org.rj.homectl.consumer.status.events;
+package org.rj.homectl.status.events;
 
 import org.rj.homectl.kafka.consumer.events.AbstractConsumerEvent;
 

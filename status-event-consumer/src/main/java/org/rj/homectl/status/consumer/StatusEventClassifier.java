@@ -1,11 +1,11 @@
-package org.rj.homectl.consumer.status;
+package org.rj.homectl.status.consumer;
 
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.type.TypeFactory;
 import org.apache.kafka.common.header.Headers;
-import org.rj.homectl.consumer.status.awair.AwairStatusEvent;
-import org.rj.homectl.consumer.status.hue.HueStatusEvent;
-import org.rj.homectl.consumer.status.st.StStatusEvent;
+import org.rj.homectl.status.awair.AwairStatusEvent;
+import org.rj.homectl.status.hue.HueStatusEvent;
+import org.rj.homectl.status.st.StStatusEvent;
 
 import java.util.Arrays;
 

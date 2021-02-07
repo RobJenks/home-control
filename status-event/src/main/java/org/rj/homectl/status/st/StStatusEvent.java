@@ -1,6 +1,6 @@
-package org.rj.homectl.consumer.status.st;
+package org.rj.homectl.status.st;
 
-import org.rj.homectl.consumer.status.events.StatusEvent;
+import org.rj.homectl.status.events.StatusEvent;
 
 public class StStatusEvent extends StatusEvent {
 

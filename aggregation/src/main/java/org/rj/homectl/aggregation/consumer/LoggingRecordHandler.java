@@ -2,7 +2,7 @@ package org.rj.homectl.aggregation.consumer;
 
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.rj.homectl.aggregation.controller.TmpData;
-import org.rj.homectl.common.beans.events.StatusEvent;
+import org.rj.homectl.consumer.status.events.StatusEvent;
 import org.rj.homectl.kafka.consumer.handlers.ConsumerRecordsHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

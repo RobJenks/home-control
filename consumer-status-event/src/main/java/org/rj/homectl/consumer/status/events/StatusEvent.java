@@ -1,8 +1,10 @@
-package org.rj.homectl.common.beans.events;
+package org.rj.homectl.consumer.status.events;
+
+import org.rj.homectl.kafka.consumer.events.AbstractConsumerEvent;
 
 import java.time.OffsetDateTime;
 
-public abstract class StatusEvent {
+public abstract class StatusEvent extends AbstractConsumerEvent {
     private String type;
     private OffsetDateTime timestamp;
 

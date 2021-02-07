@@ -6,6 +6,8 @@ import org.apache.kafka.common.serialization.Deserializer;
 import org.rj.homectl.common.config.Config;
 import org.rj.homectl.common.config.ConfigEntry;
 import org.rj.homectl.common.util.Util;
+import org.rj.homectl.kafka.consumer.events.AbstractConsumerEvent;
+import org.rj.homectl.kafka.consumer.events.ConsumerEvent;
 import org.rj.homectl.kafka.consumer.handlers.ConsumerRecordsHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,18 +16,20 @@ import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
 import org.springframework.kafka.core.ConsumerFactory;
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
 import org.springframework.kafka.support.serializer.ErrorHandlingDeserializer;
+import org.springframework.kafka.support.serializer.FailedDeserializationInfo;
 import org.springframework.kafka.support.serializer.JsonDeserializer;
 
 import java.time.Duration;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 /*
    Custom factory initialisation: https://github.com/SpringOnePlatform2016/grussell-spring-kafka/blob/master/s1p-kafka/src/main/java/org/s1p/JsonConfiguration.java#L66
 */
 
-public abstract class AbstractEventConsumer<K, V> implements EventConsumer<K, V> {
+public abstract class AbstractEventConsumer<K, V extends AbstractConsumerEvent> implements EventConsumer<K, V> {
     private volatile boolean active = true;
     private final Logger log;
     private final String id;
@@ -56,7 +60,7 @@ public abstract class AbstractEventConsumer<K, V> implements EventConsumer<K, V>
         // Add base properties not specified in external config
         consumerConfig.put(ErrorHandlingDeserializer.KEY_DESERIALIZER_CLASS, getKeyDeserializerClass());
         consumerConfig.put(ErrorHandlingDeserializer.VALUE_DESERIALIZER_CLASS, getValueDeserializerClass());
-        consumerConfig.put(JsonDeserializer.VALUE_DEFAULT_TYPE, getValueClass().getName());
+        //consumerConfig.put(JsonDeserializer.VALUE_DEFAULT_TYPE, getValueClass().getName());
 
         return consumerConfig;
     }
@@ -64,8 +68,8 @@ public abstract class AbstractEventConsumer<K, V> implements EventConsumer<K, V>
     @Bean
     public ConsumerFactory<K, V> consumerFactory() {
         return new DefaultKafkaConsumerFactory<>(consumerConfig(),
-                buildErrorHandlingDeserializer(provideKeyDeserializer()),
-                buildErrorHandlingDeserializer(provideValueDeserializer()));
+                buildErrorHandlingKeyDeserializer(provideKeyDeserializer()),
+                buildErrorHandlingValueDeserializer(provideValueDeserializer()));
     }
 
     @Bean
@@ -76,9 +80,31 @@ public abstract class AbstractEventConsumer<K, V> implements EventConsumer<K, V>
         return containerFactory;
     }
 
-    private <T> Deserializer<T> buildErrorHandlingDeserializer(Optional<Supplier<Deserializer<T>>> provider) {
+    private Deserializer<K> buildErrorHandlingKeyDeserializer(Optional<Supplier<Deserializer<K>>> provider) {
+        return buildErrorHandlingDeserializer(provider, true, this::handleKeyDeserialisationFailure);
+    }
+
+    private Deserializer<V> buildErrorHandlingValueDeserializer(Optional<Supplier<Deserializer<V>>> provider) {
+        return buildErrorHandlingDeserializer(provider, false, this::handleValueDeserialisationFailure);
+    }
+
+    private <T> Deserializer<T> buildErrorHandlingDeserializer(Optional<Supplier<Deserializer<T>>> provider, boolean forKey,
+                                                               Function<FailedDeserializationInfo, T> failedDeserialisationFunction) {
         final var deser = provider.orElse(() -> null).get();
-        return new ErrorHandlingDeserializer<>(deser);
+        final var handler = new ErrorHandlingDeserializer<>(deser);
+
+        handler.setForKey(forKey);
+        handler.setFailedDeserializationFunction(failedDeserialisationFunction);
+
+        return handler;
+    }
+
+    private K handleKeyDeserialisationFailure(FailedDeserializationInfo failureInfo) {
+        
+    }
+
+    private V handleValueDeserialisationFailure(FailedDeserializationInfo failureInfo) {
+
     }
 
     public void execute() {

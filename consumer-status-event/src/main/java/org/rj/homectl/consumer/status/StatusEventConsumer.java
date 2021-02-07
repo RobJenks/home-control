@@ -6,6 +6,7 @@ import org.apache.kafka.common.serialization.Deserializer;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.rj.homectl.common.beans.events.StatusEvent;
 import org.rj.homectl.common.config.Config;
+import org.rj.homectl.consumer.status.awair.AwairStatusEvent;
 import org.rj.homectl.kafka.consumer.AbstractEventConsumer;
 import org.rj.homectl.kafka.consumer.ConsumerGenerator;
 import org.rj.homectl.kafka.consumer.handlers.ConsumerRecordsHandler;
@@ -36,8 +37,8 @@ public class StatusEventConsumer extends AbstractEventConsumer<String, StatusEve
 
     @Override
     protected Class<?> getValueClass() {
-        return StatusEvent.class;
-    }
+        return AwairStatusEvent.class;
+    }   // TODO: Back to generic StatusEvent
 
     @Override
     @SuppressWarnings("rawtypes")

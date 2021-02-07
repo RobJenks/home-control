@@ -1,6 +1,6 @@
 package org.rj.homectl.aggregation;
 
-import org.rj.homectl.aggregation.consumer.TmpDataHandler;
+import org.rj.homectl.aggregation.consumer.LoggingRecordHandler;
 import org.rj.homectl.common.config.Config;
 import org.rj.homectl.consumer.status.StatusEventConsumer;
 import org.springframework.boot.SpringApplication;
@@ -25,7 +25,7 @@ public class Aggregation {
                 "status-consumer-01",
                 config,
                 Optional.empty(),
-                new TmpDataHandler());
+                new LoggingRecordHandler());
 
         Runtime.getRuntime().addShutdownHook(new Thread(statusConsumer::shutdown));
 

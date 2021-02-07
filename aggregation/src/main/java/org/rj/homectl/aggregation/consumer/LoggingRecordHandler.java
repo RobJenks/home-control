@@ -7,8 +7,8 @@ import org.rj.homectl.kafka.consumer.handlers.ConsumerRecordsHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class TmpDataHandler implements ConsumerRecordsHandler<String, StatusEvent> {
-    private static final Logger LOG = LoggerFactory.getLogger(TmpDataHandler.class);
+public class LoggingRecordHandler implements ConsumerRecordsHandler<String, StatusEvent> {
+    private static final Logger LOG = LoggerFactory.getLogger(LoggingRecordHandler.class);
 
     @Override
     public void process(ConsumerRecords<String, StatusEvent> consumerRecords) {

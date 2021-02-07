@@ -22,7 +22,7 @@ public class ConsumerEventError {
         return "ConsumerEventError (" + Optional.ofNullable(exception).map(Exception::toString).orElse("<null>") + ")";
     }
 
-    public static ConsumerEventError fromFailedDeserialisationInfo(FailedDeserializationInfo failure) {
+    public static ConsumerEventError fromFailedDeserializationInfo(FailedDeserializationInfo failure) {
         final var error = new ConsumerEventError();
         error.setTopic(failure.getTopic());
         error.setHeaders(failure.getHeaders());

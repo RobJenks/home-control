@@ -70,15 +70,15 @@ public class StatusEventConsumer extends AbstractEventConsumer<String, StatusEve
     }
 
     @Override
-    protected String handleKeyDeserialisationFailure(FailedDeserializationInfo failureInfo) {
-        log().error("Failed to deserialise status event key [{}]", failureInfo);
+    protected String handleKeyDeserializationFailure(FailedDeserializationInfo failureInfo) {
+        log().error("Failed to deserialize status event key [{}]", failureInfo);
         return StatusEventType.Unknown.getKey();
     }
 
     @Override
-    protected StatusEvent handleValueDeserialisationFailure(FailedDeserializationInfo failureInfo) {
-        log().error("Failed to deserialise status event value [{}]", failureInfo);
-        return StatusEventError.generate(ConsumerEventError.fromFailedDeserialisationInfo(failureInfo));
+    protected StatusEvent handleValueDeserializationFailure(FailedDeserializationInfo failureInfo) {
+        log().error("Failed to deserialize status event value [{}]", failureInfo);
+        return StatusEventError.generate(ConsumerEventError.fromFailedDeserializationInfo(failureInfo));
     }
 
     private static Consumer<String, StatusEvent> defaultConsumerGenerator(Map<String, Object> consumerConfig) {

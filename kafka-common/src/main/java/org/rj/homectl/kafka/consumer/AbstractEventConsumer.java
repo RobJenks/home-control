@@ -79,26 +79,26 @@ public abstract class AbstractEventConsumer<K, V extends AbstractConsumerEvent> 
     }
 
     private Deserializer<K> buildErrorHandlingKeyDeserializer(Optional<Supplier<Deserializer<K>>> provider) {
-        return buildErrorHandlingDeserializer(provider, true, this::handleKeyDeserialisationFailure);
+        return buildErrorHandlingDeserializer(provider, true, this::handleKeyDeserializationFailure);
     }
 
     private Deserializer<V> buildErrorHandlingValueDeserializer(Optional<Supplier<Deserializer<V>>> provider) {
-        return buildErrorHandlingDeserializer(provider, false, this::handleValueDeserialisationFailure);
+        return buildErrorHandlingDeserializer(provider, false, this::handleValueDeserializationFailure);
     }
 
     private <T> Deserializer<T> buildErrorHandlingDeserializer(Optional<Supplier<Deserializer<T>>> provider, boolean forKey,
-                                                               Function<FailedDeserializationInfo, T> failedDeserialisationFunction) {
+                                                               Function<FailedDeserializationInfo, T> failedDeserializationFunction) {
         final var deser = provider.orElse(() -> null).get();
         final var handler = new ErrorHandlingDeserializer<>(deser);
 
         handler.setForKey(forKey);
-        handler.setFailedDeserializationFunction(failedDeserialisationFunction);
+        handler.setFailedDeserializationFunction(failedDeserializationFunction);
 
         return handler;
     }
 
-    protected abstract K handleKeyDeserialisationFailure(FailedDeserializationInfo failureInfo);
-    protected abstract V handleValueDeserialisationFailure(FailedDeserializationInfo failureInfo);
+    protected abstract K handleKeyDeserializationFailure(FailedDeserializationInfo failureInfo);
+    protected abstract V handleValueDeserializationFailure(FailedDeserializationInfo failureInfo);
 
     public void execute() {
         try {

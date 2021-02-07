@@ -28,7 +28,8 @@
         <module>aggregation</module>
         <module>common</module>
         <module>kafka-common</module>
-        <module>consumer-status-event</module>
+        <module>status-event</module>
+        <module>status-event-consumer</module>
     </modules>
 
     <build>

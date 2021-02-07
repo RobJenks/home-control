@@ -1,4 +1,4 @@
-package org.rj.homectl.aggregation.controller;
+package org.rj.homectl.kafka.consumer.handlers;
 
 import java.util.ArrayList;
 import java.util.List;

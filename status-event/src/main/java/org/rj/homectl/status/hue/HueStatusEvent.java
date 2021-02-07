@@ -1,6 +1,6 @@
-package org.rj.homectl.consumer.status.hue;
+package org.rj.homectl.status.hue;
 
-import org.rj.homectl.consumer.status.events.StatusEvent;
+import org.rj.homectl.status.events.StatusEvent;
 
 public class HueStatusEvent extends StatusEvent {
 

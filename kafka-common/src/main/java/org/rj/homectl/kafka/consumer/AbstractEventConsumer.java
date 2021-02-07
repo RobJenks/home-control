@@ -7,8 +7,8 @@ import org.rj.homectl.common.config.Config;
 import org.rj.homectl.common.config.ConfigEntry;
 import org.rj.homectl.common.util.Util;
 import org.rj.homectl.kafka.consumer.events.AbstractConsumerEvent;
-import org.rj.homectl.kafka.consumer.events.ConsumerEvent;
 import org.rj.homectl.kafka.consumer.handlers.ConsumerRecordsHandler;
+import org.rj.homectl.kafka.consumer.handlers.LoggingRecordHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
@@ -17,7 +17,6 @@ import org.springframework.kafka.core.ConsumerFactory;
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
 import org.springframework.kafka.support.serializer.ErrorHandlingDeserializer;
 import org.springframework.kafka.support.serializer.FailedDeserializationInfo;
-import org.springframework.kafka.support.serializer.JsonDeserializer;
 
 import java.time.Duration;
 import java.util.Map;
@@ -44,7 +43,7 @@ public abstract class AbstractEventConsumer<K, V extends AbstractConsumerEvent> 
                                  final ConsumerRecordsHandler<K, V> recordsHandler,
                                  final Class<?> implementationClass) {
         this.log = LoggerFactory.getLogger(implementationClass);
-        log.info("Intialising consumer \"{}\" of type \"{}\"", id, implementationClass.getSimpleName());
+        log.info("Initialising consumer \"{}\" of type \"{}\"", id, implementationClass.getSimpleName());
 
         this.id = id;
         this.config = config;
@@ -60,7 +59,6 @@ public abstract class AbstractEventConsumer<K, V extends AbstractConsumerEvent> 
         // Add base properties not specified in external config
         consumerConfig.put(ErrorHandlingDeserializer.KEY_DESERIALIZER_CLASS, getKeyDeserializerClass());
         consumerConfig.put(ErrorHandlingDeserializer.VALUE_DESERIALIZER_CLASS, getValueDeserializerClass());
-        //consumerConfig.put(JsonDeserializer.VALUE_DEFAULT_TYPE, getValueClass().getName());
 
         return consumerConfig;
     }
@@ -99,13 +97,8 @@ public abstract class AbstractEventConsumer<K, V extends AbstractConsumerEvent> 
         return handler;
     }
 
-    private K handleKeyDeserialisationFailure(FailedDeserializationInfo failureInfo) {
-        
-    }
-
-    private V handleValueDeserialisationFailure(FailedDeserializationInfo failureInfo) {
-
-    }
+    protected abstract K handleKeyDeserialisationFailure(FailedDeserializationInfo failureInfo);
+    protected abstract V handleValueDeserialisationFailure(FailedDeserializationInfo failureInfo);
 
     public void execute() {
         try {
@@ -133,6 +126,14 @@ public abstract class AbstractEventConsumer<K, V extends AbstractConsumerEvent> 
         if (secs < 1L) throw new RuntimeException("Cannot set consumer poll duration <1 sec, requested duration was " + secs);
 
         return Duration.ofSeconds(secs);
+    }
+
+    protected static <K, V extends AbstractConsumerEvent> ConsumerRecordsHandler<K, V> defaultRecordHandler() {
+        return new LoggingRecordHandler<>();
+    }
+
+    protected Logger log() {
+        return this.log;
     }
 
     protected abstract Class<?> getKeyClass();

@@ -1,5 +1,6 @@
 package org.rj.homectl.aggregation.controller;
 
+import org.rj.homectl.kafka.consumer.handlers.TmpData;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 

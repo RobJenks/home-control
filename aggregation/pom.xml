@@ -36,7 +36,7 @@
         </dependency>
         <dependency>
             <groupId>org.rj.homectl</groupId>
-            <artifactId>consumer-status-event</artifactId>
+            <artifactId>status-event-consumer</artifactId>
             <version>${project.version}</version>
         </dependency>
 

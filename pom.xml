@@ -30,6 +30,7 @@
         <module>kafka-common</module>
         <module>status-event</module>
         <module>status-event-consumer</module>
+        <module>model-awair</module>
     </modules>
 
     <build>

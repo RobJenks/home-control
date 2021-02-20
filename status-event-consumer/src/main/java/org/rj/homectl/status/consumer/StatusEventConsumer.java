@@ -43,8 +43,8 @@ public class StatusEventConsumer extends AbstractEventConsumer<String, StatusEve
 
     @Override
     protected Class<?> getValueClass() {
-        return AwairStatusEvent.class;
-    }   // TODO: Back to generic StatusEvent
+        return StatusEvent.class;
+    }
 
     @Override
     @SuppressWarnings("rawtypes")

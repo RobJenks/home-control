@@ -5,10 +5,8 @@ import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.common.serialization.Deserializer;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.rj.homectl.kafka.consumer.error.ConsumerEventError;
-import org.rj.homectl.status.errors.StatusEventError;
 import org.rj.homectl.status.events.StatusEvent;
 import org.rj.homectl.common.config.Config;
-import org.rj.homectl.status.awair.AwairStatusEvent;
 import org.rj.homectl.kafka.consumer.AbstractEventConsumer;
 import org.rj.homectl.kafka.consumer.ConsumerGenerator;
 import org.rj.homectl.kafka.consumer.handlers.ConsumerRecordsHandler;
@@ -23,17 +21,21 @@ import java.util.Optional;
 import java.util.function.Supplier;
 
 @Component
-public class StatusEventConsumer extends AbstractEventConsumer<String, StatusEvent> {
+public class StatusEventConsumer<T> extends AbstractEventConsumer<String, StatusEvent<T>> {
+    private final Supplier<StatusEvent<T>> statusEventFactory;
 
     @Autowired
     public StatusEventConsumer(final String id,
                                final Config config,
-                               final Optional<ConsumerGenerator<String, StatusEvent>> consumerGenerator,
-                               final Optional<ConsumerRecordsHandler<String, StatusEvent>> recordsHandler) {
+                               final Supplier<StatusEvent<T>> statusEventFactory,
+                               final Optional<ConsumerGenerator<String, StatusEvent<T>>> consumerGenerator,
+                               final Optional<ConsumerRecordsHandler<String, StatusEvent<T>>> recordsHandler) {
         super(id, config,
                 consumerGenerator.orElse(StatusEventConsumer::defaultConsumerGenerator),
                 recordsHandler.orElseGet(AbstractEventConsumer::defaultRecordHandler),
                 StatusEventConsumer.class);
+
+        this.statusEventFactory = statusEventFactory;
     }
 
     @Override
@@ -64,8 +66,8 @@ public class StatusEventConsumer extends AbstractEventConsumer<String, StatusEve
     }
 
     @Override
-    protected Optional<Supplier<Deserializer<StatusEvent>>> provideValueDeserializer() {
-        return Optional.of(() -> new JsonDeserializer<StatusEvent>()
+    protected Optional<Supplier<Deserializer<StatusEvent<T>>>> provideValueDeserializer() {
+        return Optional.of(() -> new JsonDeserializer<StatusEvent<T>>()
                 .trustedPackages("*"));
     }
 
@@ -76,12 +78,15 @@ public class StatusEventConsumer extends AbstractEventConsumer<String, StatusEve
     }
 
     @Override
-    protected StatusEvent handleValueDeserializationFailure(FailedDeserializationInfo failureInfo) {
+    protected StatusEvent<T> handleValueDeserializationFailure(FailedDeserializationInfo failureInfo) {
         log().error("Failed to deserialize status event value [{}]", failureInfo);
-        return StatusEventError.generate(ConsumerEventError.fromFailedDeserializationInfo(failureInfo));
+
+        StatusEvent<T> errorEvent = statusEventFactory.get();
+        errorEvent.setError(ConsumerEventError.fromFailedDeserializationInfo(failureInfo));
+        return errorEvent;
     }
 
-    private static Consumer<String, StatusEvent> defaultConsumerGenerator(Map<String, Object> consumerConfig) {
+    private static <T> Consumer<String, StatusEvent<T>> defaultConsumerGenerator(Map<String, Object> consumerConfig) {
         return new KafkaConsumer<>(consumerConfig);
     }
 }

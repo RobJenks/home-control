@@ -4,19 +4,22 @@ import org.rj.homectl.status.events.StatusEvent;
 
 import java.time.OffsetDateTime;
 
-public class HueStatusEvent extends StatusEvent<Void> {
+public class HueStatusEvent extends StatusEvent<LightsStatus> {
+    private OffsetDateTime timestamp;
+    private LightsStatus data;
+
     @Override
     public OffsetDateTime getTimestamp() {
-        return null;
+        return timestamp;
     }
 
     @Override
     public void setTimestamp(OffsetDateTime timestamp) {
-
+        this.timestamp = timestamp;
     }
 
     @Override
-    public Void getData() {
-        return null;
+    public LightsStatus getData() {
+        return data;
     }
 }

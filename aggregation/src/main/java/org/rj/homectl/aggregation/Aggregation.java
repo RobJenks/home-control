@@ -1,6 +1,7 @@
 package org.rj.homectl.aggregation;
 
 import org.rj.homectl.common.config.Config;
+import org.rj.homectl.status.awair.AwairStatusEvent;
 import org.rj.homectl.status.consumer.StatusEventConsumer;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -20,9 +21,10 @@ public class Aggregation {
     public Aggregation() {
         final var config = Config.load("config/event-consumer.properties");
 
-        final var statusConsumer = new StatusEventConsumer(
+        final var statusConsumer = new StatusEventConsumer<>(
                 "status-consumer-01",
                 config,
+                AwairStatusEvent::new,  // TEMPORARY
                 Optional.empty(),
                 Optional.empty());
 

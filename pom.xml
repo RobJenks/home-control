@@ -31,6 +31,7 @@
         <module>status-event</module>
         <module>status-event-consumer</module>
         <module>model-awair</module>
+        <module>model-hue</module>
     </modules>
 
     <build>

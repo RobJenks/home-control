@@ -8,7 +8,6 @@ import org.rj.homectl.kafka.consumer.error.ConsumerEventError;
 import org.rj.homectl.status.errors.StatusEventError;
 import org.rj.homectl.status.events.StatusEvent;
 import org.rj.homectl.common.config.Config;
-import org.rj.homectl.status.awair.AwairStatusEvent;
 import org.rj.homectl.kafka.consumer.AbstractEventConsumer;
 import org.rj.homectl.kafka.consumer.ConsumerGenerator;
 import org.rj.homectl.kafka.consumer.handlers.ConsumerRecordsHandler;

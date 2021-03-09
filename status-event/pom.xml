@@ -22,6 +22,11 @@
             <artifactId>model-awair</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.rj.homectl</groupId>
+            <artifactId>model-hue</artifactId>
+            <version>${project.version}</version>
+        </dependency>
 
         <dependency>
             <groupId>org.springframework</groupId>

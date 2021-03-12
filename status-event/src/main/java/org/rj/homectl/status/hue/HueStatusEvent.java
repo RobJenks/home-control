@@ -1,25 +1,39 @@
 package org.rj.homectl.status.hue;
 
 import org.rj.homectl.status.events.StatusEvent;
+import org.rj.homectl.status.events.StatusEventType;
+import org.rj.homectl.status.serde.StatusEventMessage;
 
-import java.time.OffsetDateTime;
 
-public class HueStatusEvent extends StatusEvent<LightsStatus> {
-    private OffsetDateTime timestamp;
-    private LightsStatus data;
+public class HueStatusEvent extends StatusEvent {
+    private HueStatusData data;
 
-    @Override
-    public OffsetDateTime getTimestamp() {
-        return timestamp;
+    public HueStatusEvent() { }
+
+    public static HueStatusEvent fromMessage(StatusEventMessage message) {
+        final var event = new HueStatusEvent();
+        event.setTimestamp(message.getTimestamp());
+        event.setData(deserializeMessageDataAs(message.getData(), HueStatusData.class));
+
+        return event;
     }
 
     @Override
-    public void setTimestamp(OffsetDateTime timestamp) {
-        this.timestamp = timestamp;
+    public StatusEventType getType() {
+        return StatusEventType.Hue;
     }
 
     @Override
-    public LightsStatus getData() {
+    public HueStatusData getData() {
         return data;
+    }
+
+    public void setData(HueStatusData data) {
+        this.data = data;
+    }
+
+    @Override
+    public boolean isValid() {
+        return true;
     }
 }

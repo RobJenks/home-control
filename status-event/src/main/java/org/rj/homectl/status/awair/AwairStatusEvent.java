@@ -1,29 +1,36 @@
 package org.rj.homectl.status.awair;
 
-import org.rj.homectl.awair.model.AwairStatus;
 import org.rj.homectl.status.events.StatusEvent;
+import org.rj.homectl.status.events.StatusEventType;
+import org.rj.homectl.status.serde.StatusEventMessage;
 
-import java.time.OffsetDateTime;
-
-public class AwairStatusEvent extends StatusEvent<AwairStatus> {
-    private AwairStatus data;
+public class AwairStatusEvent extends StatusEvent {
+    private AwairStatusData data;
 
     public AwairStatusEvent() { }
 
-    @Override
-    public OffsetDateTime getTimestamp() {
-        return (data != null ? data.getTimestamp() : null);
+    public static AwairStatusEvent fromMessage(StatusEventMessage message) {
+        final var event = new AwairStatusEvent();
+        event.setTimestamp(message.getTimestamp());
+        event.setData(deserializeMessageDataAs(message.getData(), AwairStatusData.class));
+
+        return event;
     }
 
     @Override
-    public void setTimestamp(OffsetDateTime timestamp) {
-        if (data != null) {
-            data.setTimestamp(timestamp);
-        }
+    public StatusEventType getType() {
+        return StatusEventType.Awair;
     }
 
     @Override
-    public AwairStatus getData() {
+    public AwairStatusData getData() {
         return data;
     }
+
+    public void setData(AwairStatusData data) {
+        this.data = data;
+    }
+
+    @Override
+    public boolean isValid() { return true; }
 }

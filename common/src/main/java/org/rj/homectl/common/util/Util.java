@@ -18,4 +18,13 @@ public class Util {
     public static ObjectMapper objectMapper() {
         return OBJECT_MAPPER;
     }
+
+    public static String safeSerialize(Object obj) {
+        try {
+            return objectMapper().writeValueAsString(obj);
+        }
+        catch (Throwable t) {
+            return String.format("[Serialization failed: %s]", t);
+        }
+    }
 }

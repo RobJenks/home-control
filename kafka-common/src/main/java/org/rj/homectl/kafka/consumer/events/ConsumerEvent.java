@@ -4,9 +4,6 @@ import java.time.OffsetDateTime;
 
 public interface ConsumerEvent {
 
-    String getType();
-    void setType(String type);
-
     OffsetDateTime getTimestamp();
     void setTimestamp(OffsetDateTime timestamp);
 

@@ -21,10 +21,9 @@ public class Aggregation {
     public Aggregation() {
         final var config = Config.load("config/event-consumer.properties");
 
-        final var statusConsumer = new StatusEventConsumer<>(
+        final var statusConsumer = new StatusEventConsumer(
                 "status-consumer-01",
                 config,
-                AwairStatusEvent::new,  // TEMPORARY
                 Optional.empty(),
                 Optional.empty());
 

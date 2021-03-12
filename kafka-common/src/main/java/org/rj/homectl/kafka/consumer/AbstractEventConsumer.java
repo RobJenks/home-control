@@ -6,7 +6,7 @@ import org.apache.kafka.common.serialization.Deserializer;
 import org.rj.homectl.common.config.Config;
 import org.rj.homectl.common.config.ConfigEntry;
 import org.rj.homectl.common.util.Util;
-import org.rj.homectl.kafka.consumer.events.AbstractConsumerEvent;
+import org.rj.homectl.kafka.consumer.events.ConsumerEvent;
 import org.rj.homectl.kafka.consumer.handlers.ConsumerRecordsHandler;
 import org.rj.homectl.kafka.consumer.handlers.LoggingRecordHandler;
 import org.slf4j.Logger;
@@ -28,7 +28,7 @@ import java.util.function.Supplier;
    Custom factory initialisation: https://github.com/SpringOnePlatform2016/grussell-spring-kafka/blob/master/s1p-kafka/src/main/java/org/s1p/JsonConfiguration.java#L66
 */
 
-public abstract class AbstractEventConsumer<K, V extends AbstractConsumerEvent> implements EventConsumer<K, V> {
+public abstract class AbstractEventConsumer<K, V extends ConsumerEvent> implements EventConsumer<K, V> {
     private volatile boolean active = true;
     private final Logger log;
     private final String id;
@@ -128,7 +128,7 @@ public abstract class AbstractEventConsumer<K, V extends AbstractConsumerEvent> 
         return Duration.ofSeconds(secs);
     }
 
-    protected static <K, V extends AbstractConsumerEvent> ConsumerRecordsHandler<K, V> defaultRecordHandler() {
+    protected static <K, V extends ConsumerEvent> ConsumerRecordsHandler<K, V> defaultRecordHandler() {
         return new LoggingRecordHandler<>();
     }
 

@@ -4,16 +4,17 @@ import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.common.serialization.Deserializer;
 import org.apache.kafka.common.serialization.StringDeserializer;
-import org.rj.homectl.kafka.consumer.error.ConsumerEventError;
+import org.rj.homectl.kafka.common.KafkaConstants;
+import org.rj.homectl.status.error.ErrorStatusEvent;
+import org.rj.homectl.status.error.ErrorStatusEventData;
 import org.rj.homectl.status.events.StatusEvent;
 import org.rj.homectl.common.config.Config;
 import org.rj.homectl.kafka.consumer.AbstractEventConsumer;
 import org.rj.homectl.kafka.consumer.ConsumerGenerator;
 import org.rj.homectl.kafka.consumer.handlers.ConsumerRecordsHandler;
-import org.rj.homectl.status.events.StatusEventType;
+import org.rj.homectl.status.serde.StatusEventDeserializer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.support.serializer.FailedDeserializationInfo;
-import org.springframework.kafka.support.serializer.JsonDeserializer;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
@@ -21,21 +22,17 @@ import java.util.Optional;
 import java.util.function.Supplier;
 
 @Component
-public class StatusEventConsumer<T> extends AbstractEventConsumer<String, StatusEvent<T>> {
-    private final Supplier<StatusEvent<T>> statusEventFactory;
+public class StatusEventConsumer extends AbstractEventConsumer<String, StatusEvent> {
 
     @Autowired
     public StatusEventConsumer(final String id,
                                final Config config,
-                               final Supplier<StatusEvent<T>> statusEventFactory,
-                               final Optional<ConsumerGenerator<String, StatusEvent<T>>> consumerGenerator,
-                               final Optional<ConsumerRecordsHandler<String, StatusEvent<T>>> recordsHandler) {
+                               final Optional<ConsumerGenerator<String, StatusEvent>> consumerGenerator,
+                               final Optional<ConsumerRecordsHandler<String, StatusEvent>> recordsHandler) {
         super(id, config,
                 consumerGenerator.orElse(StatusEventConsumer::defaultConsumerGenerator),
                 recordsHandler.orElseGet(AbstractEventConsumer::defaultRecordHandler),
                 StatusEventConsumer.class);
-
-        this.statusEventFactory = statusEventFactory;
     }
 
     @Override
@@ -57,7 +54,7 @@ public class StatusEventConsumer<T> extends AbstractEventConsumer<String, Status
     @Override
     @SuppressWarnings("rawtypes")
     protected Class<? extends Deserializer> getValueDeserializerClass() {
-        return JsonDeserializer.class;
+        return StatusEventDeserializer.class;
     }
 
     @Override
@@ -66,27 +63,27 @@ public class StatusEventConsumer<T> extends AbstractEventConsumer<String, Status
     }
 
     @Override
-    protected Optional<Supplier<Deserializer<StatusEvent<T>>>> provideValueDeserializer() {
-        return Optional.of(() -> new JsonDeserializer<StatusEvent<T>>()
+    protected Optional<Supplier<Deserializer<StatusEvent>>> provideValueDeserializer() {
+        return Optional.of(() -> new StatusEventDeserializer()
                 .trustedPackages("*"));
     }
 
     @Override
     protected String handleKeyDeserializationFailure(FailedDeserializationInfo failureInfo) {
         log().error("Failed to deserialize status event key [{}]", failureInfo);
-        return StatusEventType.Unknown.getKey();
+        return KafkaConstants.KEY_UNKNOWN;
     }
 
     @Override
-    protected StatusEvent<T> handleValueDeserializationFailure(FailedDeserializationInfo failureInfo) {
+    protected StatusEvent handleValueDeserializationFailure(FailedDeserializationInfo failureInfo) {
         log().error("Failed to deserialize status event value [{}]", failureInfo);
 
-        StatusEvent<T> errorEvent = statusEventFactory.get();
-        errorEvent.setError(ConsumerEventError.fromFailedDeserializationInfo(failureInfo));
-        return errorEvent;
+        return ErrorStatusEvent.generateErrorEvent((ErrorStatusEventData)
+                ErrorStatusEventData.fromDeserializationErrorInfo(failureInfo));
+
     }
 
-    private static <T> Consumer<String, StatusEvent<T>> defaultConsumerGenerator(Map<String, Object> consumerConfig) {
+    private static <T> Consumer<String, StatusEvent> defaultConsumerGenerator(Map<String, Object> consumerConfig) {
         return new KafkaConsumer<>(consumerConfig);
     }
 }

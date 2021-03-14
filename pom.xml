@@ -33,6 +33,7 @@
         <module>model-awair</module>
         <module>model-hue</module>
         <module>monitor-agent-awair</module>
+        <module>status-event-producer</module>
     </modules>
 
     <build>

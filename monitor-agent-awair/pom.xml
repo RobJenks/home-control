@@ -44,6 +44,11 @@
             <artifactId>status-event</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.rj.homectl</groupId>
+            <artifactId>status-event-producer</artifactId>
+            <version>${project.version}</version>
+        </dependency>
 
         <dependency>
             <groupId>org.springframework.boot</groupId>

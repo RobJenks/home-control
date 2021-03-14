@@ -8,6 +8,7 @@ import org.rj.homectl.kafka.producer.AbstractEventProducer;
 import org.rj.homectl.kafka.producer.ProducerGenerator;
 import org.rj.homectl.status.awair.AwairStatusData;
 import org.rj.homectl.status.events.StatusEventType;
+import org.rj.homectl.status.producer.awair.AwairStatusEventProducer;
 import org.rj.homectl.status.serde.StatusEventMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,7 +32,7 @@ public class AwairMonitorAgent {
     public AwairMonitorAgent() {
         final var config = Config.load("config/status-monitor-awair.properties");
 
-        TemporaryAwairProducer producer = new TemporaryAwairProducer(
+        final var producer = new AwairStatusEventProducer(
                 "awair-agent-producer-01",
                 config,
                 KafkaProducer::new,
@@ -42,7 +43,7 @@ public class AwairMonitorAgent {
             final var status = getTempStatus();
 
             log.info("Sending status ({})", Util.safeSerialize(status));
-            producer.send(status);
+            producer.send(StatusEventType.Awair.getKey(), status);
             try {
                 Thread.sleep(1000L);
             }
@@ -72,30 +73,4 @@ public class AwairMonitorAgent {
 
         return status;
     }
-
-    class TemporaryAwairProducer extends AbstractEventProducer<String, StatusEventMessage> {
-        public TemporaryAwairProducer(String id, Config config, ProducerGenerator<String, StatusEventMessage> producerGenerator, Class<?> implementationClass) {
-            super(id, config, producerGenerator, implementationClass);
-        }
-
-        @Override
-        protected Class<?> getKeyClass() {
-            return String.class;
-        }
-
-        @Override
-        protected Class<?> getValueClass() {
-            return StatusEventMessage.class;
-        }
-
-        public void send(AwairStatusData status) {
-            final var message = new StatusEventMessage();
-            message.setTimestamp(status.getTimestamp());
-            message.setType(StatusEventType.Awair);
-            message.setData(Util.objectMapper().convertValue(status, Map.class));
-
-            this.getProducer().send(new ProducerRecord<>(getConfig().get("output.topic.name"), "awair", message));
-        }
-    }
-
 }

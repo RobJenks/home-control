@@ -1,9 +1,11 @@
 package org.rj.homectl.awair.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.time.OffsetDateTime;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class AwairStatus {
     private OffsetDateTime timestamp;
     private Integer score;

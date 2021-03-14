@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.web.client.RestTemplate;
 
 import java.time.OffsetDateTime;
 import java.util.Random;
@@ -46,7 +47,8 @@ public class AwairMonitorAgent {
 
     private void execute(AwairStatusEventProducer producer) {
         while (this.active.get()) {
-            final var status = getTempStatus();
+            log.info("Requesting status from Awair service");
+            final var status = getData(); // getTempStatus();
 
             log.info("Sending status ({})", Util.safeSerialize(status));
             producer.send(StatusEventType.Awair.getKey(), status);
@@ -57,6 +59,17 @@ public class AwairMonitorAgent {
                 log.error("*** Failed to suspend thread ({}) ***", ex.getMessage());
             }
         }
+    }
+
+    private AwairStatusData getData() {
+        RestTemplate restTemplate = new RestTemplate();
+        final var data = restTemplate
+                .getForEntity("http://awair-elem-141ea1.local/air-data/latest", AwairStatusData.class);
+
+        log.info("Received \"{} ({})\" response from Awair service: {}",
+                data.getStatusCode(), data.getStatusCodeValue(), Util.safeSerialize(data.getBody()));
+
+        return data.getBody();
     }
 
     public void terminate(String reason) {

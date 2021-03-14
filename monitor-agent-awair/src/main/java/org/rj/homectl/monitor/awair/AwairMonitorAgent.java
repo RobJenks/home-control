@@ -47,10 +47,9 @@ public class AwairMonitorAgent {
                 Thread.sleep(1000L);
             }
             catch (Exception ex) {
-                log.error("*** Failed to suspend thread ({})***", ex.getMessage());
+                log.error("*** Failed to suspend thread ({}) ***", ex.getMessage());
             }
         }
-
     }
 
     private AwairStatusData getTempStatus() {
@@ -95,8 +94,7 @@ public class AwairMonitorAgent {
             message.setType(StatusEventType.Awair);
             message.setData(Util.objectMapper().convertValue(status, Map.class));
 
-            this.getProducer().send(new ProducerRecord<>(getConfig().get("output.topic.name"), 0, System.currentTimeMillis(),
-                    "awair", message));
+            this.getProducer().send(new ProducerRecord<>(getConfig().get("output.topic.name"), "awair", message));
         }
     }
 

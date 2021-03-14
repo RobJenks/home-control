@@ -13,18 +13,14 @@ import org.rj.homectl.kafka.consumer.AbstractEventConsumer;
 import org.rj.homectl.kafka.consumer.ConsumerGenerator;
 import org.rj.homectl.kafka.consumer.handlers.ConsumerRecordsHandler;
 import org.rj.homectl.status.serde.StatusEventDeserializer;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.support.serializer.FailedDeserializationInfo;
-import org.springframework.stereotype.Component;
 
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Supplier;
 
-@Component
 public class StatusEventConsumer extends AbstractEventConsumer<String, StatusEvent> {
 
-    @Autowired
     public StatusEventConsumer(final String id,
                                final Config config,
                                final Optional<ConsumerGenerator<String, StatusEvent>> consumerGenerator,

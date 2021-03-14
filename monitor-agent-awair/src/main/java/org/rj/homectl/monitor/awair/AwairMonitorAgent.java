@@ -1,15 +1,11 @@
 package org.rj.homectl.monitor.awair;
 
 import org.apache.kafka.clients.producer.KafkaProducer;
-import org.apache.kafka.clients.producer.ProducerRecord;
 import org.rj.homectl.common.config.Config;
 import org.rj.homectl.common.util.Util;
-import org.rj.homectl.kafka.producer.AbstractEventProducer;
-import org.rj.homectl.kafka.producer.ProducerGenerator;
 import org.rj.homectl.status.awair.AwairStatusData;
 import org.rj.homectl.status.events.StatusEventType;
 import org.rj.homectl.status.producer.awair.AwairStatusEventProducer;
-import org.rj.homectl.status.serde.StatusEventMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
@@ -17,19 +13,25 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
 
 import java.time.OffsetDateTime;
-import java.util.Map;
 import java.util.Random;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 @SpringBootApplication
-@ComponentScan(basePackages = "com.rj")
+@ComponentScan(basePackages = "org.rj")
 public class AwairMonitorAgent {
     private static final Logger log = LoggerFactory.getLogger(AwairMonitorAgent.class);
+
+    private final AwairMonitorAgentService service;
+    private AtomicBoolean active;
 
     public static void main(String[] args) {
         SpringApplication.run(AwairMonitorAgent.class, args);
     }
 
     public AwairMonitorAgent() {
+        this.active = new AtomicBoolean(true);
+        this.service = new AwairMonitorAgentService(this);
+
         final var config = Config.load("config/status-monitor-awair.properties");
 
         final var producer = new AwairStatusEventProducer(
@@ -39,7 +41,11 @@ public class AwairMonitorAgent {
                 AwairMonitorAgent.class
         );
 
-        while (true) {
+        new Thread(() -> execute(producer)).start();
+    }
+
+    private void execute(AwairStatusEventProducer producer) {
+        while (this.active.get()) {
             final var status = getTempStatus();
 
             log.info("Sending status ({})", Util.safeSerialize(status));
@@ -51,6 +57,11 @@ public class AwairMonitorAgent {
                 log.error("*** Failed to suspend thread ({}) ***", ex.getMessage());
             }
         }
+    }
+
+    public void terminate(String reason) {
+        log.info("Received termination signal ({})", reason);
+        this.active.set(false);
     }
 
     private AwairStatusData getTempStatus() {

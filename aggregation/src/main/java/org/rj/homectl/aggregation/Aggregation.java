@@ -1,7 +1,6 @@
 package org.rj.homectl.aggregation;
 
 import org.rj.homectl.common.config.Config;
-import org.rj.homectl.status.awair.AwairStatusEvent;
 import org.rj.homectl.status.consumer.StatusEventConsumer;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -11,7 +10,7 @@ import java.util.Optional;
 
 
 @SpringBootApplication
-@ComponentScan(basePackages = "com.rj")
+@ComponentScan(basePackages = "org.rj")
 public class Aggregation {
 
     public static void main(String[] args) {

@@ -32,6 +32,7 @@
         <module>status-event-consumer</module>
         <module>model-awair</module>
         <module>model-hue</module>
+        <module>monitor-agent-awair</module>
     </modules>
 
     <build>
@@ -69,6 +70,11 @@
             <dependency>
                 <groupId>com.fasterxml.jackson.core</groupId>
                 <artifactId>jackson-databind</artifactId>
+                <version>${jackson.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.datatype</groupId>
+                <artifactId>jackson-datatype-jsr310</artifactId>
                 <version>${jackson.version}</version>
             </dependency>
             <dependency>

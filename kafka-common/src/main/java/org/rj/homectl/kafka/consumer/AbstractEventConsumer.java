@@ -132,6 +132,7 @@ public abstract class AbstractEventConsumer<K, V extends ConsumerEvent> implemen
         return new LoggingRecordHandler<>();
     }
 
+    public String getId() { return id; }
     protected Logger log() {
         return this.log;
     }

@@ -1,2 +1,12 @@
 server:
   port: 10200
+management:
+  server:
+    port: 10201
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    shutdown:
+      enabled: true

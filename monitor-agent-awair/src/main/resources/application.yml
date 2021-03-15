@@ -1,2 +1,12 @@
 server:
   port: 10211
+management:
+  server:
+    port: 10212
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    shutdown:
+      enabled: true

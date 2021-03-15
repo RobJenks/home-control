@@ -4,18 +4,18 @@ import org.apache.kafka.clients.producer.KafkaProducer;
 import org.rj.homectl.common.config.Config;
 import org.rj.homectl.common.util.Util;
 import org.rj.homectl.monitor.MonitorAgent;
+import org.rj.homectl.spring.application.SpringApplicationContext;
 import org.rj.homectl.status.awair.AwairStatusData;
 import org.rj.homectl.status.events.StatusEventType;
 import org.rj.homectl.status.producer.awair.AwairStatusEventProducer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.web.client.RestTemplate;
 
+import javax.annotation.PostConstruct;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 @SpringBootApplication
@@ -24,26 +24,25 @@ public class AwairMonitorAgent extends MonitorAgent {
     private static final Logger log = LoggerFactory.getLogger(AwairMonitorAgent.class);
     private AtomicBoolean active;
 
-    @Autowired
-    private ApplicationContext applicationContext;
-
     public static void main(String[] args) {
         SpringApplication.run(AwairMonitorAgent.class, args);
     }
 
-    public AwairMonitorAgent() {
-        super(AwairMonitorAgent.class);
-        this.active = new AtomicBoolean(true);
+    public AwairMonitorAgent(SpringApplicationContext context) {
+        super(AwairMonitorAgent.class, context);
+        this.active = new AtomicBoolean(false);
+    }
 
-        final var config = Config.load("config/status-monitor-awair.properties");
-
+    @PostConstruct
+    private void initialise() {
         final var producer = new AwairStatusEventProducer(
                 "awair-agent-producer-01",
-                config,
+                Config.load("config/status-monitor-awair-producer.properties"),
                 KafkaProducer::new,
                 AwairMonitorAgent.class
         );
 
+        this.active.set(true);
         new Thread(() -> execute(producer)).start();
     }
 
@@ -72,11 +71,6 @@ public class AwairMonitorAgent extends MonitorAgent {
                 data.getStatusCode(), data.getStatusCodeValue(), Util.safeSerialize(data.getBody()));
 
         return data.getBody();
-    }
-
-    @Override
-    protected ApplicationContext getApplicationContext() {
-        return applicationContext;
     }
 
     @Override

@@ -35,6 +35,7 @@
         <module>monitor-agent-awair</module>
         <module>status-event-producer</module>
         <module>monitor-agent</module>
+        <module>spring-common</module>
     </modules>
 
     <build>

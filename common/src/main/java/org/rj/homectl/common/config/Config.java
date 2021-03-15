@@ -24,6 +24,10 @@ public class Config {
         }
     }
 
+    public static Config load(Properties properties) {
+        return new Config(properties);
+    }
+
     private Config(final Properties properties) {
         this.properties = properties;
     }

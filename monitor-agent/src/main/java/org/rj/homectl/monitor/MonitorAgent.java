@@ -1,25 +1,43 @@
 package org.rj.homectl.monitor;
 
 
+import org.rj.homectl.common.config.Config;
+import org.rj.homectl.spring.application.SpringApplicationContext;
+import org.rj.homectl.spring.util.SpringUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
-import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.ComponentScan;
+
+import javax.annotation.PostConstruct;
 
 @ComponentScan(basePackages = "org.rj")
 public abstract class MonitorAgent {
     private final Logger log;
-    private final MonitorAgentService service;
+    private final SpringApplicationContext context;
+    private Config config;
+    private MonitorAgentService service;
 
-    public MonitorAgent(Class<?> implementationClass) {
+    @Autowired
+    public MonitorAgent(Class<?> implementationClass, SpringApplicationContext context) {
         this.log = LoggerFactory.getLogger(implementationClass);
-        this.service = new MonitorAgentService(this);
+        this.context = context;
 
         Runtime.getRuntime().addShutdownHook(new Thread(this::preShutdown));
     }
 
-    protected abstract ApplicationContext getApplicationContext();
+    @PostConstruct
+    private void initialise() {
+        this.config = SpringUtil.getConfigurationFromSpringEnvironment(context.getEnvironment());
+        this.config.toMap().entrySet().forEach(e -> log.info("Application Property: {}={}", e.getKey(),e.getValue()));
+
+        this.service = new MonitorAgentService(this);
+    }
+
+    protected Config getConfig() {
+        return config;
+    }
 
     /**
      * Event called when the terminate signal is received.  Method for derived classes to
@@ -37,7 +55,7 @@ public abstract class MonitorAgent {
         final var allowTermination = handleTerminationRequest(reason);
         if (!allowTermination) return;
 
-        SpringApplication.exit(getApplicationContext(), () -> 0);
+        SpringApplication.exit(context.getApplicationContext(), () -> 0);
     }
 
     private void preShutdown() {

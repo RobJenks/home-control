@@ -3,6 +3,7 @@ package org.rj.homectl.monitor.awair;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.rj.homectl.common.config.Config;
 import org.rj.homectl.common.util.Util;
+import org.rj.homectl.monitor.MonitorAgent;
 import org.rj.homectl.status.awair.AwairStatusData;
 import org.rj.homectl.status.events.StatusEventType;
 import org.rj.homectl.status.producer.awair.AwairStatusEventProducer;
@@ -19,9 +20,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 @SpringBootApplication
 @ComponentScan(basePackages = "org.rj")
-public class AwairMonitorAgent {
+public class AwairMonitorAgent extends MonitorAgent {
     private static final Logger log = LoggerFactory.getLogger(AwairMonitorAgent.class);
-    private final AwairMonitorAgentService service;
     private AtomicBoolean active;
 
     @Autowired
@@ -32,8 +32,8 @@ public class AwairMonitorAgent {
     }
 
     public AwairMonitorAgent() {
+        super(AwairMonitorAgent.class);
         this.active = new AtomicBoolean(true);
-        this.service = new AwairMonitorAgentService(this);
 
         final var config = Config.load("config/status-monitor-awair.properties");
 
@@ -43,8 +43,6 @@ public class AwairMonitorAgent {
                 KafkaProducer::new,
                 AwairMonitorAgent.class
         );
-
-        Runtime.getRuntime().addShutdownHook(new Thread(this::preShutdown));
 
         new Thread(() -> execute(producer)).start();
     }
@@ -76,13 +74,13 @@ public class AwairMonitorAgent {
         return data.getBody();
     }
 
-    public void terminate(String reason) {
-        log.info("Received termination signal ({})", reason);
-        this.active.set(false);
-        SpringApplication.exit(applicationContext, () -> 0);
+    @Override
+    protected ApplicationContext getApplicationContext() {
+        return applicationContext;
     }
 
-    private void preShutdown() {
-        log.info("JVM shutdown initiated, ending process");
+    @Override
+    protected boolean handleTerminationRequest(String reason) {
+        return true;    // Allow all requests
     }
 }

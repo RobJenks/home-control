@@ -3,8 +3,15 @@ package org.rj.homectl.common.util;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.URISyntaxException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.Consumer;
@@ -42,6 +49,16 @@ public class Util {
         }
         catch (InterruptedException ex) {
             onInterruption.accept(ex);
+        }
+    }
+
+    public static String loadStringResource(String path) throws IOException {
+        final var resourcePath = path.startsWith("/") ? path : ("/" + path);
+        try {
+            return Files.readString(Paths.get(Util.class.getResource(resourcePath).toURI()));
+        }
+        catch (URISyntaxException ex) {
+            throw new IOException(String.format("Failed to load resource \"%s\" (%s)", resourcePath, ex.getMessage()), ex);
         }
     }
 }

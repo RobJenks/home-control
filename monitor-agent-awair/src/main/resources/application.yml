@@ -1,8 +1,9 @@
 server:
-  port: 10211
+  port: 10210
+
 management:
   server:
-    port: 10212
+    port: 10211
   endpoints:
     web:
       exposure:
@@ -10,11 +11,18 @@ management:
   endpoint:
     shutdown:
       enabled: true
+
 monitor:
   sensors:
     - "http://awair-elem-141ea1.local"
   query: /air-data/latest
-  pollIntervalMs: 500
+  pollIntervalMs: 1500
+
 producer:
   id: awair-agent-producer-01
   config: config/status-monitor-awair-producer.properties
+
+logging:
+  level:
+    root: INFO
+    org.rj: DEBUG

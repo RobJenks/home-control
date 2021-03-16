@@ -7,9 +7,12 @@ public enum ConfigEntry {
     ProducerConfig("producer.config"),
     InputTopicNames("input.topic.names"),
     PollDurationSec("poll.duration.secs"),
+    MonitorSensor("monitor.sensor"),
     MonitorSensors("monitor.sensors"),
     MonitorQuery("monitor.query"),
-    MonitorPollIntervalMs("monitor.pollIntervalMs");
+    MonitorPollIntervalMs("monitor.pollIntervalMs"),
+    MonitorToken("monitor.token");
+
 
     private final String key;
     ConfigEntry(String key) {

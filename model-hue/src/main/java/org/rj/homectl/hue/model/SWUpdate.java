@@ -2,20 +2,20 @@ package org.rj.homectl.hue.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import java.time.OffsetDateTime;
+import java.time.LocalDate;
 
 public class SWUpdate {
     @JsonProperty("lastinstall")
-    private OffsetDateTime lastInstall;
+    private LocalDate lastInstall;
     private String state;
 
     public SWUpdate() { }
 
-    public OffsetDateTime getLastInstall() {
+    public LocalDate getLastInstall() {
         return lastInstall;
     }
 
-    public void setLastInstall(OffsetDateTime lastInstall) {
+    public void setLastInstall(LocalDate lastInstall) {
         this.lastInstall = lastInstall;
     }
 

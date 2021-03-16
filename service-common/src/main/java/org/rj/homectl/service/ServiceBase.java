@@ -38,6 +38,7 @@ public abstract class ServiceBase {
     protected Config getConfig() {
         return config;
     }
+    protected SpringApplicationContext getContext() { return context; }
 
     /**
      * Event called when the terminate signal is received.  Method for derived classes to

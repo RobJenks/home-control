@@ -1,4 +1,4 @@
-package org.rj.homectl.service.awair;
+package org.rj.homectl.monitor.awair;
 
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.rj.homectl.common.config.Config;
@@ -14,11 +14,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.web.client.DefaultResponseErrorHandler;
 import org.springframework.web.client.RestTemplate;
 
 import javax.annotation.PostConstruct;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
@@ -30,6 +30,7 @@ public class AwairMonitorAgent extends ServiceBase {
     private static final Logger log = LoggerFactory.getLogger(AwairMonitorAgent.class);
     private AtomicBoolean active;
     private AwairStatusEventProducer producer;
+    private RestTemplate client;
     private List<String> sensorTargets;
 
     public static void main(String[] args) {
@@ -44,6 +45,7 @@ public class AwairMonitorAgent extends ServiceBase {
     @PostConstruct
     private void initialise() {
         this.sensorTargets = getSensorTargets();
+        this.client = initialiseClient();
         this.producer = initialiseProducer();
 
 
@@ -67,6 +69,15 @@ public class AwairMonitorAgent extends ServiceBase {
         return sensors;
     }
 
+    private RestTemplate initialiseClient() {
+        RestTemplate client = new RestTemplate();
+
+        // TODO: Add retries and better error handling
+        client.setErrorHandler(new DefaultResponseErrorHandler());
+
+        return client;
+    }
+
     private AwairStatusEventProducer initialiseProducer() {
         final var producerId = getConfig().tryGet(ConfigEntry.ProducerId)
                 .orElseThrow(() -> new RuntimeException("Initialisation failed; no configured producer ID"));
@@ -77,8 +88,7 @@ public class AwairMonitorAgent extends ServiceBase {
         final var producer = new AwairStatusEventProducer(
                 producerId,
                 Config.load(producerConfigPath),
-                KafkaProducer::new,
-                AwairMonitorAgent.class
+                KafkaProducer::new
         );
 
         return producer;
@@ -103,8 +113,7 @@ public class AwairMonitorAgent extends ServiceBase {
     }
 
     private AwairStatusData getData(String sensor) {
-        RestTemplate restTemplate = new RestTemplate();
-        final var data = restTemplate.getForEntity(sensor, AwairStatusData.class);
+        final var data = client.getForEntity(sensor, AwairStatusData.class);
 
         log.debug("Received \"{} ({})\" response from Awair service: {}",
                 data.getStatusCode(), data.getStatusCodeValue(), Util.safeSerialize(data.getBody()));

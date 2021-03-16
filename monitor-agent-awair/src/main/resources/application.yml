@@ -10,3 +10,11 @@ management:
   endpoint:
     shutdown:
       enabled: true
+monitor:
+  sensors:
+    - "http://awair-elem-141ea1.local"
+  query: /air-data/latest
+  pollIntervalMs: 500
+producer:
+  id: awair-agent-producer-01
+  config: config/status-monitor-awair-producer.properties

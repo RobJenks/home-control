@@ -1,6 +1,7 @@
 package org.rj.homectl.aggregation;
 
 import org.rj.homectl.common.config.Config;
+import org.rj.homectl.common.config.ConfigEntry;
 import org.rj.homectl.service.ServiceBase;
 import org.rj.homectl.spring.application.SpringApplicationContext;
 import org.rj.homectl.status.consumer.StatusEventConsumer;
@@ -27,11 +28,12 @@ public class Aggregation extends ServiceBase {
 
     @PostConstruct
     private void initialise() {
-        final var config = Config.load("config/event-consumer.properties");
+        final var consumerId = getConfig().get(ConfigEntry.ConsumerId);
+        final var consumerConfigPath = getConfig().get(ConfigEntry.ConsumerConfig);
 
         final var statusConsumer = new StatusEventConsumer(
-                "status-consumer-01",
-                config,
+                consumerId,
+                Config.load(consumerConfigPath),
                 Optional.empty(),
                 Optional.empty());
 

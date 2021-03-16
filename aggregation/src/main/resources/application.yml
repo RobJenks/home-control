@@ -10,3 +10,6 @@ management:
   endpoint:
     shutdown:
       enabled: true
+consumer:
+  id: status-consumer-01
+  config: config/event-consumer.properties

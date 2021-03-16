@@ -2,6 +2,7 @@ package org.rj.homectl.common.config;
 
 import java.io.IOException;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Properties;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -46,6 +47,17 @@ public class Config {
     }
     public String get(String entry) {
         return getAs(entry, Function.identity());
+    }
+
+    public Optional<String> tryGet(ConfigEntry entry) {
+        return Optional.ofNullable(entry)
+                .map(ConfigEntry::getKey)
+                .flatMap(this::tryGet);
+    }
+    public Optional<String> tryGet(String entry) {
+        return Optional.ofNullable(entry)
+                .filter(properties::containsKey)
+                .map(this::get);
     }
 
     public Integer getInteger(ConfigEntry entry) {

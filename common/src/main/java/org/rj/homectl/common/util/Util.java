@@ -7,6 +7,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.Consumer;
 
 public class Util {
     private static final ObjectMapper OBJECT_MAPPER;
@@ -32,6 +33,15 @@ public class Util {
         }
         catch (Throwable t) {
             return String.format("[Serialization failed: %s]", t);
+        }
+    }
+
+    public static void threadSleepOrElse(long sleepMs, Consumer<InterruptedException> onInterruption) {
+        try {
+            Thread.sleep(sleepMs);
+        }
+        catch (InterruptedException ex) {
+            onInterruption.accept(ex);
         }
     }
 }

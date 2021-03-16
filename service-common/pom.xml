@@ -9,7 +9,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>monitor-agent</artifactId>
+    <artifactId>service-common</artifactId>
 
     <dependencyManagement>
         <dependencies>

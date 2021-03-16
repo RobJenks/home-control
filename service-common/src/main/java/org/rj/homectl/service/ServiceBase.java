@@ -1,4 +1,4 @@
-package org.rj.homectl.monitor;
+package org.rj.homectl.service;
 
 
 import org.rj.homectl.common.config.Config;
@@ -13,14 +13,14 @@ import org.springframework.context.annotation.ComponentScan;
 import javax.annotation.PostConstruct;
 
 @ComponentScan(basePackages = "org.rj")
-public abstract class MonitorAgent {
+public abstract class ServiceBase {
     private final Logger log;
     private final SpringApplicationContext context;
     private Config config;
-    private MonitorAgentService service;
+    private ServiceBaseController service;
 
     @Autowired
-    public MonitorAgent(Class<?> implementationClass, SpringApplicationContext context) {
+    public ServiceBase(Class<?> implementationClass, SpringApplicationContext context) {
         this.log = LoggerFactory.getLogger(implementationClass);
         this.context = context;
 
@@ -32,7 +32,7 @@ public abstract class MonitorAgent {
         this.config = SpringUtil.getConfigurationFromSpringEnvironment(context.getEnvironment());
         this.config.toMap().entrySet().forEach(e -> log.info("Application Property: {}={}", e.getKey(),e.getValue()));
 
-        this.service = new MonitorAgentService(this);
+        this.service = new ServiceBaseController(this);
     }
 
     protected Config getConfig() {

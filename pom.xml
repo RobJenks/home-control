@@ -34,7 +34,7 @@
         <module>model-hue</module>
         <module>monitor-agent-awair</module>
         <module>status-event-producer</module>
-        <module>monitor-agent</module>
+        <module>service-common</module>
         <module>spring-common</module>
     </modules>
 

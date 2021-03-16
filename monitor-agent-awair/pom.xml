@@ -51,7 +51,7 @@
         </dependency>
         <dependency>
             <groupId>org.rj.homectl</groupId>
-            <artifactId>monitor-agent</artifactId>
+            <artifactId>service-common</artifactId>
             <version>${project.version}</version>
         </dependency>
 

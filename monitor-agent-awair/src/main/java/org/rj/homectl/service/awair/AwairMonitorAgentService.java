@@ -1,4 +1,4 @@
-package org.rj.homectl.monitor.awair;
+package org.rj.homectl.service.awair;
 
 import org.springframework.web.bind.annotation.RestController;
 

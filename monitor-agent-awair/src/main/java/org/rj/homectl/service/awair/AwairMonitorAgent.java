@@ -1,9 +1,9 @@
-package org.rj.homectl.monitor.awair;
+package org.rj.homectl.service.awair;
 
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.rj.homectl.common.config.Config;
 import org.rj.homectl.common.util.Util;
-import org.rj.homectl.monitor.MonitorAgent;
+import org.rj.homectl.service.ServiceBase;
 import org.rj.homectl.spring.application.SpringApplicationContext;
 import org.rj.homectl.status.awair.AwairStatusData;
 import org.rj.homectl.status.events.StatusEventType;
@@ -20,7 +20,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 @SpringBootApplication
 @ComponentScan(basePackages = "org.rj")
-public class AwairMonitorAgent extends MonitorAgent {
+public class AwairMonitorAgent extends ServiceBase {
     private static final Logger log = LoggerFactory.getLogger(AwairMonitorAgent.class);
     private AtomicBoolean active;
 

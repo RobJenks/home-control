@@ -1,22 +1,33 @@
 package org.rj.homectl.status.hue;
 
-import org.rj.homectl.hue.model.Light;
 import org.rj.homectl.status.events.StatusEventContent;
 
-import java.util.HashMap;
-import java.util.Map;
 
-public class HueStatusData extends HashMap<String, Light>
-                          implements StatusEventContent {
+public class HueStatusData implements StatusEventContent {
 
-    public HueStatusData() {
-        super();
+    private HueEventType type;
+    private HueStatusLightData lights;
+
+    public HueStatusData() { }
+
+    public HueStatusData(HueEventType type, HueStatusLightData lights) {
+        this.type = type;
+        this.lights = lights;
     }
 
-    public HueStatusData(Map<String, Light> data) {
-        if (data != null) {
-            this.putAll(data);
-        }
+    public HueEventType getType() {
+        return type;
     }
 
+    public void setType(HueEventType type) {
+        this.type = type;
+    }
+
+    public HueStatusLightData getLights() {
+        return lights;
+    }
+
+    public void setLights(HueStatusLightData lights) {
+        this.lights = lights;
+    }
 }

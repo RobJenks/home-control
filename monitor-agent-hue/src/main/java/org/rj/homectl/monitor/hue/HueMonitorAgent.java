@@ -10,7 +10,9 @@ import org.rj.homectl.common.util.Util;
 import org.rj.homectl.service.ServiceBase;
 import org.rj.homectl.spring.application.SpringApplicationContext;
 import org.rj.homectl.status.events.StatusEventType;
+import org.rj.homectl.status.hue.HueEventType;
 import org.rj.homectl.status.hue.HueStatusData;
+import org.rj.homectl.status.hue.HueStatusLightData;
 import org.rj.homectl.status.producer.hue.HueStatusEventProducer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,7 +42,7 @@ public class HueMonitorAgent extends ServiceBase {
     private String sensorToken;
     private long snapshotSendIntervalMs;
     private long lastFullSnapshot;
-    private HueStatusData lastStatus;
+    private HueStatusLightData lastStatus;
 
     public static void main(String[] args) {
         SpringApplication.run(HueMonitorAgent.class, args);
@@ -145,26 +147,26 @@ public class HueMonitorAgent extends ServiceBase {
         return (currentTimestamp - lastSnapshotTimestamp) >= snapshotSendIntervalMs;
     }
 
-    private void sendFullStatusSnapshot(HueStatusData status, long now) {
+    private void sendFullStatusSnapshot(HueStatusLightData status, long now) {
         log.info("Sending full status snapshot at {}", now);
-        produceData(status);
+        produceData(new HueStatusData(HueEventType.Snapshot, status));
     }
 
-    private void sendEvents(HueStatusData lastStatus, HueStatusData status, long now) {
+    private void sendEvents(HueStatusLightData lastStatus, HueStatusLightData status, long now) {
         final var delta = calculateDelta(lastStatus, status);
         if (delta.isEmpty()) {
             log.debug("No status events to report at {}", now);
         }
         else {
             log.info("Publishing {} detected status events at {}", delta.size(), now);
-            produceData(delta);
+            produceData(new HueStatusData(HueEventType.Events, delta));
         }
     }
 
-    private HueStatusData calculateDelta(HueStatusData lastStatus, HueStatusData status) {
+    private HueStatusLightData calculateDelta(HueStatusLightData lastStatus, HueStatusLightData status) {
         // Collect any changes by checking each of the previous keys to see if their new value
         // is different.  This includes any removals: new value will be null in that case
-        final var deltas = new HueStatusData(
+        final var deltas = new HueStatusLightData(
                 lastStatus.entrySet().stream()
                         .map(last -> tuple(last, status.get(last.getKey())))
                         .filter(x -> !Objects.equals(x.v1.getValue(), x.v2))
@@ -183,9 +185,9 @@ public class HueMonitorAgent extends ServiceBase {
     }
 
 
-    private HueStatusData getData(String sensorTarget, String token, long now) {
+    private HueStatusLightData getData(String sensorTarget, String token, long now) {
         final var target = sensorTarget.replace(ConfigConstants.TOKEN_PLACEHOLDER, token);
-        final var data = client.getForEntity(target, HueStatusData.class);
+        final var data = client.getForEntity(target, HueStatusLightData.class);
 
         log.debug("Received \"{} ({})\" response from Hue service [{}] at {}",
                 data.getStatusCode(), data.getStatusCodeValue(), sensorTarget, now);

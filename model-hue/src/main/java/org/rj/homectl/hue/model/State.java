@@ -1,6 +1,8 @@
 package org.rj.homectl.hue.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import java.util.List;
 
@@ -108,5 +110,26 @@ public class State {
 
     public void setReachable(Boolean reachable) {
         this.reachable = reachable;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+
+        if (o == null || getClass() != o.getClass()) return false;
+
+        State state = (State) o;
+
+        return new EqualsBuilder().append(saturation, state.saturation).append(on, state.on).append(xy, state.xy)
+                .append(hue, state.hue).append(brightness, state.brightness).append(mode, state.mode).append(ct, state.ct)
+                .append(alert, state.alert).append(colorMode, state.colorMode).append(effect, state.effect)
+                .append(reachable, state.reachable).isEquals();
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder(17, 37).append(saturation).append(on).append(xy)
+                .append(hue).append(brightness).append(mode).append(ct).append(alert).append(colorMode).append(effect)
+                .append(reachable).toHashCode();
     }
 }

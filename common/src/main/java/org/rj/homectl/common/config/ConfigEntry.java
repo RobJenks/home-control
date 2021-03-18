@@ -11,6 +11,7 @@ public enum ConfigEntry {
     MonitorSensors("monitor.sensors"),
     MonitorQuery("monitor.query"),
     MonitorPollIntervalMs("monitor.pollIntervalMs"),
+    MonitorFullSnapshotSendIntervalMs("monitor.fullSnapshotSendIntervalMs"),
     MonitorToken("monitor.token");
 
 

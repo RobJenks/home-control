@@ -16,7 +16,7 @@ monitor:
   sensors:
     - "http://awair-elem-141ea1.local"
   query: /air-data/latest
-  pollIntervalMs: 1500
+  pollIntervalMs: 5000
 
 producer:
   id: awair-agent-producer-01

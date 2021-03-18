@@ -1,6 +1,8 @@
 package org.rj.homectl.hue.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 public class Light {
     private String name;
@@ -23,7 +25,8 @@ public class Light {
     @JsonProperty("swconfigid")
     private String swConfigId;
 
-    public Light() { }
+    public Light() {
+    }
 
     public String getName() {
         return name;
@@ -119,5 +122,28 @@ public class Light {
 
     public void setSwConfigId(String swConfigId) {
         this.swConfigId = swConfigId;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Light light = (Light) o;
+
+        return new EqualsBuilder()
+                .append(name, light.name).append(type, light.type).append(modelId, light.modelId)
+                .append(manufacturerName, light.manufacturerName).append(uniqueId, light.uniqueId)
+                .append(productId, light.productId).append(state, light.state).append(capabilities, light.capabilities)
+                .append(config, light.config).append(swUpdate, light.swUpdate).append(swVersion, light.swVersion)
+                .append(swConfigId, light.swConfigId).isEquals();
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder(17, 37).append(name).append(type).append(modelId)
+                .append(manufacturerName).append(uniqueId).append(productId).append(state).append(capabilities)
+                .append(config).append(swUpdate).append(swVersion).append(swConfigId).toHashCode();
     }
 }

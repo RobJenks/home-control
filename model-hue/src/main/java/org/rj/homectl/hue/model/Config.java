@@ -1,5 +1,8 @@
 package org.rj.homectl.hue.model;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+
 import java.util.Map;
 
 public class Config {
@@ -40,5 +43,23 @@ public class Config {
 
     public void setFunction(String function) {
         this.function = function;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Config config = (Config) o;
+
+        return new EqualsBuilder().append(archetype, config.archetype).append(startup, config.startup)
+                .append(direction, config.direction).append(function, config.function).isEquals();
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder(17, 37).append(archetype).append(startup)
+                .append(direction).append(function).toHashCode();
     }
 }

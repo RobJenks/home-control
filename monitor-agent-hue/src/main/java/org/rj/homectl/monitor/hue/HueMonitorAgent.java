@@ -2,6 +2,7 @@ package org.rj.homectl.monitor.hue;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.kafka.clients.producer.KafkaProducer;
+import org.jooq.lambda.tuple.*;
 import org.rj.homectl.common.config.Config;
 import org.rj.homectl.common.config.ConfigConstants;
 import org.rj.homectl.common.config.ConfigEntry;
@@ -21,7 +22,12 @@ import org.springframework.web.client.RestTemplate;
 
 import javax.annotation.PostConstruct;
 import java.io.IOException;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.stream.Collectors;
+
+import static org.jooq.lambda.tuple.Tuple.*;
+
 
 @SpringBootApplication
 @ComponentScan(basePackages = "org.rj")
@@ -32,6 +38,9 @@ public class HueMonitorAgent extends ServiceBase {
     private RestTemplate client;
     private String sensorTarget;
     private String sensorToken;
+    private long snapshotSendIntervalMs;
+    private long lastFullSnapshot;
+    private HueStatusData lastStatus;
 
     public static void main(String[] args) {
         SpringApplication.run(HueMonitorAgent.class, args);
@@ -40,12 +49,15 @@ public class HueMonitorAgent extends ServiceBase {
     public HueMonitorAgent(SpringApplicationContext context) {
         super(HueMonitorAgent.class, context);
         this.active = new AtomicBoolean(false);
+        this.lastFullSnapshot = 0L;
+        this.lastStatus = null;
     }
 
     @PostConstruct
     private void initialise() {
         this.sensorTarget = getSensorTarget();
         this.sensorToken = getSensorToken();
+        this.snapshotSendIntervalMs = getSnapshotSendInterval();
         this.client = initialiseClient();
         this.producer = initialiseProducer();
 
@@ -76,6 +88,13 @@ public class HueMonitorAgent extends ServiceBase {
         return token;
     }
 
+    private long getSnapshotSendInterval() {
+        final var ms = getConfig().getLong(ConfigEntry.MonitorFullSnapshotSendIntervalMs);
+        log.info("Monitor configured to send full snapshots every {}ms", ms);
+
+        return ms;
+    }
+
     private RestTemplate initialiseClient() {
         RestTemplate client = new RestTemplate();
 
@@ -102,23 +121,74 @@ public class HueMonitorAgent extends ServiceBase {
         final var pollInterval = getConfig().getLong(ConfigEntry.MonitorPollIntervalMs);
 
         while (active.get()) {
-            log.debug("Requesting status from Hue service [{}]", sensorTarget);
+            final var now = System.currentTimeMillis();
 
-            final var status = getData(sensorTarget, sensorToken);
-            // TODO: Analyse data and report events/diffs
-            producer.send(StatusEventType.Hue.getKey(), status);
+            log.trace("Requesting status from Hue service [{}] at {}", sensorTarget, now);
+            final var status = getData(sensorTarget, sensorToken, now);
+
+            if (shouldSendFullStatusSnapshot(lastFullSnapshot, now) || lastStatus == null) {
+                sendFullStatusSnapshot(status, now);
+                lastFullSnapshot = now;
+            }
+            else {
+                sendEvents(lastStatus, status, now);
+            }
+
+            lastStatus = status;
 
             Util.threadSleepOrElse(pollInterval,
                     ex -> log.error("Failed to suspend monitor thread ({})", ex.getMessage()));
         }
     }
 
-    private HueStatusData getData(String sensorTarget, String token) {
+    private boolean shouldSendFullStatusSnapshot(long lastSnapshotTimestamp, long currentTimestamp) {
+        return (currentTimestamp - lastSnapshotTimestamp) >= snapshotSendIntervalMs;
+    }
+
+    private void sendFullStatusSnapshot(HueStatusData status, long now) {
+        log.info("Sending full status snapshot at {}", now);
+        produceData(status);
+    }
+
+    private void sendEvents(HueStatusData lastStatus, HueStatusData status, long now) {
+        final var delta = calculateDelta(lastStatus, status);
+        if (delta.isEmpty()) {
+            log.debug("No status events to report at {}", now);
+        }
+        else {
+            log.info("Publishing {} detected status events at {}", delta.size(), now);
+            produceData(delta);
+        }
+    }
+
+    private HueStatusData calculateDelta(HueStatusData lastStatus, HueStatusData status) {
+        // Collect any changes by checking each of the previous keys to see if their new value
+        // is different.  This includes any removals: new value will be null in that case
+        final var deltas = new HueStatusData(
+                lastStatus.entrySet().stream()
+                        .map(last -> tuple(last, status.get(last.getKey())))
+                        .filter(x -> !Objects.equals(x.v1.getValue(), x.v2))
+                        .collect(Collectors.toMap(x -> x.v1.getKey(), Tuple2::v2)));
+
+        // Add any new entries in the current status
+        status.entrySet().stream()
+                .filter(entry -> !lastStatus.containsKey(entry.getKey()))
+                .forEach(newEntry -> deltas.put(newEntry.getKey(), newEntry.getValue()));
+
+        return deltas;
+    }
+
+    private void produceData(HueStatusData status) {
+        producer.send(StatusEventType.Hue.getKey(), status);
+    }
+
+
+    private HueStatusData getData(String sensorTarget, String token, long now) {
         final var target = sensorTarget.replace(ConfigConstants.TOKEN_PLACEHOLDER, token);
         final var data = client.getForEntity(target, HueStatusData.class);
 
-        log.debug("Received \"{} ({})\" response from Hue service: {}",
-                data.getStatusCode(), data.getStatusCodeValue(), Util.safeSerialize(data.getBody()));
+        log.debug("Received \"{} ({})\" response from Hue service [{}] at {}",
+                data.getStatusCode(), data.getStatusCodeValue(), sensorTarget, now);
 
         return data.getBody();
     }

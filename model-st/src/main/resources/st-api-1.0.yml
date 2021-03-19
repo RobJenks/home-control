@@ -2188,6 +2188,7 @@ definitions:
     enum:
       - DTH
       - ENDPOINT_APP
+      - HUB
     default: DTH
     description: |
       The type of device integration.

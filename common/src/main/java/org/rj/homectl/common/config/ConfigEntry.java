@@ -12,7 +12,10 @@ public enum ConfigEntry {
     MonitorQuery("monitor.query"),
     MonitorPollIntervalMs("monitor.pollIntervalMs"),
     MonitorFullSnapshotSendIntervalMs("monitor.fullSnapshotSendIntervalMs"),
-    MonitorToken("monitor.token");
+    MonitorToken("monitor.token"),
+    MonitorRequestListing("monitor.requests.listing"),
+    MonitorRequestStatus("monitor.requests.status"),
+    MonitorStDevices("monitor.st.devices");
 
 
     private final String key;

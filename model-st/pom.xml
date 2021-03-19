@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>home-control</artifactId>
+        <groupId>org.rj.homectl</groupId>
+        <version>master-SNAPSHOT</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>model-st</artifactId>
+
+    <properties>
+        <maven.compiler.source>15</maven.compiler.source>
+        <maven.compiler.target>15</maven.compiler.target>
+    </properties>
+
+    <build>
+        <plugins>
+            <plugin>
+<!--                <groupId>io.swagger</groupId>-->
+<!--                <artifactId>swagger-codegen-maven-plugin</artifactId>-->
+<!--                <version>${swagger-codegen.plugin.version}</version>-->
+                <groupId>io.swagger.codegen.v3</groupId>
+                <artifactId>swagger-codegen-maven-plugin</artifactId>
+                <version>${swagger-codegen-plugin.v3.version}</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <configuration>
+                            <inputSpec>${project.basedir}/src/main/resources/st-api-1.0.yml</inputSpec>
+                            <language>java</language>
+
+                            <invokerPackage>org.rj.homectl.st</invokerPackage>
+                            <apiPackage>org.rj.homectl.st.api</apiPackage>
+                            <modelPackage>org.rj.homectl.st.model</modelPackage>
+
+                            <generateModels>true</generateModels>
+                            <generateModelTests>true</generateModelTests>
+                            <generateApis>false</generateApis>
+                            <generateApiTests>false</generateApiTests>
+                            <generateSupportingFiles>false</generateSupportingFiles>
+
+                            <configOptions>
+                                <sourceFolder>org/rj/homectl/st/model</sourceFolder>
+                                <dateLibrary>java8</dateLibrary>
+                            </configOptions>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.rj.homectl</groupId>
+            <artifactId>kafka-common</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+            <version>2.8.6</version>
+        </dependency>
+        <dependency>
+            <groupId>io.swagger.core.v3</groupId>
+            <artifactId>swagger-annotations</artifactId>
+            <version>2.1.7</version>
+        </dependency>
+        <dependency>
+            <groupId>jakarta.annotation</groupId>
+            <artifactId>jakarta.annotation-api</artifactId>
+            <version>1.3.5</version>
+        </dependency>
+
+    </dependencies>
+
+</project>

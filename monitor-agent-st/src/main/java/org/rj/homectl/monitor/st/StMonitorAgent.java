@@ -88,17 +88,7 @@ public class StMonitorAgent extends ServiceBase {
     }
 
     private String getSensorToken() {
-        final var tokenPath = getConfig().get(ConfigEntry.MonitorToken);
-        String token;
-        try {
-            token = Util.loadStringResource(tokenPath);
-        }
-        catch (IOException ex) {
-            throw new RuntimeException("Failed to load configured token data");
-        }
-
-        if (StringUtils.isBlank(token)) throw new RuntimeException("No valid token available");
-        return token;
+        return getConfig().get(ConfigConstants.INTERNAL_TOKEN);
     }
 
     private StMonitorRequestTargets getRequestTargets(String sensorTarget) {

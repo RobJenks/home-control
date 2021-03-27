@@ -2,6 +2,7 @@ package org.rj.homectl.service;
 
 
 import org.rj.homectl.common.config.Config;
+import org.rj.homectl.common.config.ConfigConstants;
 import org.rj.homectl.spring.application.SpringApplicationContext;
 import org.rj.homectl.spring.util.SpringUtil;
 import org.slf4j.Logger;
@@ -11,6 +12,9 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.context.annotation.ComponentScan;
 
 import javax.annotation.PostConstruct;
+import java.util.List;
+import java.util.Locale;
+import java.util.Optional;
 
 @ComponentScan(basePackages = "org.rj")
 public abstract class ServiceBase {
@@ -30,7 +34,9 @@ public abstract class ServiceBase {
     @PostConstruct
     private void initialise() {
         this.config = SpringUtil.getConfigurationFromSpringEnvironment(context.getEnvironment());
-        this.config.toMap().entrySet().forEach(e -> log.info("Application Property: {}={}", e.getKey(),e.getValue()));
+        this.config.toMap().entrySet().stream()
+                .filter(e -> isPublicProperty(e.getKey()))
+                .forEach(e -> log.info("Application Property: {}={}", e.getKey(),e.getValue()));
 
         this.service = new ServiceBaseController(this);
     }
@@ -39,6 +45,12 @@ public abstract class ServiceBase {
         return config;
     }
     protected SpringApplicationContext getContext() { return context; }
+
+    private boolean isPublicProperty(String name) {
+        return Optional.ofNullable(name)
+                .map(x -> !x.toUpperCase().startsWith(ConfigConstants.INTERNAL))
+                .orElse(false);
+    }
 
     /**
      * Event called when the terminate signal is received.  Method for derived classes to

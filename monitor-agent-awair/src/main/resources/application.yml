@@ -15,6 +15,7 @@ management:
 monitor:
   sensors:
     - "http://awair-elem-141ea1.local"
+    - "http://awair-elem-14356c.local"
   query: /air-data/latest
   pollIntervalMs: 5000
 

@@ -15,7 +15,6 @@ management:
 monitor:
   sensor: http://192.168.1.125:80
   query: /api/<TOKEN>/lights
-  token: config/api-token
   pollIntervalMs: 2000
   fullSnapshotSendIntervalMs: 600000
 

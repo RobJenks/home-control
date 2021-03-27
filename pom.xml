@@ -15,13 +15,12 @@
         <maven.compiler.release>11</maven.compiler.release>
 
         <spring.version>5.2.10.RELEASE</spring.version>
-        <spring-parent.version>2.3.5.RELEASE</spring-parent.version>
+        <spring-boot.version>2.3.5.RELEASE</spring-boot.version>
         <spring-kafka.version>2.5.9.RELEASE</spring-kafka.version>
         <apache.commons-lang.version>3.11</apache.commons-lang.version>
         <apache.commons-io.version>2.8.0</apache.commons-io.version>
         <jackson.version>2.12.0</jackson.version>
         <maven.compiler.version>3.8.1</maven.compiler.version>
-        <maven.assembly.version>3.3.0</maven.assembly.version>
         <org.jooq.jool.version>0.9.14</org.jooq.jool.version>
         <apache.kafka.version>2.6.0</apache.kafka.version>
         <swagger-codegen.plugin.version>2.4.19</swagger-codegen.plugin.version>
@@ -72,11 +71,6 @@
                 <artifactId>commons-io</artifactId>
                 <version>${apache.commons-io.version}</version>
             </dependency>
-            <dependency>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-assembly-plugin</artifactId>
-                <version>${maven.assembly.version}</version>
-            </dependency>
 
             <dependency>
                 <groupId>com.fasterxml.jackson.core</groupId>
@@ -122,24 +116,7 @@
                 <artifactId>spring-kafka</artifactId>
                 <version>${spring-kafka.version}</version>
             </dependency>
-<!--            <dependency>-->
-<!--                <groupId>org.springframework</groupId>-->
-<!--                <artifactId>spring-context</artifactId>-->
-<!--            </dependency>-->
-<!--            <dependency>-->
-<!--                <groupId>org.springframework</groupId>-->
-<!--                <artifactId>spring-core</artifactId>-->
-<!--            </dependency>-->
 
-<!--            <dependency>-->
-<!--                <groupId>org.springframework.boot</groupId>-->
-<!--                <artifactId>spring-boot-starter-actuator</artifactId>-->
-<!--            </dependency>-->
-<!--            <dependency>-->
-<!--                <groupId>org.springframework.boot</groupId>-->
-<!--                <artifactId>spring-boot-maven-plugin</artifactId>-->
-<!--                <type>maven-plugin</type>-->
-<!--            </dependency>-->
         </dependencies>
     </dependencyManagement>
 

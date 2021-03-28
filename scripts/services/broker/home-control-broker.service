@@ -1,0 +1,10 @@
+[Unit]
+Description=Home control broker service
+
+[Service]
+Type=simple
+ExecStart=/bin/bash /usr/local/sbin/home-control/home-control-broker.sh
+
+[Install]
+WantedBy=multi-user.target
+

@@ -1,5 +1,8 @@
 name: Publish new release
 on:
+  push:
+    branches:
+      - master
   release:
     types:
       - published
@@ -26,7 +29,11 @@ jobs:
         id: prep
         run: |
           IMAGE=robjenks/home-control
-          VERSION=${GITHUB_REF#refs/tags/v}
+
+          VERSION=latest
+          if [[ $GITHUB_REF == refs/tags/v* ]]; then
+            VERSION=${GITHUB_REF#refs/tags/v}
+          fi
 
           TAGS_AGG="${IMAGE}:aggregation-${VERSION}"
           echo "Aggregation image: ${TAGS_AGG}"

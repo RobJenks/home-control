@@ -1,0 +1,10 @@
+[Unit]
+Description=Home control Await monitor agent"
+
+[Service]
+Type=simple
+ExecStart=/bin/bash /usr/local/sbin/home-control/home-control-monitor-awair.sh
+
+[Install]
+WantedBy=multi-user.target
+

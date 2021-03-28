@@ -15,7 +15,6 @@ management:
 monitor:
   sensor: https://api.smartthings.com
   query: /v1
-  token: config/api-token
   pollIntervalMs: 1000
   fullSnapshotSendIntervalMs: 60000
 

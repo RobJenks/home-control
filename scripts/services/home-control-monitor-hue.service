@@ -1,0 +1,10 @@
+[Unit]
+Description=Home control Hue monitor agent"
+
+[Service]
+Type=simple
+ExecStart=/bin/bash /usr/local/sbin/home-control/home-control-monitor-hue.sh
+
+[Install]
+WantedBy=multi-user.target
+

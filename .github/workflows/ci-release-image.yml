@@ -1,11 +1,12 @@
 name: Publish new release
 on:
   release:
-    types: [published]
+    types:
+      - published
 
 jobs:
 
-  test:
+  perform-release:
     name: Release build and publish
     runs-on: ubuntu-20.04
 
@@ -24,13 +25,26 @@ jobs:
       - name: Prepare image data
         id: prep
         run: |
-          IMAGE=${{ secrets.DH_USER }}/home-control
+          IMAGE=robjenks/home-control
           VERSION=${GITHUB_REF#refs/tags/v}
 
           TAGS_AGG="${IMAGE}:aggregation-${VERSION}"
+          echo "Aggregation image: ${TAGS_AGG}"
+
+          TAGS_AWAIR="${IMAGE}:monitor-agent-awair-${VERSION}"
+          echo "Awair monitor agent image: ${TAGS_AWAIR}"
+
+          TAGS_HUE="${IMAGE}:monitor-agent-hue-${VERSION}"
+          echo "Hue monitor agent image: ${TAGS_HUE}"
+
+          TAGS_ST="${IMAGE}:monitor-agent-st-${VERSION}"
+          echo "ST monitor agent image: ${TAGS_ST}"
 
           echo ::set-output name=image::${IMAGE}
           echo ::set-output name=tags_agg::${TAGS_AGG}
+          echo ::set-output name=tags_awair::${TAGS_AWAIR}
+          echo ::set-output name=tags_hue::${TAGS_HUE}
+          echo ::set-output name=tags_st::${TAGS_ST}
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@master
@@ -57,3 +71,33 @@ jobs:
           platforms: linux/arm/v7,linux/arm64,linux/amd64
           push: true
           tags: ${{ steps.prep.outputs.tags_agg }}
+
+      - name: Publish Awair monitor agent image
+        uses: docker/build-push-action@v2
+        with:
+          builder: ${{ steps.buildx.outputs.name }}
+          context: .
+          file: ./monitor-agent-awair/Dockerfile
+          platforms: linux/arm/v7,linux/arm64,linux/amd64
+          push: true
+          tags: ${{ steps.prep.outputs.tags_awair }}
+
+      - name: Publish Hue monitor agent image
+        uses: docker/build-push-action@v2
+        with:
+          builder: ${{ steps.buildx.outputs.name }}
+          context: .
+          file: ./monitor-agent-hue/Dockerfile
+          platforms: linux/arm/v7,linux/arm64,linux/amd64
+          push: true
+          tags: ${{ steps.prep.outputs.tags_hue }}
+
+      - name: Publish ST monitor agent image
+        uses: docker/build-push-action@v2
+        with:
+          builder: ${{ steps.buildx.outputs.name }}
+          context: .
+          file: ./monitor-agent-st/Dockerfile
+          platforms: linux/arm/v7,linux/arm64,linux/amd64
+          push: true
+          tags: ${{ steps.prep.outputs.tags_st }}

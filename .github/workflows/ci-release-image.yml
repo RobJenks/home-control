@@ -54,6 +54,6 @@ jobs:
           builder: ${{ steps.buildx.outputs.name }}
           context: .
           file: ./aggregation/Dockerfile
-          platforms: linux/arm/v7,linux/arm64/v8,linux/amd64
+          platforms: linux/arm/v7,linux/arm64,linux/amd64
           push: true
-          tags: ${{ steps.prep.outputs.tags }}
+          tags: ${{ steps.prep.outputs.tags_agg }}

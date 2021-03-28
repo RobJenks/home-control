@@ -6,7 +6,7 @@ on:
 jobs:
 
   test:
-    name: Build and test
+    name: Release build and publish
     runs-on: ubuntu-20.04
 
     steps:

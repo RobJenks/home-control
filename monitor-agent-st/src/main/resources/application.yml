@@ -1,9 +1,9 @@
 server:
-  port: 10220
+  port: 14230
 
 management:
   server:
-    port: 10221
+    port: 14231
   endpoints:
     web:
       exposure:

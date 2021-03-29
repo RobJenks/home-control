@@ -14,7 +14,7 @@ docker container rm -f ${CONTAINER_NAME} || true
 VER=`cat home-control-monitor-awair.version`
 echo "Attempting to start services for version '$VER'" | systemd-cat -t 'home-control-monitor-awair' -p info
 
-docker run --name ${CONTAINER_NAME} robjenks/home-control:monitor-agent-awair-${VER}
+docker run --name ${CONTAINER_NAME} -p 14210:14210 -p 14211:14211 robjenks/home-control:monitor-agent-awair-${VER}
 
 RESULT=$?
 if [ $RESULT -ne 0 ]; then

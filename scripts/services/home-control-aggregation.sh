@@ -14,7 +14,7 @@ docker container rm -f ${CONTAINER_NAME} || true
 VER=`cat home-control-aggregation.version`
 echo "Attempting to start services for version '$VER'" | systemd-cat -t 'home-control-aggregation' -p info
 
-docker run --name ${CONTAINER_NAME} robjenks/home-control:aggregation-${VER}
+docker run --name ${CONTAINER_NAME} -p 14200:14200 -p 14201:14201 robjenks/home-control:aggregation-${VER}
 
 RESULT=$?
 if [ $RESULT -ne 0 ]; then

@@ -15,7 +15,7 @@ VER=`cat home-control-monitor-st.version`
 echo "Attempting to start services for version '$VER'" | systemd-cat -t 'home-control-monitor-st' -p info
 
 TK=`cat home-control-monitor-st.tk`
-docker run --name ${CONTAINER_NAME} -e INTERNAL_TOKEN=${TK} robjenks/home-control:monitor-agent-st-${VER}
+docker run --name ${CONTAINER_NAME} -p 14230:14230 -p 14231:14231 -e INTERNAL_TOKEN=${TK} robjenks/home-control:monitor-agent-st-${VER}
 
 RESULT=$?
 if [ $RESULT -ne 0 ]; then

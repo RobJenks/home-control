@@ -14,7 +14,7 @@ fi
 
 echo "Starting home control broker services ($HOME_CONTROL_CONFIG)" | systemd-cat -t ${SERVICE_NAME} -p info
 cd $HOME_CONTROL_CONFIG
-docker-compose -f ${SERVICE_NAME}.yml up
+docker-compose -p ${SERVICE_NAME} -f ${SERVICE_NAME}.yml up
 
 RESULT=$?
 if [ $RESULT -ne 0 ]; then

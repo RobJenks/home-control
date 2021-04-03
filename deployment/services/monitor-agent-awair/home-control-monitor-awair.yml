@@ -1,0 +1,9 @@
+---
+version: '3.8'
+
+services:
+  home-control-monitor-awair:
+    image: robjenks/home-control:monitor-agent-awair-${DEPLOYMENT_VERSION}
+    ports:
+      - "14210:14210"
+      - "14211:14211"

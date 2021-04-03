@@ -1,0 +1,9 @@
+---
+version: '3.8'
+
+services:
+  home-control-monitor-hue:
+    image: robjenks/home-control:monitor-agent-st-${DEPLOYMENT_VERSION}
+    ports:
+      - "14230:14230"
+      - "14231:14231"

@@ -1,4 +1,0 @@
-Awair: GET http://awair-elem-141ea1.local/air-data/latest
-Hue: GET http://192.168.1.125:80/api/<PAT>/lights
-ST: GET https://api.smartthings.com/v1/devices (with header 'Authorization: Bearer <PAT>')
-

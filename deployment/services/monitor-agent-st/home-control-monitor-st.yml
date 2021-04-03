@@ -7,3 +7,5 @@ services:
     ports:
       - "14230:14230"
       - "14231:14231"
+    environment:
+      - INTERNAL_TOKEN

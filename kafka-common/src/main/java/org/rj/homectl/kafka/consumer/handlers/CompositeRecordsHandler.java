@@ -6,14 +6,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CompositeRecordsHandler<K, V> implements ConsumerRecordsHandler<K, V> {
-    private List<ConsumerRecordsHandler<K, V>> handlers;
+    private final List<ConsumerRecordsHandler<K, V>> handlers = new ArrayList<>();
 
     public CompositeRecordsHandler() {
         this(List.of());
     }
 
     public CompositeRecordsHandler(List<ConsumerRecordsHandler<K, V>> handlers) {
-        this.handlers = new ArrayList<>(handlers);
+        handlers.forEach(this::addHandler);
     }
 
     public void addHandler(ConsumerRecordsHandler<K, V> handler) {

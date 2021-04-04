@@ -26,6 +26,9 @@ docker-compose -p ${SERVICE_NAME} -f ${SERVICE_NAME}.yml ${ENV_CONFIG} config | 
 echo "Stopping existing service if required" | systemd-cat -t ${SERVICE_NAME} -p info
 docker-compose -p ${SERVICE_NAME} -f ${SERVICE_NAME}.yml ${ENV_CONFIG} down || true
 
+echo "Checking for updated images" | systemd-cat -t ${SERVICE_NAME} -p info
+docker-compose -p ${SERVICE_NAME} -f ${SERVICE_NAME}.yml ${ENV_CONFIG} pull
+
 echo "Attempting to start services" | systemd-cat -t ${SERVICE_NAME} -p info
 docker-compose -p ${SERVICE_NAME} -f ${SERVICE_NAME}.yml ${ENV_CONFIG} up
 

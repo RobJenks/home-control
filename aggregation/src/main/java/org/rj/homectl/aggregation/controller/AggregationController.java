@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Collections;
 import java.util.Map;
 
 @RestController
@@ -20,9 +21,12 @@ public class AggregationController {
 
     @GetMapping("/data")
     public ResponseEntity<Map<String, Object>> data() {
+        final var data = parent.getCache().get().toList();
+        Collections.reverse(data);
+
         final Map<String, Object> responseData = Map.of(
                 "count", parent.getCache().get().getCount(),
-                "data", parent.getCache().get().toList()
+                "data", data
         );
 
         final HttpHeaders headers = new HttpHeaders();

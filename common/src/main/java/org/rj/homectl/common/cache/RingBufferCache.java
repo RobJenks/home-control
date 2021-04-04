@@ -2,14 +2,14 @@ package org.rj.homectl.common.cache;
 
 import org.jooq.lambda.Seq;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
-public class RingBufferCache<T> {
+public class RingBufferCache<T> implements Iterable<T> {
     private final List<T> buffer;
     private final int internalCapacity; // Equal to requested capacity + 1, to allow non-overlapping buffer pointers
     private int start;
@@ -87,6 +87,15 @@ public class RingBufferCache<T> {
         return (nextIndex(end) == start);
     }
 
+    public Iterator<T> iterator() {
+        return new RingBufferCacheIterator<>(this);
+    }
+
+    public Stream<T> stream() {
+        return StreamSupport.stream(
+                Spliterators.spliterator(iterator(), 0L, 0), false);
+    }
+
     public List<T> toList() {
         return toList(Long.MAX_VALUE);
     }
@@ -113,12 +122,16 @@ public class RingBufferCache<T> {
     int getStart() { return start; }
     int getEnd() { return end; }
 
-    private int nextIndex(int currentIndex) {
+    int nextIndex(int currentIndex) {
         return (currentIndex + 1) % internalCapacity;
     }
 
-    private int prevIndex(int currentIndex) {
+    int prevIndex(int currentIndex) {
         return ((currentIndex - 1) + internalCapacity) % internalCapacity;
+    }
+
+    T bufferItem(int bufferIndex) {
+        return buffer.get(bufferIndex);
     }
 
 }

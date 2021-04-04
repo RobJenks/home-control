@@ -4,7 +4,9 @@ import org.jooq.lambda.Seq;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class RingBufferCacheTest {
 
@@ -89,4 +91,73 @@ public class RingBufferCacheTest {
         Assert.assertEquals(10, cache.getEnd());
         Assert.assertEquals(8, cache.getCount());
     }
+
+    @Test
+    public void testBasicIteratorRetrieval() {
+        testIteratorRetrieval(10, Seq.rangeClosed(1, 8).toList(), Seq.rangeClosed(1, 8).toList());
+    }
+
+    @Test
+    public void testWrappingIteratorRetrieval() {
+        testIteratorRetrieval(10, Seq.rangeClosed(1, 14).toList(), List.of(5,6,7,8,9,10,11,12,13,14));
+    }
+
+    @Test
+    public void testTwiceWrappingIteratorRetrieval() {
+        testIteratorRetrieval(10, Seq.rangeClosed(1, 28).toList(), List.of(19,20,21,22,23,24,25,26,27,28));
+    }
+
+    private void testIteratorRetrieval(int cacheCapacity, List<Integer> itemsToAdd, List<Integer> expected) {
+        final var cache = new RingBufferCache<Integer>(cacheCapacity);
+        itemsToAdd.forEach(cache::add);
+
+        Assert.assertEquals(expected, cache.toList());
+
+        final var iteratorOutput = new ArrayList<>();
+        for (final var item : cache) {
+            iteratorOutput.add(item);
+        }
+
+        Assert.assertEquals(expected, iteratorOutput);
+    }
+
+    @Test
+    public void testBasicStreamRetrieval() {
+        testStreamRetrieval(10, Seq.rangeClosed(1, 8).toList(), Seq.rangeClosed(1, 8).toList());
+    }
+
+    @Test
+    public void testWrappingStreamRetrieval() {
+        testStreamRetrieval(10, Seq.rangeClosed(1, 14).toList(), List.of(5,6,7,8,9,10,11,12,13,14));
+    }
+
+    @Test
+    public void testTwiceWrappingStreamRetrieval() {
+        testStreamRetrieval(10, Seq.rangeClosed(1, 28).toList(), List.of(19,20,21,22,23,24,25,26,27,28));
+    }
+
+    private void testStreamRetrieval(int cacheCapacity, List<Integer> itemsToAdd, List<Integer> expected) {
+        final var cache = new RingBufferCache<Integer>(cacheCapacity);
+        itemsToAdd.forEach(cache::add);
+
+        Assert.assertEquals(expected, cache.toList());
+
+        final var output = cache.stream().collect(Collectors.toList());
+        Assert.assertEquals(expected, output);
+    }
+
+    @Test
+    public void testClearCache() {
+        final var cache = new RingBufferCache<Integer>(10);
+        Assert.assertTrue(cache.isEmpty());
+
+        Seq.rangeClosed(1, 32).forEach(cache::add);
+        Assert.assertTrue(cache.isFull());
+        Assert.assertFalse(cache.isEmpty());
+
+        cache.clear();
+        Assert.assertTrue(cache.isEmpty());
+        Assert.assertFalse(cache.isFull());
+    }
+
 }

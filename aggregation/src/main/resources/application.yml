@@ -1,5 +1,6 @@
 server:
   port: 14200
+
 management:
   server:
     port: 14201
@@ -10,6 +11,11 @@ management:
   endpoint:
     shutdown:
       enabled: true
+
+aggregation:
+  logging:
+    logInboundRecords: true
+
 consumer:
   id: status-consumer-01
   config: config/event-consumer.properties

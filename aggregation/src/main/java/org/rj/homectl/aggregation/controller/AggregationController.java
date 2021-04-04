@@ -1,8 +1,14 @@
 package org.rj.homectl.aggregation.controller;
 
 import org.rj.homectl.aggregation.Aggregation;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.Map;
 
 @RestController
 public class AggregationController {
@@ -12,8 +18,16 @@ public class AggregationController {
         this.parent = parent;
     }
 
-    @RequestMapping("/")
-    public String home() {
-        return String.format("Cache holds %d items", parent.getCache().get().getCount());
+    @GetMapping("/data")
+    public ResponseEntity<Map<String, Object>> data() {
+        final Map<String, Object> responseData = Map.of(
+                "count", parent.getCache().get().getCount(),
+                "data", parent.getCache().get().toList()
+        );
+
+        final HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        return new ResponseEntity<>(responseData, headers, HttpStatus.OK);
     }
 }

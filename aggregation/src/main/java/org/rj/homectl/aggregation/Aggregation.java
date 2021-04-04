@@ -23,7 +23,7 @@ import java.util.concurrent.atomic.AtomicReference;
 public class Aggregation extends ServiceBase {
     private AggregationController aggregationController;
 
-    private static final int CACHE_SIZE = 1000;
+    private static final int CACHE_SIZE = 100;
     private final AtomicReference<RingBufferCache<ConsumerRecordInfo<String, StatusEvent>>> cache;
 
 

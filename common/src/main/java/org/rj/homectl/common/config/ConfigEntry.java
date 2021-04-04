@@ -7,6 +7,7 @@ public enum ConfigEntry {
     ProducerConfig("producer.config"),
     InputTopicNames("input.topic.names"),
     PollDurationSec("poll.duration.secs"),
+    LogInboundRecords("aggregation.logging.logInboundRecords"),
     MonitorSensor("monitor.sensor"),
     MonitorSensors("monitor.sensors"),
     MonitorQuery("monitor.query"),

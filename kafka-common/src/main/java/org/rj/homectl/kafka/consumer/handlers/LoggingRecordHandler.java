@@ -23,7 +23,6 @@ public class LoggingRecordHandler<K, V> implements ConsumerRecordsHandler<K, V> 
             }
 
             LOG.info("Processing new record ({})", value);
-            TmpData.recordData(value);
         });
     }
 }

@@ -81,6 +81,17 @@ public class Config {
         return getAs(entry, Boolean::parseBoolean);
     }
 
+    public Optional<Boolean> tryGetBoolean(ConfigEntry entry) {
+        return Optional.ofNullable(entry)
+                .map(ConfigEntry::getKey)
+                .flatMap(this::tryGetBoolean);
+    }
+    public Optional<Boolean> tryGetBoolean(String entry) {
+        return Optional.ofNullable(entry)
+                .filter(properties::containsKey)
+                .map(this::getBoolean);
+    }
+
     public <T> T getAs(ConfigEntry entry, Function<String, T> transform) {
         return getAs(entry.getKey(), transform);
     }

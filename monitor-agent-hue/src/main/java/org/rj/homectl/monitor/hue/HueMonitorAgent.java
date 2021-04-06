@@ -1,5 +1,6 @@
 package org.rj.homectl.monitor.hue;
 
+import com.google.common.collect.Maps;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.jooq.lambda.tuple.*;
@@ -7,12 +8,12 @@ import org.rj.homectl.common.config.Config;
 import org.rj.homectl.common.config.ConfigConstants;
 import org.rj.homectl.common.config.ConfigEntry;
 import org.rj.homectl.common.util.Util;
+import org.rj.homectl.hue.model.Light;
+import org.rj.homectl.hue.model.State;
 import org.rj.homectl.service.ServiceBase;
 import org.rj.homectl.spring.application.SpringApplicationContext;
 import org.rj.homectl.status.events.StatusEventType;
-import org.rj.homectl.status.hue.HueEventType;
-import org.rj.homectl.status.hue.HueStatusData;
-import org.rj.homectl.status.hue.HueStatusLightData;
+import org.rj.homectl.status.hue.*;
 import org.rj.homectl.status.producer.hue.HueStatusEventProducer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,7 +25,10 @@ import org.springframework.web.client.RestTemplate;
 
 import javax.annotation.PostConstruct;
 import java.io.IOException;
+import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
@@ -122,10 +126,8 @@ public class HueMonitorAgent extends ServiceBase {
                 sendFullStatusSnapshot(status, now);
                 lastFullSnapshot = now;
             }
-            else {
-                sendEvents(lastStatus, status, now);
-            }
 
+            sendEvents(lastStatus, status, now);
             lastStatus = status;
 
             Util.threadSleepOrElse(pollInterval,
@@ -139,35 +141,79 @@ public class HueMonitorAgent extends ServiceBase {
 
     private void sendFullStatusSnapshot(HueStatusLightData status, long now) {
         log.info("Sending full status snapshot at {}", now);
-        produceData(new HueStatusData(HueEventType.Snapshot, status));
+        produceData(HueStatusData.snapshot(status));
     }
 
     private void sendEvents(HueStatusLightData lastStatus, HueStatusLightData status, long now) {
         final var delta = calculateDelta(lastStatus, status);
         if (delta.isEmpty()) {
             log.debug("No status events to report at {}", now);
+            return;
         }
-        else {
-            log.info("Publishing {} detected status events at {}", delta.size(), now);
-            produceData(new HueStatusData(HueEventType.Events, delta));
-        }
+
+        log.info("Publishing {} detected status updates and {} events at {}", delta.getUpdates().size(), delta.getEvents().size(), now);
+
+        produceData(HueStatusData.updates(delta.getUpdates()));
+        delta.getEvents().forEach(event -> produceData(HueStatusData.event(event)));
     }
 
-    private HueStatusLightData calculateDelta(HueStatusLightData lastStatus, HueStatusLightData status) {
-        // Collect any changes by checking each of the previous keys to see if their new value
-        // is different.  This includes any removals: new value will be null in that case
-        final var deltas = new HueStatusLightData(
-                lastStatus.entrySet().stream()
-                        .map(last -> tuple(last, status.get(last.getKey())))
-                        .filter(x -> !Objects.equals(x.v1.getValue(), x.v2))
-                        .collect(Collectors.toMap(x -> x.v1.getKey(), Tuple2::v2)));
+    private HueDeltaDetails calculateDelta(HueStatusLightData lastStatus, HueStatusLightData status) {
+        HueDeltaDetails delta = new HueDeltaDetails();
 
-        // Add any new entries in the current status
-        status.entrySet().stream()
-                .filter(entry -> !lastStatus.containsKey(entry.getKey()))
-                .forEach(newEntry -> deltas.put(newEntry.getKey(), newEntry.getValue()));
+        final var oldStatus = Optional.ofNullable(lastStatus).orElseGet(HueStatusLightData::new);
+        final var newStatus = Optional.ofNullable(status).orElseGet(HueStatusLightData::new);
 
+        // Updated and removed devices
+        oldStatus.entrySet().stream()
+                .map(last -> tuple(last, newStatus.get(last.getKey())))
+                .filter(x -> !Objects.equals(x.v1.getValue(), x.v2))
+                .map(x -> calculateDeltaForDevice(x.v1.getKey(), x.v1.getValue(), x.v2))
+                .forEach(delta::addFrom);
+
+        // New devices
+        newStatus.entrySet().stream()
+                .filter(x -> !oldStatus.containsKey(x.getKey()))
+                .map(data -> calculateDeltaForDevice(data.getKey(), null, data.getValue()))
+                .forEach(delta::addFrom);
+
+        return delta;
+    }
+
+    // Method is called on objects which have already been established to be different
+    private HueDeltaDetails calculateDeltaForDevice(String id, Light lastStatus, Light status) {
+        if (lastStatus == null && status == null) return new HueDeltaDetails();
+        if (lastStatus == null) return newDeviceEvents(id, status);
+        if (status == null) return removedDeviceEvents(id, lastStatus);
+
+        final var deltas = new HueDeltaDetails();
+        deltas.addUpdate(id, status);
+
+        final var diff = Util.mapDifference(lastStatus, status);
+        final boolean wasOn = Optional.ofNullable(lastStatus.getState()).map(State::getOn).orElse(false);
+        final boolean isOn = Optional.ofNullable(status.getState()).map(State::getOn).orElse(false);
+
+        if (isOn != wasOn) {
+            deltas.addEvent(new HueStatusEventDetails(id, isOn ? HueDeviceEventType.TurnedOn : HueDeviceEventType.TurnedOff, diff));
+        }
+
+        deltas.addEvent(new HueStatusEventDetails(id, HueDeviceEventType.StateChange, diff));
         return deltas;
+    }
+
+    private HueDeltaDetails newDeviceEvents(String id, Light status) {
+        return new HueDeltaDetails(
+                new HueStatusLightData(Map.of(id, status)),
+                List.of(new HueStatusEventDetails(id, HueDeviceEventType.DeviceAdded,
+                        Maps.difference(Map.of(), Util.convertToJsonMap(status))))
+        );
+    }
+
+    private HueDeltaDetails removedDeviceEvents(String id, Light lastStatus) {
+        return new HueDeltaDetails(
+                new HueStatusLightData(Map.of()),
+                List.of(new HueStatusEventDetails(id, HueDeviceEventType.DeviceRemoved,
+                        Maps.difference(Util.convertToJsonMap(lastStatus), Map.of())))
+        );
     }
 
     private void produceData(HueStatusData status) {

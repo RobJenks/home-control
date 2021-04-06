@@ -22,6 +22,7 @@
         <jackson.version>2.12.0</jackson.version>
         <maven.compiler.version>3.8.1</maven.compiler.version>
         <org.jooq.jool.version>0.9.14</org.jooq.jool.version>
+        <guava.version>30.1.1-jre</guava.version>
         <apache.kafka.version>2.6.0</apache.kafka.version>
         <swagger-codegen.plugin.version>2.4.19</swagger-codegen.plugin.version>
         <swagger-codegen-plugin.v3.version>3.0.25</swagger-codegen-plugin.v3.version>
@@ -98,6 +99,12 @@
                 <artifactId>jool</artifactId>
                 <version>${org.jooq.jool.version}</version>
             </dependency>
+            <dependency>
+                <groupId>com.google.guava</groupId>
+                <artifactId>guava</artifactId>
+                <version>${guava.version}</version>
+            </dependency>
+
 
             <dependency>
                 <groupId>org.apache.kafka</groupId>

@@ -5,7 +5,8 @@ import com.fasterxml.jackson.annotation.JsonValue;
 public enum HueEventType {
     Unknown("unknown"),
     Snapshot("snapshot"),
-    Events("events");
+    Update("update"),
+    Event("event");
 
     private final String key;
 

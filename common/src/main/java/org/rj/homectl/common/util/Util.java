@@ -3,6 +3,8 @@ package org.rj.homectl.common.util;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.google.common.collect.MapDifference;
+import com.google.common.collect.Maps;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 
@@ -13,7 +15,9 @@ import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Consumer;
 
 public class Util {
@@ -43,6 +47,11 @@ public class Util {
         }
     }
 
+    @SuppressWarnings("unchecked")
+    public static <T> Map<String, Object> convertToJsonMap(T object) {
+        return (Map<String, Object>)objectMapper().convertValue(object, Map.class);
+    }
+
     public static void threadSleepOrElse(long sleepMs, Consumer<InterruptedException> onInterruption) {
         try {
             Thread.sleep(sleepMs);
@@ -61,4 +70,15 @@ public class Util {
             throw new IOException(String.format("Failed to load resource \"%s\" (%s)", resourcePath, ex.getMessage()), ex);
         }
     }
+
+    public static<T> MapDifference<String, Object> mapDifference(T from, T to) {
+        return mapDifference(Util.convertToJsonMap(from), Util.convertToJsonMap(to));
+    }
+
+    public static MapDifference<String, Object> mapDifference(Map<String, Object> from, Map<String, Object> to) {
+        return Maps.difference(from, to);
+    }
+
+
+
 }

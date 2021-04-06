@@ -87,13 +87,23 @@ public class RingBufferCache<T> implements Iterable<T> {
         return (nextIndex(end) == start);
     }
 
+    @Override
     public Iterator<T> iterator() {
-        return new RingBufferCacheIterator<>(this);
+        return new RingBufferCacheIterators.ForwardIterator<>(this);
+    }
+
+    public Iterator<T> reverseIterator() {
+        return new RingBufferCacheIterators.ReverseIterator<>(this);
     }
 
     public Stream<T> stream() {
         return StreamSupport.stream(
                 Spliterators.spliterator(iterator(), 0L, 0), false);
+    }
+
+    public Stream<T> reverseStream() {
+        return StreamSupport.stream(
+                Spliterators.spliterator(reverseIterator(), 0L, 0), false);
     }
 
     public List<T> toList() {

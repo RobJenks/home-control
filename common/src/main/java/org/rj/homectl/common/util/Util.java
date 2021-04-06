@@ -71,14 +71,11 @@ public class Util {
         }
     }
 
-    public static<T> MapDifference<String, Object> mapDifference(T from, T to) {
+    public static<T> DiffMap mapDifference(T from, T to) {
         return mapDifference(Util.convertToJsonMap(from), Util.convertToJsonMap(to));
     }
 
-    public static MapDifference<String, Object> mapDifference(Map<String, Object> from, Map<String, Object> to) {
-        return Maps.difference(from, to);
+    public static DiffMap mapDifference(Map<String, Object> from, Map<String, Object> to) {
+        return DiffMap.fromCalculatedMapDifference(Maps.difference(from, to));
     }
-
-
-
 }

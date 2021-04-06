@@ -204,7 +204,7 @@ public class HueMonitorAgent extends ServiceBase {
         return new HueDeltaDetails(
                 new HueStatusLightData(Map.of(id, status)),
                 List.of(new HueStatusEventDetails(id, HueDeviceEventType.DeviceAdded,
-                        Maps.difference(Map.of(), Util.convertToJsonMap(status))))
+                        Util.mapDifference(Map.of(), Util.convertToJsonMap(status))))
         );
     }
 
@@ -212,7 +212,7 @@ public class HueMonitorAgent extends ServiceBase {
         return new HueDeltaDetails(
                 new HueStatusLightData(Map.of()),
                 List.of(new HueStatusEventDetails(id, HueDeviceEventType.DeviceRemoved,
-                        Maps.difference(Util.convertToJsonMap(lastStatus), Map.of())))
+                        Util.mapDifference(Util.convertToJsonMap(lastStatus), Map.of())))
         );
     }
 

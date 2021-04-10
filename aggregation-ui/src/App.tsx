@@ -1,6 +1,6 @@
 import './App.css'
 import React, { useState, useEffect } from 'react';
-import axios from "axios"
+import axios, * as Axios from "axios"
 import { QueryClient, QueryClientProvider, useQuery, useQueryClient } from "react-query";
 
 const queryClient = new QueryClient();
@@ -13,13 +13,25 @@ function App() {
   )
 }
 
-function DoThings() {
+type int = number;
+type EventResponseData = {
+  count: int,
+  data: EventData[]
+}
+type EventData = {
+  key: string,
+  offset: int,
+  value: Object[]
+}
+
+
+function DoThings() : JSX.Element {
   const [pollIntervalMs, setPollIntervalMs] = React.useState(2000);
   const targetUrl = process.env.REACT_APP_LOCAL_SERVICE_URL + "/updates?count=40"
 
   const { isLoading, error, data, isFetching } = 
-    useQuery("testDataQuery", 
-    async () => axios.get(targetUrl),
+    useQuery<Axios.AxiosResponse<EventResponseData>, Error>("testDataQuery", 
+    async () => axios.get<EventResponseData>(targetUrl),
     {
       refetchInterval: pollIntervalMs
     }
@@ -28,7 +40,7 @@ function DoThings() {
   if (error) {
     var err = "Query error: " + error.message;
     console.error(err);
-    return err;
+    return (<p>{err}</p>);
   }
 
   return (
@@ -59,7 +71,7 @@ function DoThings() {
   );
 }
 
-function cleanData(queryResponse) {
+function cleanData(queryResponse?: Axios.AxiosResponse<EventResponseData>) : EventData[] {
   if (queryResponse) {
     if (queryResponse.data) {
       return queryResponse.data.data;
@@ -72,3 +84,4 @@ function cleanData(queryResponse) {
 
 export default App;
 
+ 

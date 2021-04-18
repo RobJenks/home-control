@@ -1,5 +1,5 @@
 FROM adoptopenjdk:11-jre-hotspot-bionic
-ARG TARGET_JAR="monitor-agent-awair/target/monitor-agent-awair-master-SNAPSHOT.jar"
+ARG TARGET_JAR="target/monitor-agent-awair-master-SNAPSHOT.jar"
 
 EXPOSE 14210/tcp 14211/tcp
 

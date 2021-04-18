@@ -7,8 +7,11 @@ on:
     types:
       - published
 
-jobs:
+env:
+  jdk-version: 1.11
+  node-version: '14.x'
 
+jobs:
   perform-release:
     name: Build and publish
     runs-on: ubuntu-20.04
@@ -17,13 +20,25 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
-      - name: Init JDK 11
+      - name: Init JDK ${{ env.jdk-version }}
         uses: actions/setup-java@v1
         with:
-          java-version: 1.11
+          java-version: ${{ env.jdk-version }}
 
       - name: Maven build and test
         run: mvn -B clean install
+
+      - name: Init node.js ${{ env.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ env.node-version }}
+
+      - name: NPM CI install
+        run: cd ./aggregation-ui && npm ci
+      - name: NPM build
+        run: cd ./aggregation-ui && npm run build
+      - name: NPM test
+        run: cd ./aggregation-ui && npm test
 
       - name: Prepare image data
         id: prep
@@ -38,6 +53,9 @@ jobs:
           TAGS_AGG="${IMAGE}:aggregation-${VERSION}"
           echo "Aggregation image: ${TAGS_AGG}"
 
+          TAGS_AGG_UI="${IMAGE}:aggregation-ui-${VERSION}"
+          echo "Aggregation UI image: ${TAGS_AGG_UI}"
+
           TAGS_AWAIR="${IMAGE}:monitor-agent-awair-${VERSION}"
           echo "Awair monitor agent image: ${TAGS_AWAIR}"
 
@@ -49,6 +67,7 @@ jobs:
 
           echo ::set-output name=image::${IMAGE}
           echo ::set-output name=tags_agg::${TAGS_AGG}
+          echo ::set-output name=tags_agg_ui::${TAGS_AGG_UI}
           echo ::set-output name=tags_awair::${TAGS_AWAIR}
           echo ::set-output name=tags_hue::${TAGS_HUE}
           echo ::set-output name=tags_st::${TAGS_ST}
@@ -77,6 +96,16 @@ jobs:
           platforms: linux/arm/v7,linux/arm64,linux/amd64
           push: true
           tags: ${{ steps.prep.outputs.tags_agg }}
+
+      - name: Publish Aggregation UI image
+        uses: docker/build-push-action@v2
+        with:
+          builder: ${{ steps.buildx.outputs.name }}
+          context: .
+          file: ./aggregation-ui/Dockerfile
+          platforms: linux/arm/v7,linux/arm64,linux/amd64
+          push: true
+          tags: ${{ steps.prep.outputs.tags_agg_ui }}
 
       - name: Publish Awair monitor agent image
         uses: docker/build-push-action@v2

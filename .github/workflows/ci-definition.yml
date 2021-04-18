@@ -7,8 +7,8 @@ on:
 
 jobs:
 
-  test:
-    name: Build and test
+  build-test-services:
+    name: Build and test services
     runs-on: ubuntu-20.04
 
     steps:
@@ -22,3 +22,33 @@ jobs:
 
       - name: Maven build and test
         run: mvn -B clean install
+
+  build-test-ui:
+    name: Build and test UI
+    runs-on: ubuntu-20.04
+    
+    strategy:
+      matrix:
+        node-version: [ 14.x, 15.x ]
+
+    defaults:
+      run:
+        working-directory: ./aggregation-ui
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      
+      - name: Init node.js${{ matrix.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: CI install
+        run: npm ci
+
+      - name: Build
+        run: npm run build
+
+      - name: Test
+        run: npm test

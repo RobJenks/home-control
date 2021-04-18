@@ -1,0 +1,10 @@
+[Unit]
+Description=Home control aggregation UI"
+
+[Service]
+Type=simple
+ExecStart=/bin/bash /usr/local/sbin/home-control/home-control-aggregation-ui.sh
+
+[Install]
+WantedBy=multi-user.target
+

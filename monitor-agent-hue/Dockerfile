@@ -1,5 +1,5 @@
 FROM adoptopenjdk:11-jre-hotspot-bionic
-ARG TARGET_JAR="monitor-agent-hue/target/monitor-agent-hue-master-SNAPSHOT.jar"
+ARG TARGET_JAR="target/monitor-agent-hue-master-SNAPSHOT.jar"
 
 EXPOSE 14220/tcp 14221/tcp
 

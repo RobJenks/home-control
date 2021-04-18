@@ -1,5 +1,5 @@
 FROM adoptopenjdk:11-jre-hotspot-bionic
-ARG TARGET_JAR="aggregation/target/aggregation-master-SNAPSHOT.jar"
+ARG TARGET_JAR="target/aggregation-master-SNAPSHOT.jar"
 
 EXPOSE 14200/tcp 14201/tcp
 

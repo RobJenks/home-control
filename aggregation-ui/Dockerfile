@@ -7,7 +7,7 @@ COPY deployment/render-template.sh /
 COPY deployment/templates/nginx.conf.template /
 COPY deployment/templates/runtime-config.js.template /
 
-EXPOSE 14800
+EXPOSE 14800/tcp
 
 ENTRYPOINT ["/aggregation-ui-init.sh"]
 CMD ["nginx","-g","daemon off;"]

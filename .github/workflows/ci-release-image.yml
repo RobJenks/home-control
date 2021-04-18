@@ -91,7 +91,7 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           builder: ${{ steps.buildx.outputs.name }}
-          context: .
+          context: ./aggregation
           file: ./aggregation/Dockerfile
           platforms: linux/arm/v7,linux/arm64,linux/amd64
           push: true
@@ -101,7 +101,7 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           builder: ${{ steps.buildx.outputs.name }}
-          context: .
+          context: ./aggregation-ui
           file: ./aggregation-ui/Dockerfile
           platforms: linux/arm/v7,linux/arm64,linux/amd64
           push: true
@@ -111,7 +111,7 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           builder: ${{ steps.buildx.outputs.name }}
-          context: .
+          context: ./monitor-agent-awair
           file: ./monitor-agent-awair/Dockerfile
           platforms: linux/arm/v7,linux/arm64,linux/amd64
           push: true
@@ -121,7 +121,7 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           builder: ${{ steps.buildx.outputs.name }}
-          context: .
+          context: ./monitor-agent-hue
           file: ./monitor-agent-hue/Dockerfile
           platforms: linux/arm/v7,linux/arm64,linux/amd64
           push: true
@@ -131,7 +131,7 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           builder: ${{ steps.buildx.outputs.name }}
-          context: .
+          context: ./monitor-agent-st
           file: ./monitor-agent-st/Dockerfile
           platforms: linux/arm/v7,linux/arm64,linux/amd64
           push: true

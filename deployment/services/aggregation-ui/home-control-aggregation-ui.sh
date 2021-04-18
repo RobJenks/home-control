@@ -35,8 +35,12 @@ if [ -z "$ENV_VARS" ]; then
   exit 1
 fi
 
+# Exports full content of ENV_VARS in [key=val ...] form, so disable warning
+# shellcheck disable=SC2163
+export "${ENV_VARS}"
+
 echo "Attempting to start services" | systemd-cat -t ${SERVICE_NAME} -p info
-${ENV_VARS} docker-compose -p ${SERVICE_NAME} -f ${SERVICE_NAME}.yml ${ENV_CONFIG} up
+docker-compose -p ${SERVICE_NAME} -f ${SERVICE_NAME}.yml ${ENV_CONFIG} up
 
 RESULT=$?
 if [ $RESULT -ne 0 ]; then

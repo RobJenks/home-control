@@ -3,6 +3,10 @@ import React, { useState, useEffect } from 'react';
 import axios, * as Axios from "axios"
 import { QueryClient, QueryClientProvider, useQuery, useQueryClient } from "react-query";
 
+declare global {
+  interface Window { config: any; }
+}
+
 const queryClient = new QueryClient();
 
 function App() {
@@ -24,10 +28,12 @@ type EventData = {
   value: Object[]
 }
 
+// https://blog.theodo.com/2020/11/react-resizeable-split-panels/
+// https://codesandbox.io/s/splitview-p37yw?file=/src/components/SplitView.tsx
 
 function DoThings() : JSX.Element {
   const [pollIntervalMs, setPollIntervalMs] = React.useState(2000);
-  const targetUrl = process.env.REACT_APP_LOCAL_SERVICE_URL + "/updates?count=40"
+  const targetUrl = window.config.aggregationServiceUrl + "/updates?count=40";
 
   const { isLoading, error, data, isFetching } = 
     useQuery<Axios.AxiosResponse<EventResponseData>, Error>("testDataQuery", 

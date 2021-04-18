@@ -4,6 +4,7 @@ table.eventTable {
   width: 400px;
   text-align: left;
   border-collapse: collapse;
+  font-family: 'Courier New', Courier, monospace;
 }
 table.eventTable td, table.eventTable th {
   border: 1px solid #555555;

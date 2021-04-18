@@ -1,0 +1,10 @@
+---
+version: '3.6'
+
+services:
+  home-control-aggregation-ui:
+    image: robjenks/home-control:aggregation-ui-${DEPLOYMENT_VERSION}
+    ports:
+      - "14800:14800"
+    environment:
+      - AGGREGATION_SERVICE_URL

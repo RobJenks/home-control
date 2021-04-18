@@ -33,7 +33,7 @@ jobs:
     
     steps:
       - name: Checkout
-      - uses: actions/checkout@v2
+        uses: actions/checkout@v2
       
       - name: Node.js${{ matrix.node-version }} build and test
         uses: actions/setup-node@v1

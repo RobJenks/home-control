@@ -1,5 +1,6 @@
 import React from 'react';
 import * as Events from 'types/events';
+import 'components/events/eventDataStream.css'
 
 type EventDataStreamProps = {
     data: Events.Data[]
@@ -14,8 +15,8 @@ class EventDataStream extends React.Component<EventDataStreamProps, {}> {
                 <table className="eventTable">
                   <thead>
                     <tr>
-                      <th>#</th>
                       <th>Event</th>
+                      <th>Data</th>
                     </tr>
                   </thead>
                   
@@ -24,8 +25,8 @@ class EventDataStream extends React.Component<EventDataStreamProps, {}> {
                         this.props.data.map((ev, i) => {
                             return (
                                 <tr key={ev.offset}>
-                                <td>{ev.offset}</td>
-                                <td>{JSON.stringify(ev)}</td>
+                                    <td>{ev.offset}</td>
+                                    <td>{JSON.stringify(ev)}</td>
                                 </tr>
                             )
                         })

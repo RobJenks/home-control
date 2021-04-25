@@ -29,7 +29,7 @@ const TopPane: React.FunctionComponent<{
     }
   }, [topRef, topHeight, setTopHeight]);
 
-  return <div className="topPane" ref={topRef}>{children}</div>;
+  return <div className="verticalTopPane" ref={topRef}>{children}</div>;
 };
 
 export const SplitViewVertical: React.FunctionComponent<SplitViewVerticalProps> = ({
@@ -104,20 +104,20 @@ export const SplitViewVertical: React.FunctionComponent<SplitViewVerticalProps> 
   });
 
   return (
-    <div style={{ height: "100%", boxSizing: "border-box" }}>
-      <div className={`splitView ${className ?? ""}`} ref={splitPaneRef}>
+    <div className="verticalSplitViewContainer">
+      <div className={`verticalSplitView ${className ?? ""}`} ref={splitPaneRef}>
         <TopPane topHeight={topHeight} setTopHeight={setTopHeight}>
           {top}
         </TopPane>
         <div
-          className="divider-hitbox"
+          className="vertical-divider-hitbox"
           onMouseDown={onMouseDown}
           onTouchStart={onTouchStart}
           onTouchEnd={onMouseUp}
         >
-          <div className="divider" />
+          <div className="vertical-divider" />
         </div>
-        <div className="bottomPane">{bottom}</div>
+        <div className="verticalBottomPane">{bottom}</div>
       </div>
     </div>
   );

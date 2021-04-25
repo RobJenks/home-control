@@ -29,7 +29,7 @@ const LeftPane: React.FunctionComponent<{
     }
   }, [leftRef, leftWidth, setLeftWidth]);
 
-  return <div ref={leftRef}>{children}</div>;
+  return <div className="leftPane" ref={leftRef}>{children}</div>;
 };
 
 export const SplitView: React.FunctionComponent<SplitViewProps> = ({
@@ -104,19 +104,21 @@ export const SplitView: React.FunctionComponent<SplitViewProps> = ({
   });
 
   return (
-    <div className={`splitView ${className ?? ""}`} ref={splitPaneRef}>
-      <LeftPane leftWidth={leftWidth} setLeftWidth={setLeftWidth}>
-        {left}
-      </LeftPane>
-      <div
-        className="divider-hitbox"
-        onMouseDown={onMouseDown}
-        onTouchStart={onTouchStart}
-        onTouchEnd={onMouseUp}
-      >
-        <div className="divider" />
+    <div className="splitViewContainer">
+      <div className={`splitView ${className ?? ""}`} ref={splitPaneRef}>
+        <LeftPane leftWidth={leftWidth} setLeftWidth={setLeftWidth}>
+          {left}
+        </LeftPane>
+        <div
+          className="divider-hitbox"
+          onMouseDown={onMouseDown}
+          onTouchStart={onTouchStart}
+          onTouchEnd={onMouseUp}
+        >
+          <div className="divider" />
+        </div>
+        <div className="rightPane">{right}</div>
       </div>
-      <div className="rightPane">{right}</div>
     </div>
   );
 };

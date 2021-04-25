@@ -10,32 +10,29 @@ class EventDataStream extends React.Component<EventDataStreamProps, {}> {
 
     render() {
         return (
-            <div className="App">
-              <div>
-                <table className="eventTable">
-                  <thead>
-                    <tr>
-                      <th>Event</th>
-                      <th>Data</th>
-                    </tr>
-                  </thead>
-                  
-                  <tbody>
-                    {
-                        this.props.data.map((ev, i) => {
-                            return (
-                                <tr key={ev.offset}>
-                                    <td>{ev.offset}</td>
-                                    <td>{JSON.stringify(ev)}</td>
-                                </tr>
-                            )
-                        })
-                    }
-                  </tbody>
-                </table>
-              </div>
-              
-            </div>
+             <div className="eventTableContainer">
+              <table className="eventTable">
+                <thead>
+                  <tr>
+                    <th>Event</th>
+                    <th>Data</th>
+                  </tr>
+                </thead>
+                
+                <tbody>
+                  {
+                      this.props.data.map((ev, i) => {
+                          return (
+                              <tr key={ev.offset}>
+                                  <td>{ev.offset}</td>
+                                  <td>{JSON.stringify(ev)}</td>
+                              </tr>
+                          )
+                      })
+                  }
+                </tbody>
+              </table>
+             </div>
           );
     }
 }

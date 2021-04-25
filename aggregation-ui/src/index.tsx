@@ -4,6 +4,7 @@ import 'index.css';
 import App from 'App';
 import reportWebVitals from 'reportWebVitals';
 import { SplitView } from 'components/util/splitView'
+import { SplitViewVertical } from 'components/util/splitViewVertical'
 
 declare global {
   interface Window { config: any; }
@@ -11,10 +12,15 @@ declare global {
 
 ReactDOM.render(
   <React.StrictMode>    
-      <div>
-        <SplitView
+      <div style={{ height: "100%" }}>
+        {/* <SplitView
           left={<div style={{ margin: "1rem" }}><App /></div>}
           right={<div style={{ margin: "1rem" }}><App /></div>}
+        />
+      </div> */}
+      <SplitViewVertical
+          top={<div style={{ height: "100%", boxSizing: "border-box" }}><App /></div>}
+          bottom={<div style={{ height: "100%", boxSizing: "border-box" }}><App /></div>}
         />
       </div>
   </React.StrictMode>,

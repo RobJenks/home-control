@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 import 'index.css';
 import App from 'App';
 import reportWebVitals from 'reportWebVitals';
-import { SplitView } from 'components/util/splitView'
+// import { SplitView } from 'components/util/splitView'
 import { SplitViewVertical } from 'components/util/splitViewVertical'
 
 declare global {
@@ -19,8 +19,8 @@ ReactDOM.render(
         />
       </div> */}
       <SplitViewVertical
-          top={<div style={{ height: "100%", boxSizing: "border-box" }}><App /></div>}
-          bottom={<div style={{ height: "100%", boxSizing: "border-box" }}><App /></div>}
+          top={<App />}
+          bottom={<App />}
         />
       </div>
   </React.StrictMode>,

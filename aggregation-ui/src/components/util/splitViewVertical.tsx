@@ -104,19 +104,21 @@ export const SplitViewVertical: React.FunctionComponent<SplitViewVerticalProps> 
   });
 
   return (
-    <div className={`splitView ${className ?? ""}`} ref={splitPaneRef}>
-      <TopPane topHeight={topHeight} setTopHeight={setTopHeight}>
-        {top}
-      </TopPane>
-      <div
-        className="divider-hitbox"
-        onMouseDown={onMouseDown}
-        onTouchStart={onTouchStart}
-        onTouchEnd={onMouseUp}
-      >
-        <div className="divider" />
+    <div style={{ height: "100%", boxSizing: "border-box" }}>
+      <div className={`splitView ${className ?? ""}`} ref={splitPaneRef}>
+        <TopPane topHeight={topHeight} setTopHeight={setTopHeight}>
+          {top}
+        </TopPane>
+        <div
+          className="divider-hitbox"
+          onMouseDown={onMouseDown}
+          onTouchStart={onTouchStart}
+          onTouchEnd={onMouseUp}
+        >
+          <div className="divider" />
+        </div>
+        <div className="bottomPane">{bottom}</div>
       </div>
-      <div className="bottomPane">{bottom}</div>
     </div>
   );
 };

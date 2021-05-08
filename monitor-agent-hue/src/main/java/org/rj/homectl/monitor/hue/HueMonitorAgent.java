@@ -7,6 +7,7 @@ import org.jooq.lambda.tuple.*;
 import org.rj.homectl.common.config.Config;
 import org.rj.homectl.common.config.ConfigConstants;
 import org.rj.homectl.common.config.ConfigEntry;
+import org.rj.homectl.common.util.DiffGeneration;
 import org.rj.homectl.common.util.Util;
 import org.rj.homectl.hue.model.Light;
 import org.rj.homectl.hue.model.State;
@@ -175,7 +176,7 @@ public class HueMonitorAgent extends ServiceBase {
                 .filter(x -> !oldStatus.containsKey(x.getKey()))
                 .map(data -> calculateDeltaForDevice(data.getKey(), null, data.getValue()))
                 .forEach(delta::addFrom);
-
+log.info("DELTA: " + Util.safeSerialize(delta));
         return delta;
     }
 
@@ -188,7 +189,9 @@ public class HueMonitorAgent extends ServiceBase {
         final var deltas = new HueDeltaDetails();
         deltas.addUpdate(id, status);
 
-        final var diff = Util.mapDifference(lastStatus, status);
+        final var diff = DiffGeneration.deepMapDifference(
+                Util.convertToJsonMap(lastStatus), Util.convertToJsonMap(status));
+
         final boolean wasOn = Optional.ofNullable(lastStatus.getState()).map(State::getOn).orElse(false);
         final boolean isOn = Optional.ofNullable(status.getState()).map(State::getOn).orElse(false);
 
@@ -204,7 +207,7 @@ public class HueMonitorAgent extends ServiceBase {
         return new HueDeltaDetails(
                 new HueStatusLightData(Map.of(id, status)),
                 List.of(new HueStatusEventDetails(id, HueDeviceEventType.DeviceAdded,
-                        Util.mapDifference(Map.of(), Util.convertToJsonMap(status))))
+                        DiffGeneration.deepMapDifference(Map.of(), Util.convertToJsonMap(status))))
         );
     }
 
@@ -212,7 +215,7 @@ public class HueMonitorAgent extends ServiceBase {
         return new HueDeltaDetails(
                 new HueStatusLightData(Map.of()),
                 List.of(new HueStatusEventDetails(id, HueDeviceEventType.DeviceRemoved,
-                        Util.mapDifference(Util.convertToJsonMap(lastStatus), Map.of())))
+                        DiffGeneration.deepMapDifference(Util.convertToJsonMap(lastStatus), Map.of())))
         );
     }
 

@@ -71,11 +71,4 @@ public class Util {
         }
     }
 
-    public static<T> DiffMap mapDifference(T from, T to) {
-        return mapDifference(Util.convertToJsonMap(from), Util.convertToJsonMap(to));
-    }
-
-    public static DiffMap mapDifference(Map<String, Object> from, Map<String, Object> to) {
-        return DiffMap.fromCalculatedMapDifference(Maps.difference(from, to));
-    }
 }

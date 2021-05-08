@@ -1,17 +1,16 @@
 package org.rj.homectl.status.hue;
 
-import com.google.common.collect.MapDifference;
-import org.rj.homectl.common.util.DiffMap;
+import java.util.Map;
 
 public class HueStatusEventDetails {
     private String id;
 
     private HueDeviceEventType type;
-    private DiffMap update;
+    private Map<String, Object> update;
 
     public HueStatusEventDetails() { }
 
-    public HueStatusEventDetails(String id, HueDeviceEventType type, DiffMap update) {
+    public HueStatusEventDetails(String id, HueDeviceEventType type, Map<String, Object> update) {
         this.id = id;
         this.type = type;
         this.update = update;
@@ -33,11 +32,11 @@ public class HueStatusEventDetails {
         this.type = type;
     }
 
-    public DiffMap getUpdate() {
+    public Map<String, Object> getUpdate() {
         return update;
     }
 
-    public void setUpdate(DiffMap update) {
+    public void setUpdate(Map<String, Object> update) {
         this.update = update;
     }
 }

@@ -1,0 +1,51 @@
+---
+kind: Namespace
+apiVersion: apps/v1
+metadata:
+  name: home-control
+  labels:
+    name: home-control
+
+---
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: home-control-monitor-awair
+  namespace: home-control
+  labels:
+    entity: home-control-monitor-awair
+    entityType: monitor-agent
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      entity: home-control-monitor-awair
+  template:
+    metadata:
+      labels:
+        entity: home-control-monitor-awair
+    spec:
+      containers:
+      - name: home-control-monitor-awair
+        image: robjenks/home-control:monitor-agent-awair-latest
+        ports:
+        - containerPort: 14210
+        - containerPort: 14211
+
+---
+kind: Service
+apiVersion: apps/v1
+metadata:
+  name: home-control-monitor-awair
+  namespace: home-control
+  labels:
+    entity: home-control-monitor-awair
+spec:
+  selector:
+    entity: home-control-monitor-awair
+  ports:
+  - port: 14210
+    protocol: TCP
+  - port: 14211
+    protocol: TCP
+

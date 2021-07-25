@@ -1,4 +1,3 @@
----
 kind: Namespace
 apiVersion: apps/v1
 metadata:
@@ -31,7 +30,6 @@ spec:
         ports:
         - containerPort: 14210
         - containerPort: 14211
-
 ---
 kind: Service
 apiVersion: apps/v1

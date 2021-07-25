@@ -1,9 +1,11 @@
+---
 kind: Namespace
-apiVersion: apps/v1
+apiVersion: v1
 metadata:
   name: home-control
   labels:
     name: home-control
+
 ---
 kind: Deployment
 apiVersion: apps/v1
@@ -27,11 +29,18 @@ spec:
       - name: home-control-monitor-awair
         image: robjenks/home-control:monitor-agent-awair-latest
         ports:
-        - containerPort: 14210
-        - containerPort: 14211
+        - name: service-port
+          containerPort: 14210
+          protocol: TCP
+        - name: actuator-port
+          containerPort: 14211
+          protocol: TCP
+      nodeSelector:
+        host.specs: low
+
 ---
 kind: Service
-apiVersion: apps/v1
+apiVersion: v1
 metadata:
   name: home-control-monitor-awair
   namespace: home-control
@@ -41,8 +50,12 @@ spec:
   selector:
     entity: home-control-monitor-awair
   ports:
-  - port: 14210
+  - name: service-port
+    port: 14210
+    targetPort: service-port
     protocol: TCP
-  - port: 14211
+  - name: actuator-port
+    port: 14211
+    targetPort: actuator-port
     protocol: TCP
 

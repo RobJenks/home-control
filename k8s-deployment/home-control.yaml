@@ -4,7 +4,6 @@ metadata:
   name: home-control
   labels:
     name: home-control
-
 ---
 kind: Deployment
 apiVersion: apps/v1

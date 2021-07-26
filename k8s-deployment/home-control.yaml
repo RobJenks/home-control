@@ -86,7 +86,7 @@ spec:
           containerPort: 14220
           protocol: TCP
         - name: actuator-port
-          containerPort: 14220
+          containerPort: 14221
           protocol: TCP
         env:
         - name: INTERNAL_TOKEN
@@ -115,6 +115,65 @@ spec:
     protocol: TCP
   - name: actuator-port
     port: 14221
+    targetPort: actuator-port
+    protocol: TCP
+
+---
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: home-control-monitor-st
+  namespace: home-control
+  labels:
+    entity: home-control-monitor-st
+    entityType: monitor-agent
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      entity: home-control-monitor-st
+  template:
+    metadata:
+      labels:
+        entity: home-control-monitor-st
+    spec:
+      containers:
+      - name: home-control-monitor-st
+        image: robjenks/home-control:monitor-agent-st-latest
+        ports:
+        - name: service-port
+          containerPort: 14230
+          protocol: TCP
+        - name: actuator-port
+          containerPort: 14231
+          protocol: TCP
+        env:
+        - name: INTERNAL_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: st-auth
+              key: internal-token
+      nodeSelector:
+        host.specs: low
+
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: home-control-monitor-st
+  namespace: home-control
+  labels:
+    entity: home-control-monitor-st
+spec:
+  selector:
+    entity: home-control-monitor-st
+  ports:
+  - name: service-port
+    port: 14230
+    targetPort: service-port
+    protocol: TCP
+  - name: actuator-port
+    port: 14231
     targetPort: actuator-port
     protocol: TCP
 

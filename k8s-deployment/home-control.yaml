@@ -59,3 +59,62 @@ spec:
     targetPort: actuator-port
     protocol: TCP
 
+---
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: home-control-monitor-hue
+  namespace: home-control
+  labels:
+    entity: home-control-monitor-hue
+    entityType: monitor-agent
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      entity: home-control-monitor-hue
+  template:
+    metadata:
+      labels:
+        entity: home-control-monitor-hue
+    spec:
+      containers:
+      - name: home-control-monitor-hue
+        image: robjenks/home-control:monitor-agent-hue-latest
+        ports:
+        - name: service-port
+          containerPort: 14220
+          protocol: TCP
+        - name: actuator-port
+          containerPort: 14220
+          protocol: TCP
+        env:
+        - name: INTERNAL_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: hue-auth
+              key: internal-token
+      nodeSelector:
+        host.specs: low
+
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: home-control-monitor-hue
+  namespace: home-control
+  labels:
+    entity: home-control-monitor-hue
+spec:
+  selector:
+    entity: home-control-monitor-hue
+  ports:
+  - name: service-port
+    port: 14220
+    targetPort: service-port
+    protocol: TCP
+  - name: actuator-port
+    port: 14221
+    targetPort: actuator-port
+    protocol: TCP
+

@@ -16,7 +16,7 @@ metadata:
     entity: home-control-monitor-awair
     entityType: monitor-agent
 spec:
-  replics: 1
+  replicas: 1
   selector:
     matchLabels:
       entity: home-control-monitor-awair

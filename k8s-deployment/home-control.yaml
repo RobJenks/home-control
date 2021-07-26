@@ -16,7 +16,7 @@ metadata:
     entity: home-control-monitor-awair
     entityType: monitor-agent
 spec:
-  replicas: 1
+  replics: 1
   selector:
     matchLabels:
       entity: home-control-monitor-awair
@@ -37,6 +37,7 @@ spec:
           protocol: TCP
       nodeSelector:
         host.specs: low
+  revisionHistoryLimit: 3
 
 ---
 kind: Service
@@ -96,6 +97,7 @@ spec:
               key: internal-token
       nodeSelector:
         host.specs: low
+  revisionHistoryLimit: 3
 
 ---
 kind: Service
@@ -155,6 +157,7 @@ spec:
               key: internal-token
       nodeSelector:
         host.specs: low
+  revisionHistoryLimit: 3
 
 ---
 kind: Service

@@ -38,7 +38,7 @@ spec:
           protocol: TCP
       nodeSelector:
         host.specs: high
-  revisionHistoryLimit: 3
+  revisionHistoryLimit: 2
 
 ---
 kind: Service
@@ -92,7 +92,7 @@ spec:
           protocol: TCP
       nodeSelector:
         host.specs: low
-  revisionHistoryLimit: 3
+  revisionHistoryLimit: 2
 
 ---
 kind: Service
@@ -152,7 +152,7 @@ spec:
               key: internal-token
       nodeSelector:
         host.specs: low
-  revisionHistoryLimit: 3
+  revisionHistoryLimit: 2
 
 ---
 kind: Service
@@ -212,7 +212,7 @@ spec:
               key: internal-token
       nodeSelector:
         host.specs: low
-  revisionHistoryLimit: 3
+  revisionHistoryLimit: 2
 
 ---
 kind: Service
@@ -267,7 +267,7 @@ spec:
           value: http://home-control-aggregation:14200
       nodeSelector:
         host.specs: high
-  revisionHistoryLimit: 3
+  revisionHistoryLimit: 2
 
 ---
 kind: Service

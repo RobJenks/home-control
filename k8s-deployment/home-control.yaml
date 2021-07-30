@@ -6,6 +6,61 @@ metadata:
   labels:
     name: home-control
 
+
+---
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: home-control-aggregation
+  namespace: home-control
+  labels:
+    entity: home-control-aggregation
+    entityType: aggregation
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      entity: home-control-aggregation
+  template:
+    metadata:
+      labels:
+        entity: home-control-aggregation
+    spec:
+      containers:
+      - name: home-control-aggregation
+        image: robjenks/home-control:aggregation-latest
+        ports:
+        - name: service-port
+          containerPort: 14200
+          protocol: TCP
+        - name: actuator-port
+          containerPort: 14201
+          protocol: TCP
+      nodeSelector:
+        host.specs: high
+  revisionHistoryLimit: 3
+
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: home-control-aggregation
+  namespace: home-control
+  labels:
+    entity: home-control-aggregation
+spec:
+  selector:
+    entity: home-control-aggregation
+  ports:
+  - name: service-port
+    port: 14200
+    targetPort: service-port
+    protocol: TCP
+  - name: actuator-port
+    port: 14201
+    targetPort: actuator-port
+    protocol: TCP
+        
 ---
 kind: Deployment
 apiVersion: apps/v1

@@ -6,6 +6,140 @@ metadata:
   labels:
     name: home-control
 
+---
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: home-control-zookeeper
+  namespace: home-control
+  labels:
+    entity: home-control-zookeeper
+    entityType: zookeeper
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      entity: home-control-zookeeper
+  template:
+    metadata:
+      labels:
+        entity: home-control-zookeeper
+    spec:
+      containers:
+      - name: home-control-zookeeper
+        image: cfei/zookeeper:latest-multiarch
+        ports:
+        - name: client-port
+          containerPort: 2181
+          protocol: TCP
+        - name: follower-port
+          containerPort: 2888
+          protocol: TCP
+        - name: leader-port
+          containerPort: 3888
+          protocol: TCP
+        env:
+        - name: ZOO_ID
+          value: "1"
+        - name: ZOO_PORT
+          value: "2181"
+      nodeSelector:
+        host.specs: high
+  revisionHistoryLimit: 2
+
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: home-control-zookeeper
+  namespace: home-control
+  labels:
+    entity: home-control-zookeeper
+spec:
+  selector:
+    entity: home-control-zookeeper
+  ports:
+  - name: client-port
+    port: 2181
+    targetPort: client-port
+    protocol: TCP
+  - name: follower-port
+    port: 2888
+    targetPort: follower-port
+    protocol: TCP
+  - name: leader-port
+    port: 3888
+    targetPort: leader-port
+    protocol: TCP
+
+---
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: home-control-kafka-brokers
+  namespace: home-control
+  labels:
+    entity: home-control-kafka-brokers
+    entityType: kafka-broker
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      entity: home-control-kafka-brokers
+  template:
+    metadata:
+      labels:
+        entity: home-control-kafka-brokers
+    spec:  
+      containers:
+      - name: home-control-kafka-brokers
+        image: cfei/kafka:latest-multiarch
+        ports:
+        - name: external-port
+          containerPort: 9092
+          protocol: TCP
+        - name: internal-port
+          containerPort: 29092
+          protocol: TCP
+        env:
+        - name: KAFKA_BROKER_ID
+          value: "1"
+        - name: KAFKA_ZOOKEEPER_CONNECT
+          value: "home-control-zookeeper:2181"
+        - name: KAFKA_LISTENERS
+          value: "INTERNAL://0.0.0.0:29092,EXTERNAL://0.0.0.0:9092"
+        - name: KAFKA_ADVERTISED_LISTENERS
+          value: "INTERNAL://home-control-kafka-brokers:29092,EXTERNAL://home-control-kafka-brokers:9092"
+        - name: KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR
+          value: "1"
+        - name: KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS
+          value: "0"
+      nodeSelector:
+        host.specs: high
+  revisionHistoryLimit: 2
+
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: home-control-kafka-brokers
+  namespace: home-control
+  labels:
+    entity: home-control-kafka-brokers
+    entityType: kafka-broker
+spec:
+  selector:
+    entity: home-control-kafka-brokers
+  ports:
+  - name: external-port
+    port: 9092
+    targetPort: external-port
+    protocol: TCP
+  - name: internal-port
+    port: 29092
+    targetPort: internal-port
+    protocol: TCP
+  type: NodePort
 
 ---
 kind: Deployment

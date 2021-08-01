@@ -162,7 +162,7 @@ spec:
     spec:
       containers:
       - name: home-control-aggregation
-        image: robjenks/home-control:aggregation-latest
+        image: robjenks/home-control-aggregation:latest
         ports:
         - name: service-port
           containerPort: 14200
@@ -216,7 +216,7 @@ spec:
     spec:
       containers:
       - name: home-control-monitor-awair
-        image: robjenks/home-control:monitor-agent-awair-latest
+        image: robjenks/home-control-monitor-agent-awair:latest
         ports:
         - name: service-port
           containerPort: 14210
@@ -270,7 +270,7 @@ spec:
     spec:
       containers:
       - name: home-control-monitor-hue
-        image: robjenks/home-control:monitor-agent-hue-latest
+        image: robjenks/home-control-monitor-agent-hue:latest
         ports:
         - name: service-port
           containerPort: 14220
@@ -330,7 +330,7 @@ spec:
     spec:
       containers:
       - name: home-control-monitor-st
-        image: robjenks/home-control:monitor-agent-st-latest
+        image: robjenks/home-control-monitor-agent-st:latest
         ports:
         - name: service-port
           containerPort: 14230
@@ -391,7 +391,7 @@ spec:
     spec:
       containers:
       - name: home-control-aggregation-ui
-        image: robjenks/home-control:aggregation-ui-latest
+        image: robjenks/home-control-aggregation-ui:latest
         ports:
         - name: http-port
           containerPort: 14800

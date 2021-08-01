@@ -170,6 +170,9 @@ spec:
         - name: actuator-port
           containerPort: 14201
           protocol: TCP
+        env:
+        - name: BOOTSTRAP_SERVERS
+          value: http://home-control-kafka-brokers:29092
       nodeSelector:
         host.specs: high
   revisionHistoryLimit: 2
@@ -224,6 +227,9 @@ spec:
         - name: actuator-port
           containerPort: 14211
           protocol: TCP
+        env:
+        - name: BOOTSTRAP_SERVERS
+          value: http://home-control-kafka-brokers:29092
       nodeSelector:
         host.specs: low
   revisionHistoryLimit: 2
@@ -279,6 +285,8 @@ spec:
           containerPort: 14221
           protocol: TCP
         env:
+        - name: BOOTSTRAP_SERVERS
+          value: http://home-control-kafka-brokers:29092
         - name: INTERNAL_TOKEN
           valueFrom:
             secretKeyRef:
@@ -339,6 +347,8 @@ spec:
           containerPort: 14231
           protocol: TCP
         env:
+        - name: BOOTSTRAP_SERVERS
+          value: http://home-control-kafka-brokers:29092
         - name: INTERNAL_TOKEN
           valueFrom:
             secretKeyRef:

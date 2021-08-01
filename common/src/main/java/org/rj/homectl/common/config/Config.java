@@ -1,24 +1,37 @@
 package org.rj.homectl.common.config;
 
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
+
 import java.io.IOException;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.function.Function;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 public class Config {
+    static final Pattern substPattern = Pattern.compile("\\$\\{([^}]+)\\}");
+
     private final Properties properties;
 
-    public static Config load(String path) {
+    // Parent config can optionally be provided to use in resolving embedded ${variables} in the loaded config
+    public static Config load(String path, Config parentConfig) {
         try (final var resource = Config.class.getClassLoader().getResourceAsStream(path)) {
             if (resource == null ) throw new RuntimeException(String.format(
                     "Could not open resource stream for config at '%s'", path));
 
-            final Properties properties = new Properties();
+            Properties properties = new Properties();
             properties.load(resource);
 
-            return new Config(properties);
+            final var config = new Config(properties);
+
+            if (parentConfig != null) {
+                config.resolvePlaceholders(parentConfig);
+            }
+
+            return config;
         }
         catch (IOException ex) {
             throw new RuntimeException("Could not load configuration: " + ex.getMessage(), ex);
@@ -31,6 +44,34 @@ public class Config {
 
     private Config(final Properties properties) {
         this.properties = properties;
+    }
+
+    private void resolvePlaceholders(Config parentConfig) {
+        final var resolved = properties.entrySet().stream()
+                .map(entry -> ImmutablePair.of(
+                        parentConfig.performSubstitutionsIfApplicable(entry.getKey()),
+                        parentConfig.performSubstitutionsIfApplicable(entry.getValue())))
+                .collect(Collectors.toMap(Pair::getKey, Pair::getValue));
+
+        properties.clear();
+        properties.putAll(resolved);
+    }
+
+    private Object performSubstitutionsIfApplicable(Object target) {
+        if (!(target instanceof String)) return target;
+        return performSubstitutions((String)target);
+    }
+
+    public String performSubstitutions(String target) {
+        var resolved = target;
+        var matcher = substPattern.matcher(target);
+
+        while (matcher.find()) {
+            resolved = resolved.replace(matcher.group(0), tryGet(matcher.group(1)).orElse(""));
+            matcher = substPattern.matcher(resolved);
+        }
+
+        return resolved;
     }
 
     public Properties getProperties() {

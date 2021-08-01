@@ -46,7 +46,7 @@ public class Aggregation extends ServiceBase {
 
         final var statusConsumer = new StatusEventConsumer(
                 consumerId,
-                Config.load(consumerConfigPath),
+                Config.load(consumerConfigPath, getConfig()),
                 Optional.empty(),
                 Optional.of(buildRecordHandler()));
 

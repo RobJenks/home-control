@@ -50,19 +50,19 @@ jobs:
             VERSION=${GITHUB_REF#refs/tags/v}
           fi
 
-          TAGS_AGG="${IMAGE}:aggregation-${VERSION}"
+          TAGS_AGG="${IMAGE}-aggregation:${VERSION}"
           echo "Aggregation image: ${TAGS_AGG}"
 
-          TAGS_AGG_UI="${IMAGE}:aggregation-ui-${VERSION}"
+          TAGS_AGG_UI="${IMAGE}-aggregation-ui:${VERSION}"
           echo "Aggregation UI image: ${TAGS_AGG_UI}"
 
-          TAGS_AWAIR="${IMAGE}:monitor-agent-awair-${VERSION}"
+          TAGS_AWAIR="${IMAGE}-monitor-agent-awair:${VERSION}"
           echo "Awair monitor agent image: ${TAGS_AWAIR}"
 
-          TAGS_HUE="${IMAGE}:monitor-agent-hue-${VERSION}"
+          TAGS_HUE="${IMAGE}-monitor-agent-hue:${VERSION}"
           echo "Hue monitor agent image: ${TAGS_HUE}"
 
-          TAGS_ST="${IMAGE}:monitor-agent-st-${VERSION}"
+          TAGS_ST="${IMAGE}-monitor-agent-st:${VERSION}"
           echo "ST monitor agent image: ${TAGS_ST}"
 
           echo ::set-output name=image::${IMAGE}

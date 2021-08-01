@@ -133,7 +133,7 @@ public class StMonitorAgent extends ServiceBase {
 
         final var producer = new StStatusEventProducer(
                 producerId,
-                Config.load(producerConfigPath),
+                Config.load(producerConfigPath, getConfig()),
                 KafkaProducer::new
         );
 

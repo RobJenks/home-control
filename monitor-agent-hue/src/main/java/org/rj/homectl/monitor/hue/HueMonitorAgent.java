@@ -107,7 +107,7 @@ public class HueMonitorAgent extends ServiceBase {
 
         final var producer = new HueStatusEventProducer(
                 producerId,
-                Config.load(producerConfigPath),
+                Config.load(producerConfigPath, getConfig()),
                 KafkaProducer::new
         );
 

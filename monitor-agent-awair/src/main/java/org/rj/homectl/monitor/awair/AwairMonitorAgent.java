@@ -87,7 +87,7 @@ public class AwairMonitorAgent extends ServiceBase {
 
         final var producer = new AwairStatusEventProducer(
                 producerId,
-                Config.load(producerConfigPath),
+                Config.load(producerConfigPath, getConfig()),
                 KafkaProducer::new
         );
 

@@ -139,7 +139,7 @@ spec:
     port: 29092
     targetPort: internal-port
     protocol: TCP
-  type: NodePort
+    #  type: NodePort
 
 ---
 kind: Deployment

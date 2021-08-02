@@ -35,10 +35,8 @@ http {
         index index.html index.htm;
 
         location / {
-            # Enforce CORS policy
-            if ($http_origin ~* (home-control-aggregation)) {
-                add_header 'Access-Control-Allow-Origin' "$http_origin";
-            }
+            # Todo: should enforce a proper CORS policy
+            add_header Access-Control-Allow-Origin *;
 
             # First attempt to serve request as file, then
             # as directory, then fall back to redirecting to index.html

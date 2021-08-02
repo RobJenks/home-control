@@ -232,6 +232,13 @@ spec:
           value: http://home-control-kafka-brokers:29092
       nodeSelector:
         host.specs: low
+      topologySpreadConstraints:
+      - maxSkew: 1
+        topologyKey: kubernetes.io/hostname
+        whenUnsatisfiable: DoNotSchedule
+        labelSelector:
+          matchLabels:
+            entityType: monitor-agent
   revisionHistoryLimit: 2
 
 ---
@@ -294,6 +301,13 @@ spec:
               key: internal-token
       nodeSelector:
         host.specs: low
+      topologySpreadConstraints:
+      - maxSkew: 1
+        topologyKey: kubernetes.io/hostname
+        whenUnsatisfiable: DoNotSchedule
+        labelSelector:
+          matchLabels:
+            entityType: monitor-agent
   revisionHistoryLimit: 2
 
 ---
@@ -356,6 +370,13 @@ spec:
               key: internal-token
       nodeSelector:
         host.specs: low
+      topologySpreadConstraints:
+      - maxSkew: 1
+        topologyKey: kubernetes.io/hostname
+        whenUnsatisfiable: DoNotSchedule
+        labelSelector:
+          matchLabels:
+            entityType: monitor-agent
   revisionHistoryLimit: 2
 
 ---

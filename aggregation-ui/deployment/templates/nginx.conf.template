@@ -35,6 +35,11 @@ http {
         index index.html index.htm;
 
         location / {
+            # Enforce CORS policy
+            if ($http_origin ~* (home-control-aggregation)) {
+                add_header 'Access-Control-Allow-Origin' "$http_origin";
+            }
+
             # First attempt to serve request as file, then
             # as directory, then fall back to redirecting to index.html
             try_files $uri $uri/ /index.html;

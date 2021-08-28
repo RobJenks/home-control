@@ -24,9 +24,10 @@
         <org.jooq.jool.version>0.9.14</org.jooq.jool.version>
         <guava.version>30.1.1-jre</guava.version>
         <apache.kafka.version>2.6.0</apache.kafka.version>
-        <swagger-codegen.plugin.version>2.4.19</swagger-codegen.plugin.version>
-        <swagger-codegen-plugin.v3.version>3.0.25</swagger-codegen-plugin.v3.version>
         <junit.version>4.13.1</junit.version>
+        <!-- Note: OpenAPI Swagger codegen plugin does not work with JDK 16, as of -->
+        <!-- version 3.0.27.  Use JDK 14 or lower -->
+        <swagger-codegen-plugin.v3.version>3.0.27</swagger-codegen-plugin.v3.version>
     </properties>
 
     <modules>

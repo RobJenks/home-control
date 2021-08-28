@@ -1,7 +1,7 @@
 package org.rj.homectl.awair.model;
 
+import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.time.OffsetDateTime;
 
@@ -9,29 +9,29 @@ import java.time.OffsetDateTime;
 public class AwairStatus {
     private OffsetDateTime timestamp;
     private Integer score;
-    @JsonProperty("dew_point")
+    @JsonAlias({ "dew_point" })
     private Float dewPoint;
     private Float temp;
-    @JsonProperty("humid")
+    @JsonAlias({ "humid" })
     private Float humidity;
-    @JsonProperty("abs_humid")
+    @JsonAlias({ "abs_humid" })
     private Float absoluteHumidity;
-    @JsonProperty("co2")
-    private Integer CO2;
-    @JsonProperty("co2_est")
-    private Integer estimatedCO2;
-    @JsonProperty("voc")
-    private Integer VOC;
-    @JsonProperty("voc_baseline")
-    private Long VOCBaseline;
-    @JsonProperty("voc_h2_raw")
-    private Integer VOCRawH2;
-    @JsonProperty("voc_ethanol_raw")
-    private Integer VOCRawEthanol;
-    @JsonProperty("pm25")
-    private Integer PM25;
-    @JsonProperty("pm10_est")
-    private Integer estimatedPM10;
+    @JsonAlias({ "co2" })
+    private Integer co2;
+    @JsonAlias({ "co2_est" })
+    private Integer estimatedCo2;
+    @JsonAlias({ "voc" })
+    private Integer voc;
+    @JsonAlias({ "voc_baseline" })
+    private Long vocBaseline;
+    @JsonAlias({ "voc_h2_raw" })
+    private Integer vocRawH2;
+    @JsonAlias({ "voc_ethanol_raw" })
+    private Integer vocRawEthanol;
+    @JsonAlias({ "pm25" })
+    private Integer pm25;
+    @JsonAlias({ "pm10_est" })
+    private Integer estimatedPm10;
 
     public AwairStatus() { }
 
@@ -88,67 +88,67 @@ public class AwairStatus {
         this.absoluteHumidity = absoluteHumidity;
     }
 
-    public Integer getCO2() {
-        return CO2;
+    public Integer getCo2() {
+        return co2;
     }
 
-    public void setCO2(Integer CO2) {
-        this.CO2 = CO2;
+    public void setCo2(Integer co2) {
+        this.co2 = co2;
     }
 
-    public Integer getEstimatedCO2() {
-        return estimatedCO2;
+    public Integer getEstimatedCo2() {
+        return estimatedCo2;
     }
 
-    public void setEstimatedCO2(Integer estimatedCO2) {
-        this.estimatedCO2 = estimatedCO2;
+    public void setEstimatedCo2(Integer estimatedCo2) {
+        this.estimatedCo2 = estimatedCo2;
     }
 
-    public Integer getVOC() {
-        return VOC;
+    public Integer getVoc() {
+        return voc;
     }
 
-    public void setVOC(Integer VOC) {
-        this.VOC = VOC;
+    public void setVoc(Integer voc) {
+        this.voc = voc;
     }
 
-    public Long getVOCBaseline() {
-        return VOCBaseline;
+    public Long getVocBaseline() {
+        return vocBaseline;
     }
 
-    public void setVOCBaseline(Long VOCBaseline) {
-        this.VOCBaseline = VOCBaseline;
+    public void setVocBaseline(Long vocBaseline) {
+        this.vocBaseline = vocBaseline;
     }
 
-    public Integer getVOCRawH2() {
-        return VOCRawH2;
+    public Integer getVocRawH2() {
+        return vocRawH2;
     }
 
-    public void setVOCRawH2(Integer VOCRawH2) {
-        this.VOCRawH2 = VOCRawH2;
+    public void setVocRawH2(Integer vocRawH2) {
+        this.vocRawH2 = vocRawH2;
     }
 
-    public Integer getVOCRawEthanol() {
-        return VOCRawEthanol;
+    public Integer getVocRawEthanol() {
+        return vocRawEthanol;
     }
 
-    public void setVOCRawEthanol(Integer VOCRawEthanol) {
-        this.VOCRawEthanol = VOCRawEthanol;
+    public void setVocRawEthanol(Integer vocRawEthanol) {
+        this.vocRawEthanol = vocRawEthanol;
     }
 
-    public Integer getPM25() {
-        return PM25;
+    public Integer getPm25() {
+        return pm25;
     }
 
-    public void setPM25(Integer PM25) {
-        this.PM25 = PM25;
+    public void setPm25(Integer pm25) {
+        this.pm25 = pm25;
     }
 
-    public Integer getEstimatedPM10() {
-        return estimatedPM10;
+    public Integer getEstimatedPm10() {
+        return estimatedPm10;
     }
 
-    public void setEstimatedPM10(Integer estimatedPM10) {
-        this.estimatedPM10 = estimatedPM10;
+    public void setEstimatedPm10(Integer estimatedPm10) {
+        this.estimatedPm10 = estimatedPm10;
     }
 }

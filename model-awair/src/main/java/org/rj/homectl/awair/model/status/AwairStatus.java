@@ -1,4 +1,4 @@
-package org.rj.homectl.awair.model;
+package org.rj.homectl.awair.model.status;
 
 import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;

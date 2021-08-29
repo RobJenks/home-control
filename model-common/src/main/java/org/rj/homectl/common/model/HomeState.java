@@ -38,6 +38,21 @@ public class HomeState {
         this.devices = devices;
     }
 
+    @JsonIgnore
+    public Map<String, Room> getIndexedRooms() {
+        return indexedRooms;
+    }
+
+    @JsonIgnore
+    public Map<String, Device> getIndexedDevices() {
+        return indexedDevices;
+    }
+
+    @JsonIgnore
+    private void updatedIndexedCollections() {
+        this.indexedRooms = this.rooms.stream().collect(Collectors.toMap(Room::getId, Function.identity()));
+        this.indexedDevices = this.devices.stream().collect(Collectors.toMap(Device::getId, Function.identity()));
+    }
 
     protected static class PostDeserializationSanitizer extends StdConverter<HomeState, HomeState> {
         @Override
@@ -47,8 +62,7 @@ public class HomeState {
             if (state.devices == null) state.devices = new ArrayList<>();
 
             // Build internal indexed collections
-            state.indexedRooms = state.rooms.stream().collect(Collectors.toMap(Room::getId, Function.identity()));
-            state.indexedDevices = state.devices.stream().collect(Collectors.toMap(Device::getId, Function.identity()));
+            state.updatedIndexedCollections();
 
             return state;
         }

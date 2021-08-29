@@ -1,6 +1,7 @@
 package org.rj.homectl.aggregation.controller;
 
 import org.rj.homectl.aggregation.Aggregation;
+import org.rj.homectl.common.model.HomeState;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -38,5 +39,15 @@ public class AggregationController {
         headers.setContentType(MediaType.APPLICATION_JSON);
 
         return new ResponseEntity<>(responseData, headers, HttpStatus.OK);
+    }
+
+    @GetMapping("/state")
+    public ResponseEntity<HomeState> state() {
+        final var state = parent.getAggregationService().getState();
+
+        final HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        return new ResponseEntity<>(state, headers, HttpStatus.OK);
     }
 }

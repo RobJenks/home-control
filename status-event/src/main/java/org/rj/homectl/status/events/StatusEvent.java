@@ -10,7 +10,6 @@ import java.util.Map;
 
 public abstract class StatusEvent implements ConsumerEvent {
     private OffsetDateTime timestamp;
-    private StatusEventType type;
 
     public StatusEvent() { }
 

@@ -1,0 +1,24 @@
+home:
+  rooms:
+    - id: livingRoom
+      name: "Living Room"
+
+    - id: bedroom
+      name: "Bedroom"
+
+  devices:
+    - id: "Living Room Back Left"
+      class: hue
+      room: livingRoom
+
+    - id: "Living Room Top Left"
+      class: hue
+      room: livingRoom
+
+    - id: "http://192.168.1.21"
+      class: awair
+      room: livingRoom
+
+    - id: "http://192.168.1.25"
+      class: awair
+      room: bedroom

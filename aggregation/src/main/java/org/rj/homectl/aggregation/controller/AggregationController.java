@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 public class AggregationController {
     private final Aggregation parent;
 
-    public AggregationController(Aggregation parent) {
+    public AggregationController(final Aggregation parent) {
         this.parent = parent;
     }
 
@@ -28,11 +28,7 @@ public class AggregationController {
 
         if (count < 0) return new ResponseEntity<>(Map.of("error", "Invalid update count requested"), HttpStatus.BAD_REQUEST);
 
-        final var data = parent.getCache().get()
-                .reverseStream()
-                .limit(count)
-                .collect(Collectors.toList());
-
+        final var data = parent.getRecordCache().getLatestRecords(count);
         final Map<String, Object> responseData = Map.of(
                 "count", data.size(),
                 "data", data

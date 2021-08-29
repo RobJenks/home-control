@@ -1,23 +1,23 @@
 package org.rj.homectl.hue.model;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonAlias;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import java.util.List;
 
 public class State {
-    @JsonProperty("sat")
+    @JsonAlias({ "sat" })
     private Integer saturation;
     private Boolean on;
     private List<Float> xy;
     private Integer hue;
-    @JsonProperty("bri")
+    @JsonAlias({ "bri" })
     private Integer brightness;
     private String mode;
     private Integer ct;
     private String alert;
-    @JsonProperty("colormode")
+    @JsonAlias({ "colormode" })
     private String colorMode;
     private String effect;
     private Boolean reachable;

@@ -1,28 +1,28 @@
 package org.rj.homectl.hue.model;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonAlias;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 public class Light {
     private String name;
     private String type;
-    @JsonProperty("modelid")
+    @JsonAlias({ "modelid" })
     private String modelId;
-    @JsonProperty("manufacturername")
+    @JsonAlias({ "manufacturername" })
     private String manufacturerName;
-    @JsonProperty("uniqueid")
+    @JsonAlias({ "uniqueid" })
     private String uniqueId;
-    @JsonProperty("productid")
+    @JsonAlias({ "productid" })
     private String productId;
     private State state;
     private Capabilities capabilities;
     private Config config;
-    @JsonProperty("swupdate")
+    @JsonAlias({ "swupdate" })
     private SWUpdate swUpdate;
-    @JsonProperty("swversion")
+    @JsonAlias({ "swversion" })
     private String swVersion;
-    @JsonProperty("swconfigid")
+    @JsonAlias({ "swconfigid" })
     private String swConfigId;
 
     public Light() {

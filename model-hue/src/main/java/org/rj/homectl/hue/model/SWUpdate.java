@@ -1,13 +1,13 @@
 package org.rj.homectl.hue.model;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonAlias;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import java.time.LocalDate;
 
 public class SWUpdate {
-    @JsonProperty("lastinstall")
+    @JsonAlias({ "lastinstall" })
     private LocalDate lastInstall;
     private String state;
 

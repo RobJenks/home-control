@@ -16,9 +16,11 @@ home:
       room: livingRoom
 
     - id: "http://192.168.1.21"
+      name: "Awair Living Room"
       class: awair
       room: livingRoom
 
     - id: "http://192.168.1.25"
+      name: "Awair Bedroom"
       class: awair
       room: bedroom

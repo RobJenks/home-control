@@ -70,13 +70,13 @@ public class Util {
         }
     }
 
-    public static String loadStringResource(String path) throws IOException {
+    public static Result<String, String> loadStringResource(String path) {
         final var resourcePath = path.startsWith("/") ? path : ("/" + path);
         try {
-            return Files.readString(Paths.get(Util.class.getResource(resourcePath).toURI()));
+            return Result.Ok(Files.readString(Paths.get(Util.class.getResource(resourcePath).toURI())));
         }
-        catch (URISyntaxException ex) {
-            throw new IOException(String.format("Failed to load resource \"%s\" (%s)", resourcePath, ex.getMessage()), ex);
+        catch (Throwable t) {
+            return Result.Err(String.format("Failed to load resource \"%s\" (%s)", resourcePath, t.getMessage()));
         }
     }
 

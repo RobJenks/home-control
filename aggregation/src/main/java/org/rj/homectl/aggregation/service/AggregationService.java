@@ -3,6 +3,7 @@ package org.rj.homectl.aggregation.service;
 import org.rj.homectl.aggregation.Aggregation;
 import org.rj.homectl.aggregation.processor.AwairEventProcessor;
 import org.rj.homectl.aggregation.processor.HueEventProcessor;
+import org.rj.homectl.aggregation.processor.StEventProcessor;
 import org.rj.homectl.aggregation.state.AggregateState;
 import org.rj.homectl.common.config.Config;
 import org.rj.homectl.common.config.ConfigEntry;
@@ -26,13 +27,16 @@ public class AggregationService implements RecordInfoConsumer<String, StatusEven
     private final AggregateState state;
     private final AwairEventProcessor awairEventProcessor;
     private final HueEventProcessor hueEventProcessor;
+    private final StEventProcessor stEventProcessor;
 
     public AggregationService(final Aggregation parent, final Config config) {
         this.parent = parent;
         this.config = config;
         this.state = initialiseState(config.get(ConfigEntry.AggregationConfig));
+
         this.awairEventProcessor = new AwairEventProcessor(this.state);
         this.hueEventProcessor = new HueEventProcessor(this.state);
+        this.stEventProcessor = new StEventProcessor(this.state);
     }
 
     private AggregateState initialiseState(String configLocation) {
@@ -53,7 +57,7 @@ public class AggregationService implements RecordInfoConsumer<String, StatusEven
 
         if (event instanceof AwairStatusEvent)      awairEventProcessor.processEvent((AwairStatusEvent) event);
         else if (event instanceof HueStatusEvent)   hueEventProcessor.processEvent((HueStatusEvent) event);
-        else if (event instanceof StStatusEvent)    { /* TODO */ }
+        else if (event instanceof StStatusEvent)    stEventProcessor.processEvent((StStatusEvent) event);
         else {
             LOG.error("Received unrecognised status event type for aggregation: {}", Util.safeSerialize(event));
         }

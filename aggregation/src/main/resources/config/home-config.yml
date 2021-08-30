@@ -6,6 +6,9 @@ home:
     - id: bedroom
       name: "Bedroom"
 
+    - id: hallway
+      name: "Hallway"
+
   devices:
     - id: "Living room Back Left"
       class: hue
@@ -24,3 +27,13 @@ home:
       name: "Awair Bedroom"
       class: awair
       room: bedroom
+
+    - id: d39152db-b02a-47e2-9adf-1a63cb7b953d
+      name: "Bedroom Sonos"
+      class: st
+      room: bedroom
+
+    - id: 82d8fc36-7516-413b-bbb3-8f4a1e11a692
+      name: "Front door sensor"
+      class: st
+      room: hallway

@@ -19,6 +19,8 @@ public class AwairDeviceState extends DeviceState {
     private Integer pm25;
     private Integer estimatedPm10;
 
+    public AwairDeviceState() { }
+
     public void updateFromStatus(AwairStatus status) {
         this.score = status.getScore();
         this.dewPoint = status.getDewPoint();

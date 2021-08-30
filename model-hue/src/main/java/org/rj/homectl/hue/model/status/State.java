@@ -1,4 +1,4 @@
-package org.rj.homectl.hue.model;
+package org.rj.homectl.hue.model.status;
 
 import com.fasterxml.jackson.annotation.JsonAlias;
 import org.apache.commons.lang3.builder.EqualsBuilder;

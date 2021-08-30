@@ -7,11 +7,11 @@ home:
       name: "Bedroom"
 
   devices:
-    - id: "Living Room Back Left"
+    - id: "Living room Back Left"
       class: hue
       room: livingRoom
 
-    - id: "Living Room Top Left"
+    - id: "Living room Top Left"
       class: hue
       room: livingRoom
 

@@ -171,7 +171,7 @@ public class HueMonitorAgent extends ServiceBase {
                 .filter(x -> !oldStatus.containsKey(x.getKey()))
                 .map(data -> calculateDeltaForDevice(data.getKey(), null, data.getValue()))
                 .forEach(delta::addFrom);
-log.info("DELTA: " + Util.safeSerialize(delta));
+
         return delta;
     }
 

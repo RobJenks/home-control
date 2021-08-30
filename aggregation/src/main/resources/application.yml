@@ -13,6 +13,7 @@ management:
       enabled: true
 
 aggregation:
+  config: config/home-config.yml
   logging:
     logInboundRecords: true
 

@@ -4,6 +4,7 @@ import org.apache.kafka.clients.producer.KafkaProducer;
 import org.rj.homectl.common.config.Config;
 import org.rj.homectl.common.config.ConfigEntry;
 import org.rj.homectl.common.util.Util;
+import org.rj.homectl.monitor.awair.config.SensorTarget;
 import org.rj.homectl.service.ServiceBase;
 import org.rj.homectl.spring.application.SpringApplicationContext;
 import org.rj.homectl.status.awair.AwairStatusData;
@@ -31,7 +32,7 @@ public class AwairMonitorAgent extends ServiceBase {
     private AtomicBoolean active;
     private AwairStatusEventProducer producer;
     private RestTemplate client;
-    private List<String> sensorTargets;
+    private List<SensorTarget> sensorTargets;
 
     public static void main(String[] args) {
         SpringApplication.run(AwairMonitorAgent.class, args);
@@ -53,14 +54,15 @@ public class AwairMonitorAgent extends ServiceBase {
         new Thread(this::execute).start();
     }
 
-    private List<String> getSensorTargets() {
+    private List<SensorTarget> getSensorTargets() {
         final var query = getConfig().tryGet(ConfigEntry.MonitorQuery)
                 .orElseThrow(() -> new RuntimeException("No configured monitor query"));
 
         final var sensors = IntStream.range(0, 100)
                 .mapToObj(i -> getConfig().tryGet(String.format("%s[%d]", ConfigEntry.MonitorSensors.getKey(), i)))
                 .takeWhile(Optional::isPresent)
-                .map(service -> String.format("%s%s", service.get(), query))
+                .map(Optional::get)
+                .map(service -> new SensorTarget(service, String.format("%s%s", service, query)))
                 .collect(Collectors.toList());
 
         if (sensors.isEmpty()) throw new RuntimeException("No sensors configured for status monitor");
@@ -112,13 +114,16 @@ public class AwairMonitorAgent extends ServiceBase {
         }
     }
 
-    private AwairStatusData getData(String sensor) {
-        final var data = client.getForEntity(sensor, AwairStatusData.class);
+    private AwairStatusData getData(SensorTarget sensor) {
+        final var data = client.getForEntity(sensor.getTarget(), AwairStatusData.class);
 
         log.debug("Received \"{} ({})\" response from Awair service: {}",
                 data.getStatusCode(), data.getStatusCodeValue(), Util.safeSerialize(data.getBody()));
 
-        return data.getBody();
+        final var status = Optional.ofNullable(data.getBody()).orElseGet(AwairStatusData::new);
+        status.setDeviceId(sensor.getId());
+
+        return status;
     }
 
     @Override

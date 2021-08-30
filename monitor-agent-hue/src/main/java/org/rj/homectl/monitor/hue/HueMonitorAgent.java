@@ -1,16 +1,13 @@
 package org.rj.homectl.monitor.hue;
 
-import com.google.common.collect.Maps;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.kafka.clients.producer.KafkaProducer;
-import org.jooq.lambda.tuple.*;
 import org.rj.homectl.common.config.Config;
 import org.rj.homectl.common.config.ConfigConstants;
 import org.rj.homectl.common.config.ConfigEntry;
 import org.rj.homectl.common.util.DiffGeneration;
 import org.rj.homectl.common.util.Util;
-import org.rj.homectl.hue.model.Light;
-import org.rj.homectl.hue.model.State;
+import org.rj.homectl.hue.model.status.Light;
+import org.rj.homectl.hue.model.status.State;
 import org.rj.homectl.service.ServiceBase;
 import org.rj.homectl.spring.application.SpringApplicationContext;
 import org.rj.homectl.status.events.StatusEventType;
@@ -25,13 +22,11 @@ import org.springframework.web.client.DefaultResponseErrorHandler;
 import org.springframework.web.client.RestTemplate;
 
 import javax.annotation.PostConstruct;
-import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.stream.Collectors;
 
 import static org.jooq.lambda.tuple.Tuple.*;
 
@@ -176,7 +171,7 @@ public class HueMonitorAgent extends ServiceBase {
                 .filter(x -> !oldStatus.containsKey(x.getKey()))
                 .map(data -> calculateDeltaForDevice(data.getKey(), null, data.getValue()))
                 .forEach(delta::addFrom);
-log.info("DELTA: " + Util.safeSerialize(delta));
+
         return delta;
     }
 

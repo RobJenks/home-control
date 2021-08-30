@@ -1,7 +1,8 @@
 package org.rj.homectl.aggregation;
 
+import org.rj.homectl.aggregation.cache.RecordCache;
 import org.rj.homectl.aggregation.controller.AggregationController;
-import org.rj.homectl.common.cache.RingBufferCache;
+import org.rj.homectl.aggregation.service.AggregationService;
 import org.rj.homectl.common.config.Config;
 import org.rj.homectl.common.config.ConfigEntry;
 import org.rj.homectl.kafka.consumer.handlers.*;
@@ -15,17 +16,14 @@ import org.springframework.context.annotation.ComponentScan;
 
 import javax.annotation.PostConstruct;
 import java.util.Optional;
-import java.util.concurrent.atomic.AtomicReference;
 
 
 @SpringBootApplication
 @ComponentScan(basePackages = "org.rj")
 public class Aggregation extends ServiceBase {
     private AggregationController aggregationController;
-
-    private static final int CACHE_SIZE = 100;
-    private final AtomicReference<RingBufferCache<ConsumerRecordInfo<String, StatusEvent>>> cache;
-
+    private AggregationService aggregationService;
+    private RecordCache recordCache;
 
     public static void main(String[] args) {
         SpringApplication.run(Aggregation.class, args);
@@ -33,13 +31,13 @@ public class Aggregation extends ServiceBase {
 
     public Aggregation(SpringApplicationContext context) {
         super(Aggregation.class, context);
-
-        cache = new AtomicReference<>(new RingBufferCache<>(CACHE_SIZE, () -> null));
     }
 
     @PostConstruct
     private void initialise() {
         this.aggregationController = new AggregationController(this);
+        this.aggregationService = new AggregationService(this, getConfig());
+        this.recordCache = new RecordCache(this);
 
         final var consumerId = getConfig().get(ConfigEntry.ConsumerId);
         final var consumerConfigPath = getConfig().get(ConfigEntry.ConsumerConfig);
@@ -56,9 +54,10 @@ public class Aggregation extends ServiceBase {
     private ConsumerRecordsHandler<String, StatusEvent> buildRecordHandler() {
         final CompositeRecordsHandler<String, StatusEvent> handler = new CompositeRecordsHandler<>();
 
-        handler.addHandler(new CacheStoreRecordHandler<>(cache));
+        handler.addHandler(new DelegatingRecordHandler<>(aggregationService));
+        handler.addHandler(new DelegatingRecordHandler<>(recordCache));
 
-        if (getConfig().tryGetBoolean(ConfigEntry.LogInboundRecords).orElse(false)) {
+        if (getConfig().tryGetBoolean(ConfigEntry.AggregationLogInboundRecords).orElse(false)) {
             handler.addHandler(new LoggingRecordHandler<>());
         }
 
@@ -70,8 +69,11 @@ public class Aggregation extends ServiceBase {
         return true;    // accept all requests
     }
 
-    // TODO: Will not be held in aggregation class in future
-    public AtomicReference<RingBufferCache<ConsumerRecordInfo<String, StatusEvent>>> getCache() {
-        return cache;
+    public AggregationService getAggregationService() {
+        return aggregationService;
+    }
+
+    public RecordCache getRecordCache() {
+        return recordCache;
     }
 }

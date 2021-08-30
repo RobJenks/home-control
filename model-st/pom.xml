@@ -55,6 +55,11 @@
     <dependencies>
         <dependency>
             <groupId>org.rj.homectl</groupId>
+            <artifactId>model-common</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.rj.homectl</groupId>
             <artifactId>kafka-common</artifactId>
             <version>${project.version}</version>
         </dependency>

@@ -1,6 +1,6 @@
 package org.rj.homectl.status.hue;
 
-import org.rj.homectl.hue.model.Light;
+import org.rj.homectl.hue.model.status.Light;
 
 import java.util.HashMap;
 import java.util.Map;

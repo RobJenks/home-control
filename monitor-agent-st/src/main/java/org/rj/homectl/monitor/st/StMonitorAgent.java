@@ -14,10 +14,7 @@ import org.rj.homectl.spring.application.SpringApplicationContext;
 import org.rj.homectl.st.model.DeviceStatus;
 import org.rj.homectl.status.events.StatusEventType;
 import org.rj.homectl.status.producer.st.StStatusEventProducer;
-import org.rj.homectl.status.st.StDeviceListing;
-import org.rj.homectl.status.st.StDeviceStatuses;
-import org.rj.homectl.status.st.StEventType;
-import org.rj.homectl.status.st.StStatusData;
+import org.rj.homectl.status.st.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
@@ -50,7 +47,7 @@ public class StMonitorAgent extends ServiceBase {
     private int currentDevice;
     private long snapshotSendIntervalMs;
     private long lastFullSnapshot;
-    private Map<String, DeviceStatus> lastStatus;
+    private Map<String, StDeviceStatus> lastStatus;
 
     public static void main(String[] args) {
         SpringApplication.run(StMonitorAgent.class, args);
@@ -176,12 +173,13 @@ public class StMonitorAgent extends ServiceBase {
         produceData(statusSnapshot);
     }
 
-    private void sendDeviceEvents(int deviceIx, Map<String, DeviceStatus> lastStatus, long now) {
+    private void sendDeviceEvents(int deviceIx, Map<String, StDeviceStatus> lastStatus, long now) {
         final var device = devices.get(deviceIx);
         final var target = requestTargets.getStatusRequest().replace(ConfigConstants.DEVICE_PLACEHOLDER, device);
         final var status = getData(target, sensorToken, now, DeviceFullStatusResponse.class);
+        final var deviceStatus = new StDeviceStatus(device, status);
 
-        final var delta = calculateDelta(lastStatus.get(device), status);
+        final var delta = calculateDelta(lastStatus.get(device), deviceStatus);
         if (delta.isEmpty()) {
             log.debug("No status events to report for device {} at {}", device, now);
         }
@@ -194,7 +192,7 @@ public class StMonitorAgent extends ServiceBase {
         }
     }
 
-    private List<DeviceStatus> calculateDelta(DeviceStatus lastStatus, DeviceStatus status) {
+    private List<StDeviceStatus> calculateDelta(StDeviceStatus lastStatus, StDeviceStatus status) {
         if (lastStatus == null) return List.of(status);
         if (!Objects.equals(lastStatus, status)) return List.of(status);
 

@@ -44,6 +44,7 @@ public abstract class ServiceBase {
     protected Config getConfig() {
         return config;
     }
+
     protected SpringApplicationContext getContext() { return context; }
 
     private boolean isPublicProperty(String name) {

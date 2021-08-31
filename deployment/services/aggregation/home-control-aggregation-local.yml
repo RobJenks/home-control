@@ -1,0 +1,10 @@
+---
+version: '3.6'
+
+services:
+  home-control-aggregation:
+    image: robjenks/home-control-aggregation:${DEPLOYMENT_VERSION}
+    ports:
+      - "14200:14200"
+      - "14201:14201"
+

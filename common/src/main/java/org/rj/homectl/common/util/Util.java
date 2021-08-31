@@ -4,21 +4,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.google.common.collect.MapDifference;
-import com.google.common.collect.Maps;
-import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.URISyntaxException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.nio.charset.Charset;
+import java.util.*;
 import java.util.function.Consumer;
 
 public class Util {
@@ -70,13 +61,15 @@ public class Util {
         }
     }
 
-    public static Result<String, String> loadStringResource(String path) {
-        final var resourcePath = path.startsWith("/") ? path : ("/" + path);
-        try {
-            return Result.Ok(Files.readString(Paths.get(Util.class.getResource(resourcePath).toURI())));
+    public static Result<String, String> loadStringResource(String resourcePath) {
+        try (final var resource = Util.class.getClassLoader().getResourceAsStream(resourcePath)) {
+            if (resource == null ) throw new RuntimeException(String.format(
+                    "Could not open resource stream at '%s'", resourcePath));
+
+            return Result.Ok(IOUtils.toString(resource, Charset.defaultCharset()));
         }
-        catch (Throwable t) {
-            return Result.Err(String.format("Failed to load resource \"%s\" (%s)", resourcePath, t.getMessage()));
+        catch (IOException ex) {
+            return Result.Err(String.format("Failed to load resource \"%s\" (%s)", resourcePath, ex.getMessage()));
         }
     }
 

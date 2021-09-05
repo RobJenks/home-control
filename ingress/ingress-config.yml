@@ -20,14 +20,14 @@ static_resources:
               domains: ["*"]
               routes:
               - match: { prefix: "/" }
-                route: { host_rewrite: aggregation-ui, cluster: aggregation-ui-cluster, timeout: 60s }
+                route: { host_rewrite: aggregation_ui, cluster: aggregation_ui_cluster, timeout: 60s }
           http_filters:
           - name: envoy.router
   clusters:
-  - name: aggregation-ui-cluster
+  - name: aggregation_ui_cluster
     connect_timeout: 0.25s
     type: STRICT_DNS
     dns_lookup_family: V4_ONLY
     lb_policy: LEAST_REQUEST
-    hosts: [{ socket_address: { address: aggregation-ui, port_value: 14800 }}]
+    hosts: [{ socket_address: { address: aggregation_ui, port_value: 14800 }}]
 

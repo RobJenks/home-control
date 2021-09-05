@@ -187,6 +187,7 @@ metadata:
 spec:
   selector:
     entity: home-control-aggregation
+  clusterIP: None       # Headless
   ports:
   - name: service-port
     port: 14200
@@ -444,6 +445,7 @@ metadata:
 spec:
   selector:
     entity: home-control-aggregation-ui
+  clusterIP: None       # Headless
   ports:
   - name: http-port
     port: 14800

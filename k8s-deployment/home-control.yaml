@@ -453,46 +453,66 @@ spec:
     protocol: TCP
 
 ---
-kind: Deployment
-apiVersion: apps/v1 
+kind: Ingress
+apiVersion: networking.k8s.io/v1
 metadata:
   name: home-control-ingress
-  labels:
-    app: home-control-ingress
+  annotations:
+    kubernetes.io/ingress.class: "traefik"
+    traefik.frontend.rule.type: PathPrefixStrip
 spec:
-  selector:
-    matchLabels:
-      app: home-control-ingress
-  template:
-    metadata:
-      labels:
-        app: home-control-ingress
-    spec:
-      containers:
-      - name: home-control-ingress
-        image: robjenks/home-control-ingress:latest
-        ports:
-        - name: http-port
-          containerPort: 14800
-        - name: envoy-admin
-          containerPort: 9901
-      nodeSelector:
-        kubernetes.io/arch: arm64       # Currently required; no arm-v7 image for rpi
+  rules:
+  - http:
+      paths:
+      - path: /home-control
+        pathType: Prefix
+        backend:
+          service:
+            name: home-control-aggregation-ui
+            port:
+              number: 14800
 
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: home-control-ingress
-  labels:
-    app: home-control-ingress
-spec:
-  type: ClusterIP
-  ports:
-  - name: http-port
-    port: 14800
-    targetPort: http-port
-    protocol: TCP
-  selector:
-    app: home-control-ingress
+#---
+#kind: Deployment
+#apiVersion: apps/v1 
+#metadata:
+#  name: home-control-ingress
+#  labels:
+#    app: home-control-ingress
+#spec:
+#  selector:
+#    matchLabels:
+#      app: home-control-ingress
+#  template:
+#    metadata:
+#      labels:
+#        app: home-control-ingress
+#    spec:
+#      containers:
+#      - name: home-control-ingress
+#        image: robjenks/home-control-ingress:latest
+#        ports:
+#        - name: http-port
+#          containerPort: 14800
+#        - name: envoy-admin
+#          containerPort: 9901
+#      nodeSelector:
+#        kubernetes.io/arch: arm64       # Currently required; no arm-v7 image for rpi
+#
+#---
+#apiVersion: v1
+#kind: Service
+#metadata:
+#  name: home-control-ingress
+#  labels:
+#    app: home-control-ingress
+#spec:
+#  type: ClusterIP
+#  ports:
+#  - name: http-port
+#    port: 14800
+#    targetPort: http-port
+#    protocol: TCP
+#  selector:
+#    app: home-control-ingress
 

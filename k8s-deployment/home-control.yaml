@@ -453,3 +453,45 @@ spec:
     protocol: TCP
   type: NodePort
 
+---
+kind: Deployment
+apiVersion: apps/v1 
+metadata:
+  name: home-control-ingress
+  labels:
+    app: home-control-ingress
+spec:
+  selector:
+    matchLabels:
+      app: home-control-ingress
+  template:
+    metadata:
+      labels:
+        app: home-control-ingress
+    spec:
+      containers:
+      - name: home-control-ingress
+        image: robjenks/home-control-ingress:latest
+        ports:
+        - name: http-port
+          containerPort: 14800
+        - name: envoy-admin
+          containerPort: 9901
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: home-control-ingress
+  labels:
+    app: home-control-ingress
+spec:
+  type: ClusterIP
+  ports:
+  - name: http-port
+    port: 14800
+    targetPort: http-port
+    protocol: TCP
+  selector:
+    app: home-control-ingress
+

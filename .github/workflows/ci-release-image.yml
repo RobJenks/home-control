@@ -56,6 +56,9 @@ jobs:
           TAGS_AGG_UI="${IMAGE}-aggregation-ui:${VERSION}"
           echo "Aggregation UI image: ${TAGS_AGG_UI}"
 
+          TAGS_INGRESS="${IMAGE}-ingress:${VERSION}"
+          echo "Ingress image: ${TAGS_INGRESS}"
+
           TAGS_AWAIR="${IMAGE}-monitor-agent-awair:${VERSION}"
           echo "Awair monitor agent image: ${TAGS_AWAIR}"
 
@@ -68,6 +71,7 @@ jobs:
           echo ::set-output name=image::${IMAGE}
           echo ::set-output name=tags_agg::${TAGS_AGG}
           echo ::set-output name=tags_agg_ui::${TAGS_AGG_UI}
+          echo ::set-output name=tags_ingress::${TAGS_INGRESS}
           echo ::set-output name=tags_awair::${TAGS_AWAIR}
           echo ::set-output name=tags_hue::${TAGS_HUE}
           echo ::set-output name=tags_st::${TAGS_ST}
@@ -107,6 +111,16 @@ jobs:
           push: true
           tags: ${{ steps.prep.outputs.tags_agg_ui }}
 
+      - name: Publish ingress image
+        uses: docker/build-push-action@v2
+        with:
+          builder: ${{ steps.buildx.outputs.name }}
+          context: ./ingress
+          file: ./ingress/Dockerfile
+          platforms: linux/arm/v7,linux/arm64,linux/amd64
+          push: true
+          tags: ${{ steps.prep.outputs.tags_ingress }}
+
       - name: Publish Awair monitor agent image
         uses: docker/build-push-action@v2
         with:
@@ -136,3 +150,4 @@ jobs:
           platforms: linux/arm/v7,linux/arm64,linux/amd64
           push: true
           tags: ${{ steps.prep.outputs.tags_st }}
+

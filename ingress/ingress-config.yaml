@@ -31,7 +31,7 @@ static_resources:
     type: STRICT_DNS
     dns_lookup_family: V4_ONLY
     lb_policy: ROUND_ROBIN
-    http2_protocol_options: {}
+    # http2_protocol_options: {}
     load_assignment:
       cluster_name: home-control-aggregation-ui-cluster
       endpoints:

@@ -451,7 +451,6 @@ spec:
     port: 14800
     targetPort: http-port
     protocol: TCP
-  type: NodePort
 
 ---
 kind: Deployment

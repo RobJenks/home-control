@@ -429,7 +429,7 @@ spec:
           protocol: TCP
         env:
         - name: AGGREGATION_SERVICE_URL
-          value: http://home-control-aggregation:14200
+          value: home-control/service/aggregation
       nodeSelector:
         host.specs: high
   revisionHistoryLimit: 2

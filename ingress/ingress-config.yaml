@@ -22,21 +22,21 @@ static_resources:
               domains: ["*"]
               routes:
               - match: { prefix: "/" }
-                route: { cluster: aggregation_ui_cluster, timeout: 60s }
+                route: { cluster: aggregation-ui-cluster, timeout: 60s }
           http_filters:
           - name: envoy.filters.http.router
   clusters:
-  - name: aggregation_ui_cluster
+  - name: aggregation-ui-cluster
     connect_timeout: 0.25s
     type: STRICT_DNS
     dns_lookup_family: V4_ONLY
     lb_policy: ROUND_ROBIN
     http2_protocol_options: {}
     load_assignment:
-      cluster_name: aggregation_ui_cluster
+      cluster_name: aggregation-ui-cluster
       endpoints:
       - lb_endpoints:
         - endpoint:
             address:
-              socket_address: { address: aggregation_ui, port_value: 14800 }
+              socket_address: { address: aggregation-ui, port_value: 14800 }
 

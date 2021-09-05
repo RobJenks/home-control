@@ -476,6 +476,8 @@ spec:
           containerPort: 14800
         - name: envoy-admin
           containerPort: 9901
+      nodeSelector:
+        kubernetes.io/arch: arm64       # Currently required; no arm-v7 image for rpi
 
 ---
 apiVersion: v1

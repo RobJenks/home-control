@@ -459,7 +459,7 @@ metadata:
   name: home-control-ingress
   annotations:
     kubernetes.io/ingress.class: "traefik"
-    traefik.frontend.rule.type: PathPrefixStrip
+    #    traefik.frontend.rule.type: PathPrefixStrip
 spec:
   rules:
   - http:

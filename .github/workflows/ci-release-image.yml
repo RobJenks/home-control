@@ -101,7 +101,7 @@ jobs:
           push: true
           tags: ${{ steps.prep.outputs.tags_agg }}
 
-      - name: Publish Aggregation UI image
+      - name: Publish aggregation UI image
         uses: docker/build-push-action@v2
         with:
           builder: ${{ steps.buildx.outputs.name }}

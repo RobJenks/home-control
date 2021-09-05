@@ -197,7 +197,8 @@ spec:
     port: 14201
     targetPort: actuator-port
     protocol: TCP
-        
+  type: NodePort    
+
 ---
 kind: Deployment
 apiVersion: apps/v1

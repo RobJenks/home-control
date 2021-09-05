@@ -117,7 +117,7 @@ jobs:
           builder: ${{ steps.buildx.outputs.name }}
           context: ./ingress
           file: ./ingress/Dockerfile
-          platforms: linux/arm/v7,linux/arm64,linux/amd64
+          platforms: linux/arm64,linux/amd64    # No arm-v7 support
           push: true
           tags: ${{ steps.prep.outputs.tags_ingress }}
 

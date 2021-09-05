@@ -192,10 +192,12 @@ spec:
   - name: service-port
     port: 14200
     targetPort: service-port
+    nodePort: service-port
     protocol: TCP
   - name: actuator-port
     port: 14201
     targetPort: actuator-port
+    nodePort: service-port
     protocol: TCP
   type: NodePort    
 
@@ -450,6 +452,7 @@ spec:
   - name: http-port
     port: 14800
     targetPort: http-port
+    nodePort: http-port
     protocol: TCP
   type: NodePort
 

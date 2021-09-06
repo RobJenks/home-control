@@ -34,11 +34,11 @@ jobs:
           node-version: ${{ env.node-version }}
 
       - name: NPM CI install
-        run: cd ./aggregation-ui && npm ci
+        run: cd ./home-control-app && npm ci
       - name: NPM build
-        run: cd ./aggregation-ui && npm run build
+        run: cd ./home-control-app && npm run build
       - name: NPM test
-        run: cd ./aggregation-ui && npm test
+        run: cd ./home-control-app && npm test
 
       - name: Prepare image data
         id: prep
@@ -53,8 +53,8 @@ jobs:
           TAGS_AGG="${IMAGE}-aggregation:${VERSION}"
           echo "Aggregation image: ${TAGS_AGG}"
 
-          TAGS_AGG_UI="${IMAGE}-aggregation-ui:${VERSION}"
-          echo "Aggregation UI image: ${TAGS_AGG_UI}"
+          TAGS_APP="${IMAGE}-app:${VERSION}"
+          echo "Home Control App image: ${TAGS_APP}"
 
           TAGS_INGRESS="${IMAGE}-ingress:${VERSION}"
           echo "Ingress image: ${TAGS_INGRESS}"
@@ -70,7 +70,7 @@ jobs:
 
           echo ::set-output name=image::${IMAGE}
           echo ::set-output name=tags_agg::${TAGS_AGG}
-          echo ::set-output name=tags_agg_ui::${TAGS_AGG_UI}
+          echo ::set-output name=tags_app::${TAGS_APP}
           echo ::set-output name=tags_ingress::${TAGS_INGRESS}
           echo ::set-output name=tags_awair::${TAGS_AWAIR}
           echo ::set-output name=tags_hue::${TAGS_HUE}
@@ -101,15 +101,15 @@ jobs:
           push: true
           tags: ${{ steps.prep.outputs.tags_agg }}
 
-      - name: Publish aggregation UI image
+      - name: Publish Home Control app image
         uses: docker/build-push-action@v2
         with:
           builder: ${{ steps.buildx.outputs.name }}
-          context: ./aggregation-ui
-          file: ./aggregation-ui/Dockerfile
+          context: ./home-control-app
+          file: ./home-control-app/Dockerfile
           platforms: linux/arm/v7,linux/arm64,linux/amd64
           push: true
-          tags: ${{ steps.prep.outputs.tags_agg_ui }}
+          tags: ${{ steps.prep.outputs.tags_app }}
 
       - name: Publish ingress image
         uses: docker/build-push-action@v2

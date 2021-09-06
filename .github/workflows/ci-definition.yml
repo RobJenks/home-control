@@ -33,7 +33,7 @@ jobs:
 
     defaults:
       run:
-        working-directory: ./aggregation-ui
+        working-directory: ./home-control-app
 
     steps:
       - name: Checkout

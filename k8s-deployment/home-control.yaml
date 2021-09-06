@@ -405,24 +405,24 @@ spec:
 kind: Deployment
 apiVersion: apps/v1
 metadata:
-  name: home-control-aggregation-ui
+  name: home-control-app
   namespace: home-control
   labels:
-    entity: home-control-aggregation-ui
-    entityType: aggregation-ui
+    entity: home-control-app
+    entityType: app
 spec:
   replicas: 1
   selector:
     matchLabels:
-      entity: home-control-aggregation-ui
+      entity: home-control-app
   template:
     metadata:
       labels:
-        entity: home-control-aggregation-ui
+        entity: home-control-app
     spec:
       containers:
-      - name: home-control-aggregation-ui
-        image: robjenks/home-control-aggregation-ui:latest
+      - name: home-control-app
+        image: robjenks/home-control-app:latest
         ports:
         - name: http-port
           containerPort: 14800
@@ -438,13 +438,13 @@ spec:
 kind: Service
 apiVersion: v1
 metadata:
-  name: home-control-aggregation-ui
+  name: home-control-app
   namespace: home-control
   labels:
-    entity: home-control-aggregation-ui
+    entity: home-control-app
 spec:
   selector:
-    entity: home-control-aggregation-ui
+    entity: home-control-app
   clusterIP: None       # Headless
   ports:
   - name: http-port
@@ -468,7 +468,7 @@ spec:
         pathType: Prefix
         backend:
           service:
-            name: home-control-aggregation-ui
+            name: home-control-app
             port:
               number: 14800
 

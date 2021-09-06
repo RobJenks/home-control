@@ -27,13 +27,13 @@ function PrimaryWindowPanes() : JSX.Element {
     <div style={{ width: "100%", height: "100%" }}>
         {<SplitViewVertical
             top=
-              {<SplitView
+              {<SplitView initialSplitPosition={800} 
                 left={ PrimaryDisplayPane() }
                 
                 right=
-                {<SplitViewVertical
+                {<SplitViewVertical initialSplitPosition={800}
                   top={<img src="assets/img/logo192.png" alt="placeholder" />}
-                  bottom={<img src="assets/img/logo192.png" alt="placeholder" />}                
+                  bottom={<img src="assets/img/logo192.png" alt="placeholder"/>}                
                 />}
 
               />}

@@ -9,13 +9,16 @@ const MIN_WIDTH = 75;
 interface SplitViewProps {
   left: React.ReactElement;
   right: React.ReactElement;
+  initialSplitPosition?: number | undefined;
   className?: string;
 }
 
 const LeftPane: React.FunctionComponent<{
   leftWidth: number | undefined;
   setLeftWidth: (value: number) => void;
-}> = ({ children, leftWidth, setLeftWidth }) => {
+}> 
+= ({ children, leftWidth, setLeftWidth }) => {
+
   const leftRef = createRef<HTMLDivElement>();
 
   useEffect(() => {
@@ -35,9 +38,10 @@ const LeftPane: React.FunctionComponent<{
 export const SplitView: React.FunctionComponent<SplitViewProps> = ({
   left,
   right,
+  initialSplitPosition,
   className
 }) => {
-  const [leftWidth, setLeftWidth] = useState<undefined | number>(undefined);
+  const [leftWidth, setLeftWidth] = useState<undefined | number>(initialSplitPosition);
   const [separatorXPosition, setSeparatorXPosition] = useState<
     undefined | number
   >(undefined);

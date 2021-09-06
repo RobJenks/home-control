@@ -9,6 +9,7 @@ const MIN_HEIGHT = 75;
 interface SplitViewVerticalProps {
   top: React.ReactElement;
   bottom: React.ReactElement;
+  initialSplitPosition?: number | undefined;
   className?: string;
 }
 
@@ -35,9 +36,10 @@ const TopPane: React.FunctionComponent<{
 export const SplitViewVertical: React.FunctionComponent<SplitViewVerticalProps> = ({
   top,
   bottom,
+  initialSplitPosition,
   className
 }) => {
-  const [topHeight, setTopHeight] = useState<undefined | number>(undefined);
+  const [topHeight, setTopHeight] = useState<undefined | number>(initialSplitPosition);
   const [separatorYPosition, setSeparatorYPosition] = useState<
     undefined | number
   >(undefined);

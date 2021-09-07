@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider, useQuery } from "react-query";
 import * as Events from 'types/events';
 import { SplitView } from 'components/util/splitView'
 import { SplitViewVertical } from 'components/util/splitViewVertical'
+import PrimaryDisplay from 'components/display/primaryDisplay'
 import EventDataStream from 'components/events/eventDataStream'
 
 const queryClient = new QueryClient();
@@ -26,13 +27,13 @@ function PrimaryWindowPanes() : JSX.Element {
     <div style={{ width: "100%", height: "100%" }}>
         {<SplitViewVertical
             top=
-              {<SplitView
-                left={<img src="logo192.png" alt="placeholder"/>}
-                right=
+              {<SplitView initialSplitPosition={800} 
+                left={ PrimaryDisplayPane() }
                 
-                {<SplitViewVertical
-                  top={<img src="logo192.png" alt="placeholder" />}
-                  bottom={<img src="logo192.png" alt="placeholder" />}                
+                right=
+                {<SplitViewVertical initialSplitPosition={800}
+                  top={<img src="assets/img/logo192.png" alt="placeholder" />}
+                  bottom={<img src="assets/img/logo192.png" alt="placeholder"/>}                
                 />}
 
               />}
@@ -41,6 +42,10 @@ function PrimaryWindowPanes() : JSX.Element {
         />}
       </div>
   )
+}
+
+function PrimaryDisplayPane() : JSX.Element {
+  return (<PrimaryDisplay />);
 }
 
 function UpdatesPane() : JSX.Element {

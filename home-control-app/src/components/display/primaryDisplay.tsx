@@ -78,7 +78,7 @@ class PrimaryDisplay extends React.Component<PrimaryDisplayProps, {}> {
         var loc = schematic.location;
         var sz = schematic.size ?? PrimaryDisplay.DEFAULT_DEVICE_ICON_SIZE;
 
-        if (schematic.coordSpace == State.CoordSpace.RELATIVE) {
+        if (schematic.coordSpace === State.CoordSpace.RELATIVE) {
             var room = this.getRoom(device.room);
             if (room) {
                 loc = {
@@ -101,7 +101,7 @@ class PrimaryDisplay extends React.Component<PrimaryDisplayProps, {}> {
     }
 
     getRoom(id: string) : State.Room | undefined {
-        return this.props.state?.rooms.find(x => (x.id == id));
+        return this.props.state?.rooms.find(x => (x.id === id));
     }
 
     setSize(canvas: HTMLCanvasElement) {

@@ -11,6 +11,7 @@ public class Device {
     @JsonProperty("class")
     private DeviceClass deviceClass;
     private String room;
+    private Schematic schematic;
     private DeviceState state;
 
     public Device() { }
@@ -45,6 +46,14 @@ public class Device {
 
     public void setRoom(String room) {
         this.room = room;
+    }
+
+    public Schematic getSchematic() {
+        return schematic;
+    }
+
+    public void setSchematic(Schematic schematic) {
+        this.schematic = schematic;
     }
 
     public DeviceState getState() {

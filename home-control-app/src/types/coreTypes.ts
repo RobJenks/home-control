@@ -9,4 +9,9 @@ declare global {
         y: number
     }
 
+    export type Vector2 = {
+        x: number,
+        y: number
+    }
+
 }

@@ -1,0 +1,262 @@
+home:
+  rooms:
+    - id: livingRoom
+      name: Living Room
+      schematic:
+        location:
+          x: 35
+          y: 5
+        size:
+          x: 60
+          y: 45
+
+    - id: bedroom
+      name: Bedroom
+      schematic:
+        location:
+          x: 45
+          y: 50
+        size:
+          x: 50
+          y: 40
+
+    - id: kitchen
+      name: Kitchen
+      schematic:
+        location:
+          x: 15
+          y: 5
+        size:
+          x: 20
+          y: 35
+
+    - id: hallway
+      name: Hallway
+      schematic:
+        location:
+          x: 5
+          y: 50
+        size:
+          x: 40
+          y: 10
+
+    - id: bathroom
+      name: Bathroom
+      schematic:
+        location:
+          x: 15
+          y: 60
+        size:
+          x: 20
+          y: 30
+
+    - id: utility
+      name: Utility
+      schematic:
+        location:
+          x: 15
+          y: 45
+        size:
+          x: 10
+          y: 5
+
+    - id: none
+      name: None
+
+  devices:
+    - id: Living room Back Left
+      class: hue
+      room: livingRoom
+      schematic:
+        coordSpace: Relative
+        location:
+          x: 20
+          y: 75
+
+    - id: Living room Top Left
+      class: hue
+      room: livingRoom
+      schematic:
+        coordSpace: Relative
+        location:
+          x: 20
+          y: 25
+
+    - id: Living room Top Right
+      class: hue
+      room: livingRoom
+      schematic:
+        coordSpace: Relative
+        location:
+          x: 80
+          y: 25
+
+    - id: Living room Back Right
+      class: hue
+      room: livingRoom
+      schematic:
+        coordSpace: Relative
+        location:
+          x: 80
+          y: 75
+
+    - id: Living room lamp
+      class: hue
+      room: livingRoom
+      schematic:
+        coordSpace: Relative
+        location:
+          x: 92
+          y: 92
+
+    - id: "http://192.168.1.21"
+      name: Awair Living Room
+      class: awair
+      room: livingRoom
+      schematic:
+        coordSpace: Relative
+        location:
+          x: 50
+          y: 50
+
+    - id: 21665446-334e-47fd-bebe-58fa9084b449
+      name: Sonos Playbar
+      class: st
+      room: livingRoom
+      schematic:
+        coordSpace: Relative
+        location:
+          x: 50
+          y: 10
+
+    - id: 6e85dde4-a5d3-4ec6-a128-98db4d9c5caa
+      name: Sonos Surround 1
+      class: st
+      room: livingRoom
+      schematic:
+        coordSpace: Relative
+        location:
+          x: 25
+          y: 90
+
+    - id: ad582b88-4b2e-4039-8808-cf96c0d4771e
+      name: Sonos Surround 2
+      class: st
+      room: livingRoom
+      schematic:
+        coordSpace: Relative
+        location:
+          x: 75
+          y: 90
+
+    - id: Lightstrip
+      name: Living room light strip
+      class: hue
+      room: kitchen
+      schematic:
+        coordSpace: Relative
+        location:
+          x: 20
+          y: 38
+
+    - id: 68d502c6-b32a-482a-9dcf-93b8b5b0ab81
+      name: Kitchen lights
+      class: st
+      room: kitchen
+      schematic:
+        coordSpace: Relative
+        location:
+          x: 20
+          y: 62
+
+    - id: Bedroom Back Left
+      class: hue
+      room: bedroom
+      schematic:
+        coordSpace: Relative
+        location:
+          x: 20
+          y: 25
+
+    - id: Bedroom Top Left
+      class: hue
+      room: bedroom
+      schematic:
+        coordSpace: Relative
+        location:
+          x: 80
+          y: 25
+
+    - id: Bedroom Top Right
+      class: hue
+      room: bedroom
+      schematic:
+        coordSpace: Relative
+        location:
+          x: 80
+          y: 75
+
+    - id: Bedroom Back Right
+      class: hue
+      room: bedroom
+      schematic:
+        coordSpace: Relative
+        location:
+          x: 20
+          y: 75
+
+    - id: "http://192.168.1.25"
+      name: Awair Bedroom
+      class: awair
+      room: bedroom
+      schematic:
+        coordSpace: Relative
+        location:
+          x: 50
+          y: 50
+
+    - id: d39152db-b02a-47e2-9adf-1a63cb7b953d
+      name: Bedroom Sonos
+      class: st
+      room: bedroom
+      schematic:
+        coordSpace: Relative
+        location:
+          x: 82
+          y: 10
+
+    - id: ea91dd8a-f0c5-400d-943f-fbc828df28d6
+      name: Neato Botvac
+      class: st
+      room: bedroom
+      schematic:
+        coordSpace: Relative
+        location:
+          x: 94
+          y: 10
+
+
+    - id: 82d8fc36-7516-413b-bbb3-8f4a1e11a692
+      name: Front door
+      class: st
+      room: hallway
+      schematic:
+        coordSpace: Relative
+        location:
+          x: 0
+          y: 50
+
+    - id: 02487e15-4bd9-4026-9511-86e36f89f84c
+      name: Motion Sensor
+      class: st
+      room: none
+
+    - id: a4987b7c-0f38-4671-afe7-f997c4c0a10f
+      name: Arrival Sensor
+      class: st
+      room: none
+
+    - id: 28ac0a36-5e2e-4bca-bd98-c5663a05983c
+      name: "Rob's iPhone"
+      class: st
+      room: none

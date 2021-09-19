@@ -1,10 +1,15 @@
 import React from 'react';
+import * as State from 'types/state';
 
 
-type PrimaryDisplayProps = { }
+type PrimaryDisplayProps = { 
+    state: State.HomeState | undefined
+}
 
 class PrimaryDisplay extends React.Component<PrimaryDisplayProps, {}> {
-    private static CANVAS_DIM: number = 100.0;
+    private static STD_DIM: number = 100.0;  // Draw functions operate in a normalised [0-100]x[0-100] canvas or container space
+    private static DEFAULT_DEVICE_ICON_SIZE: Vector2 = { x: 5.0, y: 5.0 };
+
     private canvasRef: React.RefObject<HTMLCanvasElement>;
     private size: Point = { x: 100, y: 100};
     private minSize: number = 100;
@@ -24,6 +29,7 @@ class PrimaryDisplay extends React.Component<PrimaryDisplayProps, {}> {
             if (context) {
                 this.clearCanvas(this.canvasRef.current, context);
                 this.drawRooms(context);
+                this.drawDevices(context);
             }
         }
 
@@ -41,12 +47,61 @@ class PrimaryDisplay extends React.Component<PrimaryDisplayProps, {}> {
     }
 
     drawRooms(context: CanvasRenderingContext2D) {
-        let x = 30, y = 30, w = 40, h = 40;
+        if (!this.props.state?.rooms) return;
 
-        context.strokeStyle = "green";
-        context.strokeRect(this.x(x), this.y(y), this.w(w), this.h(h));
-        context.fillStyle = 'rgba(0, 100, 255, 0.1)';
-        context.fillRect(this.x(x), this.y(y), this.w(w), this.h(h));
+        for (var room of this.props.state.rooms) {
+            var schematic = room.schematic;
+            if (!schematic) continue;       // Not renderable
+
+            var loc = this.loc(schematic.location);
+            var sz = this.sz(schematic.size);
+
+            context.strokeStyle = "green";
+            context.strokeRect(loc.x, loc.y, sz.x, sz.y);
+            context.fillStyle = 'rgba(0, 100, 255, 0.1)';
+            context.fillRect(loc.x, loc.y, sz.x, sz.y);
+        }
+    }
+
+    drawDevices(context: CanvasRenderingContext2D) {
+        if (!this.props.state?.devices) return;
+
+        for (var device of this.props.state.devices) {
+            this.drawDevice(context, device);
+        }
+    }
+
+    drawDevice(context: CanvasRenderingContext2D, device: State.Device) {
+        var schematic = device.schematic;
+        if (!schematic || !schematic.location) return;
+
+        var loc = schematic.location;
+        var sz = schematic.size ?? PrimaryDisplay.DEFAULT_DEVICE_ICON_SIZE;
+
+        if (schematic.coordSpace === State.CoordSpace.RELATIVE) {
+            var room = this.getRoom(device.room);
+            if (room) {
+                loc = {
+                    x: room.schematic.location.x + (room.schematic.size.x * (loc.x / PrimaryDisplay.STD_DIM)) - (sz.x * 0.5),
+                    y: room.schematic.location.y + (room.schematic.size.y * (loc.y / PrimaryDisplay.STD_DIM)) - (sz.y * 0.5),
+                };
+
+                // TODO: For now, no sizing relative to parent
+                // sz = ...
+            }
+        }
+
+        loc = this.loc(loc); 
+        sz = this.sz(sz);
+
+        context.strokeStyle = "blue";
+        context.strokeRect(loc.x, loc.y, sz.x, sz.y);
+        context.fillStyle = 'rgba(0, 0, 255, 0.5)';
+        context.fillRect(loc.x, loc.y, sz.x, sz.y);
+    }
+
+    getRoom(id: string) : State.Room | undefined {
+        return this.props.state?.rooms.find(x => (x.id === id));
     }
 
     setSize(canvas: HTMLCanvasElement) {
@@ -65,7 +120,7 @@ class PrimaryDisplay extends React.Component<PrimaryDisplayProps, {}> {
             this.centeringTranslation = { x: 0, y: xExceedsY * -0.5 };
         }
 
-        this.drawMultiplier = this.minSize / PrimaryDisplay.CANVAS_DIM;
+        this.drawMultiplier = this.minSize / PrimaryDisplay.STD_DIM;
     }
 
     x(x: number): number {
@@ -79,9 +134,17 @@ class PrimaryDisplay extends React.Component<PrimaryDisplayProps, {}> {
     w(w: number): number {
         return (this.drawMultiplier * w);
     }
-    
+
     h(h: number): number {
         return (this.drawMultiplier * h);
+    }
+
+    loc(loc: Vector2) : Vector2 {
+        return { x: this.x(loc.x), y: this.y(loc.y) };
+    }
+
+    sz(sz: Vector2) : Vector2 {
+        return { x: this.w(sz.x), y: this.h(sz.y) };
     }
 }
 

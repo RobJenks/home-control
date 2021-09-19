@@ -3,6 +3,7 @@ import React from 'react';
 import axios, * as Axios from "axios"
 import { QueryClient, QueryClientProvider, useQuery } from "react-query";
 import * as Events from 'types/events';
+import * as State from 'types/state';
 import { SplitView } from 'components/util/splitView'
 import { SplitViewVertical } from 'components/util/splitViewVertical'
 import PrimaryDisplay from 'components/display/primaryDisplay'
@@ -45,18 +46,35 @@ function PrimaryWindowPanes() : JSX.Element {
 }
 
 function PrimaryDisplayPane() : JSX.Element {
-  return (<PrimaryDisplay />);
+  const [statePollIntervalMs, ] = React.useState(3000);
+  const targetUrl = window.config.aggregationServiceUrl + "/state";
+
+  const { data, error } = 
+    useQuery<Axios.AxiosResponse<State.HomeState>, Error>("stateQuery", 
+    async () => axios.get<State.HomeState>(targetUrl),
+    {
+      refetchInterval: statePollIntervalMs
+    }
+  );
+
+  if (error) {
+    var err = "Query error: " + error.message;
+    console.error(err);
+    return (<p>{err}</p>);
+  }
+
+  return (<PrimaryDisplay state={data?.data} />);
 }
 
 function UpdatesPane() : JSX.Element {
-  const [pollIntervalMs, ] = React.useState(2000);
+  const [updatesPollIntervalMs, ] = React.useState(2000);
   const targetUrl = window.config.aggregationServiceUrl + "/updates?count=40";
 
   const { data, error } = 
-    useQuery<Axios.AxiosResponse<Events.ResponseData>, Error>("testDataQuery", 
+    useQuery<Axios.AxiosResponse<Events.ResponseData>, Error>("updateQuery", 
     async () => axios.get<Events.ResponseData>(targetUrl),
     {
-      refetchInterval: pollIntervalMs
+      refetchInterval: updatesPollIntervalMs
     }
   );
 

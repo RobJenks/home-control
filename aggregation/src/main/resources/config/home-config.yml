@@ -66,6 +66,7 @@ home:
   devices:
     - id: Living room Back Left
       class: hue
+      deviceType: light
       room: livingRoom
       schematic:
         coordSpace: Relative
@@ -75,6 +76,7 @@ home:
 
     - id: Living room Top Left
       class: hue
+      deviceType: light
       room: livingRoom
       schematic:
         coordSpace: Relative
@@ -84,6 +86,7 @@ home:
 
     - id: Living room Top Right
       class: hue
+      deviceType: light
       room: livingRoom
       schematic:
         coordSpace: Relative
@@ -93,6 +96,7 @@ home:
 
     - id: Living room Back Right
       class: hue
+      deviceType: light
       room: livingRoom
       schematic:
         coordSpace: Relative
@@ -102,6 +106,7 @@ home:
 
     - id: Living room lamp
       class: hue
+      deviceType: light
       room: livingRoom
       schematic:
         coordSpace: Relative
@@ -112,6 +117,7 @@ home:
     - id: "http://192.168.1.21"
       name: Awair Living Room
       class: awair
+      deviceType: environmentSensor
       room: livingRoom
       schematic:
         coordSpace: Relative
@@ -122,6 +128,7 @@ home:
     - id: 21665446-334e-47fd-bebe-58fa9084b449
       name: Sonos Playbar
       class: st
+      deviceType: speaker
       room: livingRoom
       schematic:
         coordSpace: Relative
@@ -132,6 +139,7 @@ home:
     - id: 6e85dde4-a5d3-4ec6-a128-98db4d9c5caa
       name: Sonos Surround 1
       class: st
+      deviceType: speaker
       room: livingRoom
       schematic:
         coordSpace: Relative
@@ -142,6 +150,7 @@ home:
     - id: ad582b88-4b2e-4039-8808-cf96c0d4771e
       name: Sonos Surround 2
       class: st
+      deviceType: speaker
       room: livingRoom
       schematic:
         coordSpace: Relative
@@ -152,6 +161,7 @@ home:
     - id: Lightstrip
       name: Living room light strip
       class: hue
+      deviceType: light
       room: kitchen
       schematic:
         coordSpace: Relative
@@ -162,6 +172,7 @@ home:
     - id: 68d502c6-b32a-482a-9dcf-93b8b5b0ab81
       name: Kitchen lights
       class: st
+      deviceType: light
       room: kitchen
       schematic:
         coordSpace: Relative
@@ -171,6 +182,7 @@ home:
 
     - id: Bedroom Back Left
       class: hue
+      deviceType: light
       room: bedroom
       schematic:
         coordSpace: Relative
@@ -180,6 +192,7 @@ home:
 
     - id: Bedroom Top Left
       class: hue
+      deviceType: light
       room: bedroom
       schematic:
         coordSpace: Relative
@@ -189,6 +202,7 @@ home:
 
     - id: Bedroom Top Right
       class: hue
+      deviceType: light
       room: bedroom
       schematic:
         coordSpace: Relative
@@ -198,6 +212,7 @@ home:
 
     - id: Bedroom Back Right
       class: hue
+      deviceType: light
       room: bedroom
       schematic:
         coordSpace: Relative
@@ -208,6 +223,7 @@ home:
     - id: "http://192.168.1.25"
       name: Awair Bedroom
       class: awair
+      deviceType: environmentSensor
       room: bedroom
       schematic:
         coordSpace: Relative
@@ -218,6 +234,7 @@ home:
     - id: d39152db-b02a-47e2-9adf-1a63cb7b953d
       name: Bedroom Sonos
       class: st
+      deviceType: speaker
       room: bedroom
       schematic:
         coordSpace: Relative
@@ -228,6 +245,7 @@ home:
     - id: ea91dd8a-f0c5-400d-943f-fbc828df28d6
       name: Neato Botvac
       class: st
+      deviceType: vacuum
       room: bedroom
       schematic:
         coordSpace: Relative
@@ -239,6 +257,7 @@ home:
     - id: 82d8fc36-7516-413b-bbb3-8f4a1e11a692
       name: Front door
       class: st
+      deviceType: entrySensor
       room: hallway
       schematic:
         coordSpace: Relative
@@ -249,14 +268,17 @@ home:
     - id: 02487e15-4bd9-4026-9511-86e36f89f84c
       name: Motion Sensor
       class: st
+      deviceType: motionSensor
       room: none
 
     - id: a4987b7c-0f38-4671-afe7-f997c4c0a10f
       name: Arrival Sensor
       class: st
+      deviceType: tracker
       room: none
 
     - id: 28ac0a36-5e2e-4bca-bd98-c5663a05983c
       name: "Rob's iPhone"
       class: st
+      deviceType: phone
       room: none

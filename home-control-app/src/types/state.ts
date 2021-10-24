@@ -13,6 +13,7 @@ export type Device = {
     id: string,
     name: string,
     deviceClass: string,
+    deviceType: string,
     room: string,
     schematic: Schematic,
     state: string

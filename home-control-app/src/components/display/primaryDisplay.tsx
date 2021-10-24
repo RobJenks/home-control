@@ -94,14 +94,26 @@ class PrimaryDisplay extends React.Component<PrimaryDisplayProps, {}> {
         loc = this.loc(loc); 
         sz = this.sz(sz);
 
-        context.strokeStyle = "blue";
-        context.strokeRect(loc.x, loc.y, sz.x, sz.y);
-        context.fillStyle = 'rgba(0, 0, 255, 0.5)';
-        context.fillRect(loc.x, loc.y, sz.x, sz.y);
+        var img = this.getDeviceImage(device.deviceType);
+        context.drawImage(img, loc.x, loc.y, sz.x, sz.y);
+
+        if (!img.complete) {
+            console.debug("Failed to load device image for type '" + device.deviceType + "'");
+            context.fillStyle = 'rgba(255, 0, 0, 0.5)';
+            context.fillRect(loc.x, loc.y, sz.x, sz.y);
+        }
     }
 
     getRoom(id: string) : State.Room | undefined {
         return this.props.state?.rooms.find(x => (x.id === id));
+    }
+
+    getDeviceImage(type: string) : HTMLImageElement {
+        if (!type) type = "unknown";
+
+        var img = new Image();
+        img.src="assets/icons/icon-" + type + ".png";
+        return img;
     }
 
     setSize(canvas: HTMLCanvasElement) {

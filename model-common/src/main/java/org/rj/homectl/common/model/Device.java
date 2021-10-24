@@ -10,6 +10,7 @@ public class Device {
     private String name;
     @JsonProperty("class")
     private DeviceClass deviceClass;
+    private String deviceType;
     private String room;
     private Schematic schematic;
     private DeviceState state;
@@ -34,6 +35,14 @@ public class Device {
 
     public void setDeviceClass(DeviceClass deviceClass) {
         this.deviceClass = deviceClass;
+    }
+
+    public String getDeviceType() {
+        return deviceType;
+    }
+
+    public void setDeviceType(String deviceType) {
+        this.deviceType = deviceType;
     }
 
     public void setName(String name) {

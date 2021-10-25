@@ -16,7 +16,7 @@ export type Device = {
     deviceType: string,
     room: string,
     schematic: Schematic,
-    state: string
+    state: object
 }
 
 export const CoordSpace = {

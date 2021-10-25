@@ -1,4 +1,5 @@
 import React from 'react';
+import { LightState } from 'types/devices/lightState';
 import * as State from 'types/state';
 
 
@@ -94,13 +95,17 @@ class PrimaryDisplay extends React.Component<PrimaryDisplayProps, {}> {
         loc = this.loc(loc); 
         sz = this.sz(sz);
 
-        var img = this.getDeviceImage(device.deviceType);
-        context.drawImage(img, loc.x, loc.y, sz.x, sz.y);
+        this.drawDeviceAt(context, device, loc, sz);
+    }
+
+    drawDeviceAt(context: CanvasRenderingContext2D, device: State.Device, location: Vector2, size: Vector2) {
+        var img = this.getDeviceImage(device);
+        context.drawImage(img, location.x, location.y, size.x, size.y);
 
         if (!img.complete) {
             console.debug("Failed to load device image for type '" + device.deviceType + "'");
             context.fillStyle = 'rgba(255, 0, 0, 0.5)';
-            context.fillRect(loc.x, loc.y, sz.x, sz.y);
+            context.fillRect(location.x, location.y, size.x, size.y);
         }
     }
 
@@ -108,12 +113,29 @@ class PrimaryDisplay extends React.Component<PrimaryDisplayProps, {}> {
         return this.props.state?.rooms.find(x => (x.id === id));
     }
 
-    getDeviceImage(type: string) : HTMLImageElement {
-        if (!type) type = "unknown";
+    getDeviceImage(device: State.Device) : HTMLImageElement {
+        if (!device) return this.getDeviceImageByType("unknown");
 
+        switch (device.deviceType) {
+            case "light": return this.getLightDeviceImage(device);
+
+            default: return this.getDeviceImageByType(device.deviceType);
+        }
+    }
+
+    getDeviceImageByType(type: string) : HTMLImageElement {
         var img = new Image();
         img.src="assets/icons/icon-" + type + ".png";
         return img;
+    }
+
+    getLightDeviceImage(device: State.Device) : HTMLImageElement {
+        console.log("Light state: " + JSON.stringify(device.state));
+        var state = device.state as LightState;
+        
+        if (!state) return this.getDeviceImageByType("light");
+
+        return (state.on ? this.getDeviceImageByType("light-on") : this.getDeviceImageByType("light"));
     }
 
     setSize(canvas: HTMLCanvasElement) {

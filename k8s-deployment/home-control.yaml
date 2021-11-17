@@ -515,7 +515,7 @@ spec:
         entityType: grafana
     spec:
       securityContext:
-        runAsUser: 472
+        runAsUser: 0
         fsGroup: 472
         supplementalGroups:
           - 0

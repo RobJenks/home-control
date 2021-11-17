@@ -6,6 +6,8 @@ metadata:
   labels:
     name: home-control
 
+
+### Zookeeper
 ---
 kind: Deployment
 apiVersion: apps/v1
@@ -72,6 +74,8 @@ spec:
     targetPort: leader-port
     protocol: TCP
 
+
+### Kafka
 ---
 kind: Deployment
 apiVersion: apps/v1
@@ -140,6 +144,7 @@ spec:
     targetPort: internal-port
     protocol: TCP
 
+# Aggregation
 ---
 kind: Deployment
 apiVersion: apps/v1
@@ -198,6 +203,7 @@ spec:
     targetPort: actuator-port
     protocol: TCP
 
+# Monitor (Awair)
 ---
 kind: Deployment
 apiVersion: apps/v1
@@ -262,6 +268,7 @@ spec:
     targetPort: actuator-port
     protocol: TCP
 
+# Monitor (Hue)
 ---
 kind: Deployment
 apiVersion: apps/v1
@@ -331,6 +338,7 @@ spec:
     targetPort: actuator-port
     protocol: TCP
 
+# Monitor (ST)
 ---
 kind: Deployment
 apiVersion: apps/v1
@@ -400,7 +408,7 @@ spec:
     targetPort: actuator-port
     protocol: TCP
 
-
+# App UI
 ---
 kind: Deployment
 apiVersion: apps/v1
@@ -452,6 +460,7 @@ spec:
     targetPort: http-port
     protocol: TCP
 
+# Ingress controller
 ---
 kind: Ingress
 apiVersion: networking.k8s.io/v1
@@ -472,47 +481,97 @@ spec:
             port:
               number: 14800
 
-#---
-#kind: Deployment
-#apiVersion: apps/v1 
-#metadata:
-#  name: home-control-ingress
-#  labels:
-#    app: home-control-ingress
-#spec:
-#  selector:
-#    matchLabels:
-#      app: home-control-ingress
-#  template:
-#    metadata:
-#      labels:
-#        app: home-control-ingress
-#    spec:
-#      containers:
-#      - name: home-control-ingress
-#        image: robjenks/home-control-ingress:latest
-#        ports:
-#        - name: http-port
-#          containerPort: 14800
-#        - name: envoy-admin
-#          containerPort: 9901
-#      nodeSelector:
-#        kubernetes.io/arch: arm64       # Currently required; no arm-v7 image for rpi
-#
-#---
-#apiVersion: v1
-#kind: Service
-#metadata:
-#  name: home-control-ingress
-#  labels:
-#    app: home-control-ingress
-#spec:
-#  type: ClusterIP
-#  ports:
-#  - name: http-port
-#    port: 14800
-#    targetPort: http-port
-#    protocol: TCP
-#  selector:
-#    app: home-control-ingress
+# Grafana
+---
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: home-control-grafana-pvc
+  namespace: home-control
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
 
+---
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: home-control-grafana
+  namespace: home-control
+  labels:
+    entity: home-control-grafana
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      entity: home-control-grafana
+  template:
+    metadata:
+      labels:
+        entity: home-control-grafana
+        entityType: grafana
+    spec:
+      securityContext:
+        runAsUser: 0
+        fsGroup: 472
+        supplementalGroups:
+          - 0
+      containers:
+      - name: home-control-grafana
+        image: grafana/grafana:7.5.2
+        ports:
+        - containerPort: 3000
+          name: http-grafana
+          protocol: TCP
+        readinessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /robots.txt
+            port: 3000
+            scheme: HTTP
+          initialDelaySeconds: 10
+          periodSeconds: 30
+          successThreshold: 1
+          timeoutSeconds: 2
+        livenessProbe:
+          failureThreshold: 3
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          successThreshold: 1
+          tcpSocket:
+            port: 3000
+          timeoutSeconds: 1
+        resources:
+          requests:
+            cpu: 250m
+            memory: 750Mi
+        volumeMounts:
+        - mountPath: /var/lib/grafana
+          name: home-control-grafana-pv
+      nodeSelector:
+        host.specs: high
+      volumes:
+      - name: home-control-grafana-pv
+        persistentVolumeClaim:
+          claimName: home-control-grafana-pvc
+
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: home-control-grafana
+  namespace: home-control
+  labels:
+    entity: home-control-grafana
+spec:
+  selector:
+    entity: home-control-grafana
+ # type: LoadBalancer
+ # sessionAffinity: None
+  ports:
+  - port: 3000
+    protocol: TCP
+    targetPort: http-grafana

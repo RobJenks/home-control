@@ -38,7 +38,7 @@ public class AggregationService implements RecordInfoConsumer<String, StatusEven
         this.config = config;
         this.state = initialiseState(config.get(ConfigEntry.AggregationConfig));
 
-        this.metricsExporter = new MetricsExporter(12481);
+        this.metricsExporter = new MetricsExporter(config.getInteger(ConfigEntry.AggregationMetricsPort));
 
         this.awairEventProcessor = new AwairEventProcessor(this.state, this.metricsExporter);
         this.hueEventProcessor = new HueEventProcessor(this.state, this.metricsExporter);

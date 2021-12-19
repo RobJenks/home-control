@@ -16,6 +16,8 @@ aggregation:
   config: config/home-config.yml
   logging:
     logInboundRecords: true
+  metrics:
+    port: 14202
 
 consumer:
   id: status-consumer-01

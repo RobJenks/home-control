@@ -1,3 +1,91 @@
+### Grafana Agent Operator ###
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: home-control-grafana-agent-operator
+  namespace: home-control
+  labels:
+    app: home-control-grafana-agent-operator
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: home-control-grafana-agent-operator
+  template:
+    metadata:
+      labels:
+        app: home-control-grafana-agent-operator
+    spec:
+      serviceAccountName: home-control-grafana-agent-operator
+      containers:
+        - name: operator
+          image: grafana/agent-operator:v0.21.2
+          args:
+            - --kubelet-service=default/kubelet
+---
+
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: home-control-grafana-agent-operator
+  namespace: default
+
+---
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: home-control-grafana-agent-operator
+rules:
+  - apiGroups: [monitoring.grafana.com]
+    resources:
+      - grafanaagents
+      - metricsinstances
+      - logsinstances
+      - podlogs
+    verbs: [get, list, watch]
+  - apiGroups: [monitoring.coreos.com]
+    resources:
+      - podmonitors
+      - probes
+      - servicemonitors
+    verbs: [get, list, watch]
+  - apiGroups: [""]
+    resources:
+      - namespaces
+      - nodes
+    verbs: [get, list, watch]
+  - apiGroups: [""]
+    resources:
+      - secrets
+      - services
+      - configmaps
+      - endpoints
+    verbs: [get, list, watch, create, update, patch, delete]
+  - apiGroups: ["apps"]
+    resources:
+      - statefulsets
+      - daemonsets
+    verbs: [get, list, watch, create, update, patch, delete]
+
+---
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: home-control-grafana-agent-operator
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: home-control-grafana-agent-operator
+subjects:
+  - kind: ServiceAccount
+    name: home-control-grafana-agent-operator
+    namespace: default
+
+
+### Grafana Agent ###
 ---
 apiVersion: monitoring.grafana.com/v1alpha1
 kind: GrafanaAgent
@@ -123,6 +211,7 @@ apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
   name: aggregation-metrics-monitor
+  namespace: home-control
   labels:
     app: home-control-aggregation
 spec:

@@ -12,12 +12,15 @@ import org.rj.homectl.common.model.HomeState;
 import org.rj.homectl.common.util.Util;
 import org.rj.homectl.kafka.consumer.handlers.ConsumerRecordInfo;
 import org.rj.homectl.kafka.consumer.handlers.RecordInfoConsumer;
+import org.rj.homectl.metrics.MetricsExporter;
 import org.rj.homectl.status.awair.AwairStatusEvent;
 import org.rj.homectl.status.events.StatusEvent;
 import org.rj.homectl.status.hue.HueStatusEvent;
 import org.rj.homectl.status.st.StStatusEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.Random;
 
 
 public class AggregationService implements RecordInfoConsumer<String, StatusEvent> {
@@ -28,15 +31,18 @@ public class AggregationService implements RecordInfoConsumer<String, StatusEven
     private final AwairEventProcessor awairEventProcessor;
     private final HueEventProcessor hueEventProcessor;
     private final StEventProcessor stEventProcessor;
+    private final MetricsExporter metricsExporter;
 
     public AggregationService(final Aggregation parent, final Config config) {
         this.parent = parent;
         this.config = config;
         this.state = initialiseState(config.get(ConfigEntry.AggregationConfig));
 
-        this.awairEventProcessor = new AwairEventProcessor(this.state);
-        this.hueEventProcessor = new HueEventProcessor(this.state);
-        this.stEventProcessor = new StEventProcessor(this.state);
+        this.metricsExporter = new MetricsExporter(12481);
+
+        this.awairEventProcessor = new AwairEventProcessor(this.state, this.metricsExporter);
+        this.hueEventProcessor = new HueEventProcessor(this.state, this.metricsExporter);
+        this.stEventProcessor = new StEventProcessor(this.state, this.metricsExporter);
     }
 
     private AggregateState initialiseState(String configLocation) {

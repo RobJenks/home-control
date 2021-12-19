@@ -4,6 +4,7 @@ import org.rj.homectl.aggregation.state.AggregateState;
 import org.rj.homectl.common.model.DeviceClass;
 import org.rj.homectl.common.util.Util;
 import org.rj.homectl.hue.model.state.HueDeviceState;
+import org.rj.homectl.metrics.MetricsExporter;
 import org.rj.homectl.status.hue.HueEventType;
 import org.rj.homectl.status.hue.HueStatusEvent;
 import org.rj.homectl.status.hue.HueStatusLightData;
@@ -15,8 +16,8 @@ import static org.jooq.lambda.tuple.Tuple.*;
 public class HueEventProcessor extends AbstractEventProcessor<HueStatusEvent> {
     private static final Logger LOG = LoggerFactory.getLogger(HueEventProcessor.class);
 
-    public HueEventProcessor(final AggregateState state) {
-        super(state);
+    public HueEventProcessor(final AggregateState state, final MetricsExporter metricsExporter) {
+        super(state, metricsExporter);
     }
 
     @Override

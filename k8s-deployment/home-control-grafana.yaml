@@ -22,14 +22,14 @@ spec:
         - name: operator
           image: grafana/agent-operator:v0.21.2
           args:
-            - --kubelet-service=default/kubelet
+            - --kubelet-service=home-control/kubelet
 ---
 
 apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: home-control-grafana-agent-operator
-  namespace: default
+  namespace: home-control
 
 ---
 
@@ -37,6 +37,7 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
   name: home-control-grafana-agent-operator
+  namespace: home-control
 rules:
   - apiGroups: [monitoring.grafana.com]
     resources:
@@ -75,6 +76,7 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
   name: home-control-grafana-agent-operator
+  namespace: home-control
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
@@ -82,7 +84,7 @@ roleRef:
 subjects:
   - kind: ServiceAccount
     name: home-control-grafana-agent-operator
-    namespace: default
+    namespace: home-control
 
 
 ### Grafana Agent ###

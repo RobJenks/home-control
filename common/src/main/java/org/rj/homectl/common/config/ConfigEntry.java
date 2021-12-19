@@ -9,6 +9,7 @@ public enum ConfigEntry {
     PollDurationSec("poll.duration.secs"),
     AggregationConfig("aggregation.config"),
     AggregationLogInboundRecords("aggregation.logging.logInboundRecords"),
+    AggregationMetricsPort("aggregation.metrics.port"),
     MonitorSensor("monitor.sensor"),
     MonitorSensors("monitor.sensors"),
     MonitorQuery("monitor.query"),

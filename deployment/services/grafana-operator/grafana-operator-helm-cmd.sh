@@ -1,0 +1,1 @@
+sudo helm install home-control-grafana-operator grafana/grafana-agent-operator -f helm-values.yaml -n home-control --debug --kubeconfig=/etc/rancher/k3s/k3s.yaml --kube-context=home-control

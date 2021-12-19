@@ -1,0 +1,136 @@
+### Grafana Agent ###
+---
+apiVersion: monitoring.grafana.com/v1alpha1
+kind: GrafanaAgent
+metadata:
+  name: home-control-grafana-agent
+  namespace: home-control
+  labels:
+    app: home-control-grafana-agent
+spec:
+  image: grafana/agent:v0.21.2
+  logLevel: info
+  serviceAccountName: home-control-grafana-agent
+  metrics:
+    instanceSelector:
+      matchLabels:
+        agent: home-control-grafana-agent-metrics
+    externalLabels:
+      cluster: cloud
+  logs:
+    instanceSelector:
+      matchLabels:
+        agent: home-control-grafana-agent-logs
+
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: home-control-grafana-agent
+  namespace: home-control
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: home-control-grafana-agent
+  namespace: home-control
+rules:
+  - apiGroups:
+      - ""
+    resources:
+      - nodes
+      - nodes/proxy
+      - nodes/metrics
+      - services
+      - endpoints
+      - pods
+    verbs:
+      - get
+      - list
+      - watch
+  - apiGroups:
+      - networking.k8s.io
+    resources:
+      - ingresses
+    verbs:
+      - get
+      - list
+      - watch
+  - nonResourceURLs:
+      - /metrics
+      - /metrics/cadvisor
+    verbs:
+      - get
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: home-control-grafana-agent
+  namespace: home-control
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: home-control-grafana-agent
+subjects:
+  - kind: ServiceAccount
+    name: home-control-grafana-agent
+    namespace: home-control
+
+# Aggregation metrics collector
+---
+apiVersion: monitoring.grafana.com/v1alpha1
+kind: MetricsInstance
+metadata:
+  name: home-control-metrics
+  namespace: home-control
+  labels:
+    agent: home-control-grafana-agent-metrics
+spec:
+  remoteWrite:
+    - url: https://prometheus-prod-10-prod-us-central-0.grafana.net/api/prom/push
+      basicAuth:
+        username:
+          name: grafana-auth
+          key: username
+        password:
+          name: grafana-auth
+          key: password
+
+  # Supply an empty namespace selector to look in all namespaces. Remove
+  # this to only look in the same namespace as the MetricsInstance CR
+  serviceMonitorNamespaceSelector: {}
+  serviceMonitorSelector:
+    matchLabels:
+      instance: home-control-metrics
+
+  # Supply an empty namespace selector to look in all namespaces. Remove
+  # this to only look in the same namespace as the MetricsInstance CR.
+  podMonitorNamespaceSelector: {}
+  podMonitorSelector:
+    matchLabels:
+      instance: home-control-metrics
+
+  # Supply an empty namespace selector to look in all namespaces. Remove
+  # this to only look in the same namespace as the MetricsInstance CR.
+  probeNamespaceSelector: {}
+  probeSelector:
+    matchLabels:
+      instance: home-control-metrics
+
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: aggregation-metrics-monitor
+  namespace: home-control
+  labels:
+    app: home-control-aggregation
+spec:
+  endpoints:
+    - interval: 10s
+      port: metrics-port
+  selector:
+    matchLabels:
+      app: home-control-aggregation

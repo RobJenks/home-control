@@ -174,6 +174,9 @@ spec:
         - name: actuator-port
           containerPort: 14201
           protocol: TCP
+        - name: metrics-port
+          containerPort: 14202
+          protocol: TCP
         env:
         - name: BOOTSTRAP_SERVERS
           value: http://home-control-kafka-brokers:29092
@@ -201,6 +204,10 @@ spec:
   - name: actuator-port
     port: 14201
     targetPort: actuator-port
+    protocol: TCP
+  - name: metrics-port
+    port: 14202
+    targetPort: metrics-port
     protocol: TCP
 
 # Monitor (Awair)
@@ -482,96 +489,96 @@ spec:
               number: 14800
 
 # Grafana
----
-kind: PersistentVolumeClaim
-apiVersion: v1
-metadata:
-  name: home-control-grafana-pvc
-  namespace: home-control
-spec:
-  accessModes:
-    - ReadWriteOnce
-  resources:
-    requests:
-      storage: 1Gi
-
----
-kind: Deployment
-apiVersion: apps/v1
-metadata:
-  name: home-control-grafana
-  namespace: home-control
-  labels:
-    entity: home-control-grafana
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      entity: home-control-grafana
-  template:
-    metadata:
-      labels:
-        entity: home-control-grafana
-        entityType: grafana
-    spec:
-      securityContext:
-        runAsUser: 0
-        fsGroup: 472
-        supplementalGroups:
-          - 0
-      containers:
-      - name: home-control-grafana
-        image: grafana/grafana:7.5.2
-        ports:
-        - containerPort: 3000
-          name: http-grafana
-          protocol: TCP
-        readinessProbe:
-          failureThreshold: 3
-          httpGet:
-            path: /robots.txt
-            port: 3000
-            scheme: HTTP
-          initialDelaySeconds: 10
-          periodSeconds: 30
-          successThreshold: 1
-          timeoutSeconds: 2
-        livenessProbe:
-          failureThreshold: 3
-          initialDelaySeconds: 30
-          periodSeconds: 10
-          successThreshold: 1
-          tcpSocket:
-            port: 3000
-          timeoutSeconds: 1
-        resources:
-          requests:
-            cpu: 250m
-            memory: 750Mi
-        volumeMounts:
-        - mountPath: /var/lib/grafana
-          name: home-control-grafana-pv
-      nodeSelector:
-        host.specs: high
-      volumes:
-      - name: home-control-grafana-pv
-        persistentVolumeClaim:
-          claimName: home-control-grafana-pvc
-
----
-kind: Service
-apiVersion: v1
-metadata:
-  name: home-control-grafana
-  namespace: home-control
-  labels:
-    entity: home-control-grafana
-spec:
-  selector:
-    entity: home-control-grafana
- # type: LoadBalancer
- # sessionAffinity: None
-  ports:
-  - port: 3000
-    protocol: TCP
-    targetPort: http-grafana
+#---
+#kind: PersistentVolumeClaim
+#apiVersion: v1
+#metadata:
+#  name: home-control-grafana-pvc
+#  namespace: home-control
+#spec:
+#  accessModes:
+#    - ReadWriteOnce
+#  resources:
+#    requests:
+#      storage: 1Gi
+#
+#---
+#kind: Deployment
+#apiVersion: apps/v1
+#metadata:
+#  name: home-control-grafana
+#  namespace: home-control
+#  labels:
+#    entity: home-control-grafana
+#spec:
+#  replicas: 1
+#  selector:
+#    matchLabels:
+#      entity: home-control-grafana
+#  template:
+#    metadata:
+#      labels:
+#        entity: home-control-grafana
+#        entityType: grafana
+#    spec:
+#      securityContext:
+#        runAsUser: 0
+#        fsGroup: 472
+#        supplementalGroups:
+#          - 0
+#      containers:
+#      - name: home-control-grafana
+#        image: grafana/grafana:7.5.2
+#        ports:
+#        - containerPort: 3000
+#          name: http-grafana
+#          protocol: TCP
+#        readinessProbe:
+#          failureThreshold: 3
+#          httpGet:
+#            path: /robots.txt
+#            port: 3000
+#            scheme: HTTP
+#          initialDelaySeconds: 10
+#          periodSeconds: 30
+#          successThreshold: 1
+#          timeoutSeconds: 2
+#        livenessProbe:
+#          failureThreshold: 3
+#          initialDelaySeconds: 30
+#          periodSeconds: 10
+#          successThreshold: 1
+#          tcpSocket:
+#            port: 3000
+#          timeoutSeconds: 1
+#        resources:
+#          requests:
+#            cpu: 250m
+#            memory: 750Mi
+#        volumeMounts:
+#        - mountPath: /var/lib/grafana
+#          name: home-control-grafana-pv
+#      nodeSelector:
+#        host.specs: high
+#      volumes:
+#      - name: home-control-grafana-pv
+#        persistentVolumeClaim:
+#          claimName: home-control-grafana-pvc
+#
+#---
+#kind: Service
+#apiVersion: v1
+#metadata:
+#  name: home-control-grafana
+#  namespace: home-control
+#  labels:
+#    entity: home-control-grafana
+#spec:
+#  selector:
+#    entity: home-control-grafana
+# # type: LoadBalancer
+# # sessionAffinity: None
+#  ports:
+#  - port: 3000
+#    protocol: TCP
+#    targetPort: http-grafana

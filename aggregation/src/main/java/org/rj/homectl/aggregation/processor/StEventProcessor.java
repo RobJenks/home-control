@@ -2,6 +2,7 @@ package org.rj.homectl.aggregation.processor;
 
 import org.rj.homectl.aggregation.state.AggregateState;
 import org.rj.homectl.common.model.DeviceClass;
+import org.rj.homectl.metrics.MetricsExporter;
 import org.rj.homectl.st.model.state.StDeviceState;
 import org.rj.homectl.status.st.StDeviceListing;
 import org.rj.homectl.status.st.StDeviceStatuses;
@@ -11,8 +12,8 @@ import org.rj.homectl.status.st.StStatusEvent;
 import static org.jooq.lambda.tuple.Tuple.*;
 
 public class StEventProcessor extends AbstractEventProcessor<StStatusEvent> {
-    public StEventProcessor(AggregateState state) {
-        super(state);
+    public StEventProcessor(AggregateState state, final MetricsExporter metricsExporter) {
+        super(state, metricsExporter);
     }
 
     @Override

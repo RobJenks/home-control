@@ -98,23 +98,16 @@ spec:
           name: grafana-auth
           key: password
 
-  # Supply an empty namespace selector to look in all namespaces. Remove
-  # this to only look in the same namespace as the MetricsInstance CR
   serviceMonitorNamespaceSelector: {}
   serviceMonitorSelector:
     matchLabels:
       instance: home-control-metrics
 
-  # Supply an empty namespace selector to look in all namespaces. Remove
-  # this to only look in the same namespace as the MetricsInstance CR.
   podMonitorNamespaceSelector: {}
   podMonitorSelector:
     matchLabels:
       instance: home-control-metrics
 
-  # Supply an empty namespace selector to look in all namespaces. Remove
-  # this to only look in the same namespace as the MetricsInstance CR.
-  probeNamespaceSelector: {}
   probeSelector:
     matchLabels:
       instance: home-control-metrics

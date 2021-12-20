@@ -3,6 +3,7 @@ package org.rj.homectl.monitor.awair;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.rj.homectl.common.config.Config;
 import org.rj.homectl.common.config.ConfigEntry;
+import org.rj.homectl.common.util.BackoffDelay;
 import org.rj.homectl.common.util.Util;
 import org.rj.homectl.monitor.awair.config.SensorTarget;
 import org.rj.homectl.service.ServiceBase;
@@ -99,6 +100,8 @@ public class AwairMonitorAgent extends ServiceBase {
     private void execute() {
         int currentSensor = 0;
         final var pollInterval = getConfig().getLong(ConfigEntry.MonitorPollIntervalMs);
+        final var backoff = new BackoffDelay(List.of(1L, 2L, 4L, 8L, 16L, 32L, 64L, 128L),
+                n -> log.info("Backoff delay of {}s for error recovery", n), e -> log.error("Backoff delay failed: " + e.getMessage(), e));
 
         while (active.get()) {
             final var sensor = sensorTargets.get(currentSensor);
@@ -107,14 +110,15 @@ public class AwairMonitorAgent extends ServiceBase {
             try {
                 final var status = getData(sensor);
                 producer.send(StatusEventType.Awair.getKey(), status);
+                backoff.reset();
             }
             catch (Exception ex) {
                 log.error("Failed to query Awair sensor {} ({}): {}", currentSensor, sensor.getId(), ex.getMessage());
+                backoff.delay();
             }
 
             Util.threadSleepOrElse(pollInterval,
                     ex -> log.error("Failed to suspend monitor thread ({})", ex.getMessage()));
-
             currentSensor = (currentSensor + 1) % sensorTargets.size();
         }
     }

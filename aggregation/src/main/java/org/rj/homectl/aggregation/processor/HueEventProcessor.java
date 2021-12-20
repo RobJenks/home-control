@@ -38,12 +38,8 @@ public class HueEventProcessor extends AbstractEventProcessor<HueStatusEvent> {
     private void processLightStateData(HueStatusLightData data) {
         if (data == null) return;
 
-        data.entrySet().stream().map(x -> tuple(x,
-                        getState().getDeviceState(x.getValue().getName(), DeviceClass.Hue, HueDeviceState::new)))
-                .map(x -> {
-                    LOG.info("Item: {}; {}", x.v2.map(Util::safeSerialize).orElse("<none>"), Util.safeSerialize(x.v1.getValue()));
-                    return x;
-                })
+        data.entrySet().stream()
+                .map(x -> tuple(x, getState().getDeviceState(x.getValue().getName(), DeviceClass.Hue, HueDeviceState::new)))
                 .filter(x -> x.v2.isPresent())
                 .forEach(x -> x.v2.get().updateFromStatus(x.v1.getKey(), x.v1.getValue()));
     }

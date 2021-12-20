@@ -5,6 +5,7 @@ import org.apache.kafka.clients.producer.KafkaProducer;
 import org.rj.homectl.common.config.Config;
 import org.rj.homectl.common.config.ConfigConstants;
 import org.rj.homectl.common.config.ConfigEntry;
+import org.rj.homectl.common.util.BackoffDelay;
 import org.rj.homectl.common.util.DiffGeneration;
 import org.rj.homectl.common.util.Util;
 import org.rj.homectl.hue.model.status.Light;
@@ -112,6 +113,8 @@ public class HueMonitorAgent extends ServiceBase {
 
     private void execute() {
         final var pollInterval = getConfig().getLong(ConfigEntry.MonitorPollIntervalMs);
+        final var backoff = new BackoffDelay(List.of(1L, 2L, 4L, 8L, 16L, 32L, 64L, 128L),
+                n -> log.info("Backoff delay of {}s for error recovery", n), e -> log.error("Backoff delay failed: " + e.getMessage(), e));
 
         while (active.get()) {
             final var now = System.currentTimeMillis();
@@ -127,9 +130,11 @@ public class HueMonitorAgent extends ServiceBase {
 
                 sendEvents(lastStatus, status, now);
                 lastStatus = status;
+                backoff.reset();
             }
             catch (Exception ex) {
                 log.error("Failed to query Hue sensor \"{}\" ({})", sensorTarget, StringUtils.replace(ex.getMessage(), sensorToken, "<TOKEN>"));
+                backoff.delay();
             }
 
             Util.threadSleepOrElse(pollInterval,

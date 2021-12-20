@@ -104,8 +104,13 @@ public class AwairMonitorAgent extends ServiceBase {
             final var sensor = sensorTargets.get(currentSensor);
             log.debug("Requesting status from Awair service {} [{}]", currentSensor, sensor);
 
-            final var status = getData(sensor);
-            producer.send(StatusEventType.Awair.getKey(), status);
+            try {
+                final var status = getData(sensor);
+                producer.send(StatusEventType.Awair.getKey(), status);
+            }
+            catch (Exception ex) {
+                log.error("Failed to query Awair sensor {} ({}): {}", currentSensor, sensor.getId(), ex.getMessage());
+            }
 
             Util.threadSleepOrElse(pollInterval,
                     ex -> log.error("Failed to suspend monitor thread ({})", ex.getMessage()));

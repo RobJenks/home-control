@@ -143,12 +143,17 @@ public class StMonitorAgent extends ServiceBase {
         while (active.get()) {
             final var now = System.currentTimeMillis();
 
-            if (shouldSendFullStatusSnapshot(lastFullSnapshot, now)) {
-                sendFullStatusSnapshot(now);
-                lastFullSnapshot = now;
+            try {
+                if (shouldSendFullStatusSnapshot(lastFullSnapshot, now)) {
+                    sendFullStatusSnapshot(now);
+                    lastFullSnapshot = now;
+                } else {
+                    sendDeviceEvents(currentDevice, lastStatus, now);
+                    currentDevice = (currentDevice + 1) % devices.size();
+                }
             }
-            else {
-                sendDeviceEvents(currentDevice, lastStatus, now);
+            catch (Exception ex) {
+                log.error("Failed to query ST sensor {} ({}): {}", currentDevice, devices.get(currentDevice), ex.getMessage());
                 currentDevice = (currentDevice + 1) % devices.size();
             }
 

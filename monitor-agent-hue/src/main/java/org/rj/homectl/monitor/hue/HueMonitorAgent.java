@@ -1,5 +1,6 @@
 package org.rj.homectl.monitor.hue;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.rj.homectl.common.config.Config;
 import org.rj.homectl.common.config.ConfigConstants;
@@ -114,17 +115,22 @@ public class HueMonitorAgent extends ServiceBase {
 
         while (active.get()) {
             final var now = System.currentTimeMillis();
-
             log.trace("Requesting status from Hue service [{}] at {}", sensorTarget, now);
-            final var status = getData(sensorTarget, sensorToken, now);
 
-            if (shouldSendFullStatusSnapshot(lastFullSnapshot, now) || lastStatus == null) {
-                sendFullStatusSnapshot(status, now);
-                lastFullSnapshot = now;
+            try {
+                final var status = getData(sensorTarget, sensorToken, now);
+
+                if (shouldSendFullStatusSnapshot(lastFullSnapshot, now) || lastStatus == null) {
+                    sendFullStatusSnapshot(status, now);
+                    lastFullSnapshot = now;
+                }
+
+                sendEvents(lastStatus, status, now);
+                lastStatus = status;
             }
-
-            sendEvents(lastStatus, status, now);
-            lastStatus = status;
+            catch (Exception ex) {
+                log.error("Failed to query Hue sensor \"{}\" ({})", sensorTarget, StringUtils.replace(ex.getMessage(), sensorToken, "<TOKEN>"));
+            }
 
             Util.threadSleepOrElse(pollInterval,
                     ex -> log.error("Failed to suspend monitor thread ({})", ex.getMessage()));

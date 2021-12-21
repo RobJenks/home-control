@@ -42,7 +42,7 @@ public class MetricsExporter {
 
     private void initialiseMetrics() {
         initialiseEnvironmentMetrics();
-
+        initialiseHueMetrics();
     }
 
     private void initialiseEnvironmentMetrics() {
@@ -64,6 +64,10 @@ public class MetricsExporter {
 
         metrics.map(metric -> tuple(metric.v1, newGauge(metric.v1, metric.v2, List.of("room", "device"))))
                 .forEach(namedMetric -> registerNumericMetric(namedMetric.v1, namedMetric.v2));
+    }
+
+    private void initialiseHueMetrics() {
+        registerNumericMetric(METRIC_HUE_DEVICES_ON, newGauge(METRIC_HUE_DEVICES_ON, "Hue devices enabled", List.of("room", "device")));
     }
 
     private void registerNumericMetric(String name, Gauge metric) {

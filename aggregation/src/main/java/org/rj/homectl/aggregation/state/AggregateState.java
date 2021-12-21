@@ -7,8 +7,11 @@ import org.rj.homectl.common.model.HomeState;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.function.Predicate;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 public class AggregateState {
     private static final Logger LOG = LoggerFactory.getLogger(AggregateState.class);
@@ -38,6 +41,17 @@ public class AggregateState {
                 });
     }
 
+    public List<Device> getDevices() {
+        return state.getDevices();
+    }
+
+    // Returns all devices matching the given criteria
+    public List<Device> getDevices(Predicate<Device> criteria) {
+        return state.getDevices().stream()
+                .filter(criteria)
+                .collect(Collectors.toList());
+    }
+
     // Returns Optional.empty() if the given device does not exist in the current aggregate state.  Will instantiate
     // a default empty state via the give `stateBuilder` if no state is currently recorded
     @SuppressWarnings("unchecked")
@@ -53,5 +67,6 @@ public class AggregateState {
 
         return Optional.of((T)device.getState());
     }
+
 
 }

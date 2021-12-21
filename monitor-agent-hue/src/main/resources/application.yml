@@ -16,7 +16,7 @@ monitor:
   sensor: http://192.168.1.125:80
   query: /api/<TOKEN>/lights
   pollIntervalMs: 2000
-  fullSnapshotSendIntervalMs: 600000
+  fullSnapshotSendIntervalMs: 300000  # 5 mins
 
 producer:
   id: hue-agent-producer-01

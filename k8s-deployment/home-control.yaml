@@ -105,6 +105,9 @@ spec:
         - name: internal-port
           containerPort: 29092
           protocol: TCP
+        - name: jmx-port
+          containerPort: 29093
+          protocol: TCP
         env:
         - name: KAFKA_BROKER_ID
           value: "1"
@@ -118,6 +121,8 @@ spec:
           value: "1"
         - name: KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS
           value: "0"
+        - name: JMX_PORT
+          value: 29093
       nodeSelector:
         host.specs: high
   revisionHistoryLimit: 2
@@ -143,7 +148,11 @@ spec:
     port: 29092
     targetPort: internal-port
     protocol: TCP
-
+  - name: jmx-port
+    port: 29093
+    targetPort: jmx-port
+    protocol: TCP
+    
 # Aggregation
 ---
 kind: Deployment

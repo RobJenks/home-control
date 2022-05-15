@@ -148,6 +148,21 @@ spec:
     port: 29092
     targetPort: internal-port
     protocol: TCP
+    
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: home-control-kafka-brokers-external
+  namespace: home-control
+  labels:
+    entity: home-control-kafka-brokers-external
+    entityType: kafka-broker
+spec:
+  selector:
+    entity: home-control-kafka-brokers-external
+  clusterIP: None       # Headless
+  ports:
   - name: jmx-port
     port: 29093
     targetPort: jmx-port

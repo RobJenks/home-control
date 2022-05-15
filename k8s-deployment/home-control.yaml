@@ -161,7 +161,7 @@ metadata:
 spec:
   selector:
     entity: home-control-kafka-brokers-external
-  clusterIP: None       # Headless
+  type: NodePort
   ports:
   - name: jmx-port
     port: 29093

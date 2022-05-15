@@ -122,7 +122,7 @@ spec:
         - name: KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS
           value: "0"
         - name: JMX_PORT
-          value: 29093
+          value: "29093"
       nodeSelector:
         host.specs: high
   revisionHistoryLimit: 2

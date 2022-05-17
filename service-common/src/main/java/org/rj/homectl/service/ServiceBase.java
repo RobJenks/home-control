@@ -28,7 +28,7 @@ public abstract class ServiceBase {
         this.log = LoggerFactory.getLogger(implementationClass);
         this.context = context;
 
-        Runtime.getRuntime().addShutdownHook(new Thread(this::preShutdown));
+        Runtime.getRuntime().addShutdownHook(new Thread(this::preShutdownHook));
     }
 
     @PostConstruct
@@ -72,7 +72,11 @@ public abstract class ServiceBase {
         SpringApplication.exit(context.getApplicationContext(), () -> 0);
     }
 
-    private void preShutdown() {
+    private void preShutdownHook() {
         log.info("JVM shutdown initiated, ending process");
+        preShutdown();
     }
+
+    protected abstract void preShutdown();
+
 }

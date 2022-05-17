@@ -235,4 +235,7 @@ public class StMonitorAgent extends ServiceBase {
     protected boolean handleTerminationRequest(String reason) {
         return true;    // Allow all requests
     }
+
+    @Override
+    protected void preShutdown() { }
 }

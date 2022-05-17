@@ -20,8 +20,6 @@ import org.rj.homectl.status.st.StStatusEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Random;
-
 
 public class AggregationService implements RecordInfoConsumer<String, StatusEvent> {
     private static final Logger LOG = LoggerFactory.getLogger(AggregationService.class);

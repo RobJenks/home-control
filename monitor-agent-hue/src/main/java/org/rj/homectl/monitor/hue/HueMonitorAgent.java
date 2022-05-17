@@ -244,4 +244,7 @@ public class HueMonitorAgent extends ServiceBase {
     protected boolean handleTerminationRequest(String reason) {
         return true;    // allow all requests
     }
+
+    @Override
+    protected void preShutdown() { }
 }

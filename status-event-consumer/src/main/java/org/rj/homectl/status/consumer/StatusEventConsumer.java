@@ -2,6 +2,8 @@ package org.rj.homectl.status.consumer;
 
 import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
+import org.apache.kafka.common.Metric;
+import org.apache.kafka.common.MetricName;
 import org.apache.kafka.common.serialization.Deserializer;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.rj.homectl.kafka.common.KafkaConstants;
@@ -77,6 +79,10 @@ public class StatusEventConsumer extends AbstractEventConsumer<String, StatusEve
         return ErrorStatusEvent.generateErrorEvent((ErrorStatusEventData)
                 ErrorStatusEventData.fromDeserializationErrorInfo(failureInfo));
 
+    }
+
+    public Map<MetricName, ? extends Metric> getConsumerMetrics() {
+        return super.getConsumerMetrics();
     }
 
     private static <T> Consumer<String, StatusEvent> defaultConsumerGenerator(Map<String, Object> consumerConfig) {

@@ -18,6 +18,9 @@ aggregation:
     logInboundRecords: true
   metrics:
     port: 14202
+  metricsMonitor:
+    consumer:
+      collectionIntervalSecs: 5
 
 consumer:
   id: status-consumer-01

@@ -2,6 +2,7 @@ package org.rj.homectl.aggregation;
 
 import org.rj.homectl.aggregation.cache.RecordCache;
 import org.rj.homectl.aggregation.controller.AggregationController;
+import org.rj.homectl.aggregation.metrics.AggregationMetricsMonitor;
 import org.rj.homectl.aggregation.service.AggregationService;
 import org.rj.homectl.common.config.Config;
 import org.rj.homectl.common.config.ConfigEntry;
@@ -24,6 +25,8 @@ public class Aggregation extends ServiceBase {
     private AggregationController aggregationController;
     private AggregationService aggregationService;
     private RecordCache recordCache;
+    private AggregationMetricsMonitor metricsMonitor;
+    private StatusEventConsumer statusEventConsumer;
 
     public static void main(String[] args) {
         SpringApplication.run(Aggregation.class, args);
@@ -38,17 +41,18 @@ public class Aggregation extends ServiceBase {
         this.aggregationController = new AggregationController(this);
         this.aggregationService = new AggregationService(this, getConfig());
         this.recordCache = new RecordCache(this);
+        this.metricsMonitor = new AggregationMetricsMonitor(this, getConfig());
 
         final var consumerId = getConfig().get(ConfigEntry.ConsumerId);
         final var consumerConfigPath = getConfig().get(ConfigEntry.ConsumerConfig);
 
-        final var statusConsumer = new StatusEventConsumer(
+        this.statusEventConsumer = new StatusEventConsumer(
                 consumerId,
                 Config.load(consumerConfigPath, getConfig()),
                 Optional.empty(),
                 Optional.of(buildRecordHandler()));
 
-        new Thread(statusConsumer::execute).start();
+        new Thread(statusEventConsumer::execute).start();
     }
 
     private ConsumerRecordsHandler<String, StatusEvent> buildRecordHandler() {
@@ -75,5 +79,18 @@ public class Aggregation extends ServiceBase {
 
     public RecordCache getRecordCache() {
         return recordCache;
+    }
+
+    public AggregationMetricsMonitor getMetricsMonitor() {
+        return metricsMonitor;
+    }
+
+    public StatusEventConsumer getStatusEventConsumer() {
+        return statusEventConsumer;
+    }
+
+    @Override
+    protected void preShutdown() {
+        metricsMonitor.shutdown();
     }
 }

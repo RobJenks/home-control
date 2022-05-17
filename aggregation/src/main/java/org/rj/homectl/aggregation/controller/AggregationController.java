@@ -1,6 +1,7 @@
 package org.rj.homectl.aggregation.controller;
 
 import org.rj.homectl.aggregation.Aggregation;
+import org.rj.homectl.aggregation.metrics.AggregationMetrics;
 import org.rj.homectl.common.model.HomeState;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -12,7 +13,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @RestController
 @CrossOrigin
@@ -49,5 +49,10 @@ public class AggregationController {
         headers.setContentType(MediaType.APPLICATION_JSON);
 
         return new ResponseEntity<>(state, headers, HttpStatus.OK);
+    }
+
+    @GetMapping("/aggregationMetrics")
+    public ResponseEntity<AggregationMetrics> aggregationMetrics() {
+        return new ResponseEntity<>(parent.getMetricsMonitor().getMetrics(), HttpStatus.OK);
     }
 }

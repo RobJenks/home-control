@@ -2,6 +2,8 @@ package org.rj.homectl.kafka.consumer;
 
 import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
+import org.apache.kafka.common.Metric;
+import org.apache.kafka.common.MetricName;
 import org.apache.kafka.common.serialization.Deserializer;
 import org.rj.homectl.common.config.Config;
 import org.rj.homectl.common.config.ConfigEntry;
@@ -9,6 +11,7 @@ import org.rj.homectl.common.util.Util;
 import org.rj.homectl.kafka.consumer.events.ConsumerEvent;
 import org.rj.homectl.kafka.consumer.handlers.ConsumerRecordsHandler;
 import org.rj.homectl.kafka.consumer.handlers.LoggingRecordHandler;
+import org.rj.homectl.kafka.metrics.KafkaMetricsCollector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
@@ -21,8 +24,10 @@ import org.springframework.kafka.support.serializer.FailedDeserializationInfo;
 import java.time.Duration;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 /*
    Custom factory initialisation: https://github.com/SpringOnePlatform2016/grussell-spring-kafka/blob/master/s1p-kafka/src/main/java/org/s1p/JsonConfiguration.java#L66
@@ -119,6 +124,10 @@ public abstract class AbstractEventConsumer<K, V extends ConsumerEvent> implemen
     public void process(ConsumerRecords<K, V> records) {
         log.debug("Consumer \"{}\" processing {} records", id, records.count());
         recordsHandler.process(records);
+    }
+
+    protected Map<MetricName, ? extends Metric> getConsumerMetrics() {
+        return consumer.metrics();
     }
 
     private static Duration getPollDuration(Config config) {

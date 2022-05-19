@@ -11,6 +11,7 @@ import org.rj.homectl.status.error.ErrorStatusEventData;
 import org.rj.homectl.status.events.StatusEvent;
 import org.rj.homectl.status.events.StatusEventType;
 import org.rj.homectl.status.hue.HueStatusEvent;
+import org.rj.homectl.status.metrics.KafkaClusterMetricsStatusEvent;
 import org.rj.homectl.status.st.StStatusEvent;
 import org.springframework.kafka.support.serializer.JsonDeserializer;
 
@@ -23,6 +24,7 @@ public class StatusEventDeserializer extends JsonDeserializer<StatusEvent> {
             StatusEventType.Awair, AwairStatusEvent::fromMessage,
             StatusEventType.Hue, HueStatusEvent::fromMessage,
             StatusEventType.ST, StStatusEvent::fromMessage,
+            StatusEventType.ClusterMetrics, KafkaClusterMetricsStatusEvent::fromMessage,
             StatusEventType.Error, ErrorStatusEvent::fromMessage
     );
 

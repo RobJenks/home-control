@@ -19,8 +19,12 @@ aggregation:
   metrics:
     port: 14202
   metricsMonitor:
-    consumer:
-      collectionIntervalSecs: 5
+    monitoredServices:
+      consumer:
+        collectionIntervalSecs: 5
+    producer:
+      id: cluster-metrics-producer-01
+      config: config/cluster-metrics-producer.properties
 
 consumer:
   id: status-consumer-01

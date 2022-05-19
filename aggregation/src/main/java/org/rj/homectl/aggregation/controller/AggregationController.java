@@ -1,7 +1,7 @@
 package org.rj.homectl.aggregation.controller;
 
 import org.rj.homectl.aggregation.Aggregation;
-import org.rj.homectl.aggregation.metrics.AggregationMetrics;
+import org.rj.homectl.kafka.metrics.beans.KafkaClusterMetrics;
 import org.rj.homectl.common.model.HomeState;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -52,7 +52,7 @@ public class AggregationController {
     }
 
     @GetMapping("/aggregationMetrics")
-    public ResponseEntity<AggregationMetrics> aggregationMetrics() {
+    public ResponseEntity<KafkaClusterMetrics> aggregationMetrics() {
         return new ResponseEntity<>(parent.getMetricsMonitor().getMetrics(), HttpStatus.OK);
     }
 }

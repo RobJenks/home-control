@@ -7,7 +7,8 @@ public enum StatusEventType {
     Error("error"),
     Hue("hue"),
     ST("st"),
-    Awair("awair");
+    Awair("awair"),
+    ClusterMetrics("clusterMetrics");
 
     private final String key;
 

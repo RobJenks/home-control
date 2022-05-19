@@ -4,7 +4,7 @@ import io.prometheus.client.Gauge;
 import io.prometheus.client.exporter.HTTPServer;
 import org.apache.commons.lang3.StringUtils;
 import org.jooq.lambda.Seq;
-import org.jooq.lambda.tuple.Tuple;
+import org.jooq.lambda.tuple.Tuple3;
 import org.rj.homectl.metrics.util.MetricsConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,6 +43,7 @@ public class MetricsExporter {
     private void initialiseMetrics() {
         initialiseEnvironmentMetrics();
         initialiseHueMetrics();
+        initialiseClusterMetrics();
     }
 
     private void initialiseEnvironmentMetrics() {
@@ -68,6 +69,23 @@ public class MetricsExporter {
 
     private void initialiseHueMetrics() {
         registerNumericMetric(METRIC_HUE_DEVICES_ON, newGauge(METRIC_HUE_DEVICES_ON, "Hue devices enabled", List.of("room", "device")));
+    }
+
+    private void initialiseClusterMetrics() {
+        final Seq<Tuple3<String, String, List<String>>> metrics = Seq.of(
+                tuple(METRIC_CLUSTER_CONSUMER_BYTES_CONSUMED, "Aggregation service total bytes consumed", List.of()),
+                tuple(METRIC_CLUSTER_CONSUMER_FETCH_LATENCY, "Aggregation service consumer fetch latency", List.of("metric")),
+                tuple(METRIC_CLUSTER_CONSUMER_FETCH_RATE, "Aggregation service record fetch rate per sec", List.of()),
+                tuple(METRIC_CLUSTER_CONSUMER_FETCH_SIZE, "Aggregation service consumer fetch size", List.of("metric")),
+                tuple(METRIC_CLUSTER_CONSUMER_FETCH_TOTAL, "Aggregation service total fetch count", List.of()),
+                tuple(METRIC_CLUSTER_CONSUMER_LAST_HEARTBEAT_SECS, "Aggregation service consumer last heartbeat received (secs)", List.of()),
+                tuple(METRIC_CLUSTER_CONSUMER_NETWORK_IO_RATE, "Aggregation service consumer network IO rate", List.of()),
+                tuple(METRIC_CLUSTER_CONSUMER_RECORD_LAG_MAX, "Aggregation service consumer max record lag", List.of()),
+                tuple(METRIC_CLUSTER_CONSUMER_RECORDS_CONSUMED, "Aggregation service total records consumed", List.of())
+        );
+
+        metrics.map(metric -> tuple(metric.v1, newGauge(metric.v1, metric.v2, metric.v3)))
+                .forEach(namedMetric -> registerNumericMetric(namedMetric.v1, namedMetric.v2));
     }
 
     private void registerNumericMetric(String name, Gauge metric) {

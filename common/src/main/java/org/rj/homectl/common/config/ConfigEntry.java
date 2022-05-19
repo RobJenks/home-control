@@ -19,7 +19,10 @@ public enum ConfigEntry {
     MonitorRequestListing("monitor.requests.listing"),
     MonitorRequestStatus("monitor.requests.status"),
     MonitorStDevices("monitor.st.devices"),
-    MetricsMonitorConsumerCollectionIntervalSecs("aggregation.metricsMonitor.consumer.collectionIntervalSecs");
+    MetricsMonitorProducerId("aggregation.metricsMonitor.producer.id"),
+    MetricsMonitorProducerConfig("aggregation.metricsMonitor.producer.config"),
+    MetricsMonitorProducerPublishIntervalSecs("aggregation.metricsMonitor.producer.publishIntervalSecs"),
+    MetricsMonitorConsumerCollectionIntervalSecs("aggregation.metricsMonitor.monitoredServices.consumer.collectionIntervalSecs");
 
 
     private final String key;

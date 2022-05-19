@@ -1,8 +1,8 @@
-package org.rj.homectl.aggregation.metrics;
+package org.rj.homectl.kafka.metrics.beans;
 
 import com.fasterxml.jackson.annotation.JsonAlias;
 
-public class AggregationConsumerMetrics {
+public class KafkaConsumerMetrics {
     @JsonAlias("records-consumed-total")
     private Double recordsConsumedTotal;
     @JsonAlias("bytes-consumed-total")
@@ -36,7 +36,7 @@ public class AggregationConsumerMetrics {
     @JsonAlias("rebalance-total")
     private Double rebalanceTotal;
 
-    public AggregationConsumerMetrics() { }
+    public KafkaConsumerMetrics() { }
 
     public Double getRecordsConsumedTotal() {
         return recordsConsumedTotal;
